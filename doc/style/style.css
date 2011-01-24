@@ -1,0 +1,56 @@
+body {
+    margin:0px;
+    font-size:1.0em;
+    font-family:sans-serif;
+    color:#000000;
+    background-color:#ffffff;
+}
+table {
+    font-family:arial;
+    font-size:1em;
+    color:#8c8c8c;
+    background-color:#000000;
+    border:0px;
+    border-spacing:0px;
+}
+hr {
+    margin:0px;
+    clear:both;
+    background-color:#000000;
+    color:#000000;
+    height:0.2em;
+    border:1px;
+}
+img {
+    border:0;
+}
+
+tt {
+    font-size:1.20em;
+}
+
+#main {
+    margin:0.0em;
+    width:100%;
+    height:100%;
+}
+#header {
+    padding: 0.5em;
+}
+#content {
+    margin:1.0em;
+    width:100% - 2.0em;
+    height:100% - 2.0em;
+}
+
+.top_nav {
+    display:inline;
+    float:none;
+    margin:0;
+}
+.top_nav li {
+    display:inline;
+    float:none;
+    margin:0;
+}
+

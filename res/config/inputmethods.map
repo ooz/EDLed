@@ -1,0 +1,46 @@
+# Input methods map file.
+#
+# Specifies alternative GUI components (read: components other than textfields) 
+# that should be shown for some EDL entries or entry types. 
+# (empty lines and lines starting with '#' are ignored)
+# 
+# Syntax for one map entry:
+#     {<XSDType> | <XPath>}
+#     <inputmethod>
+#
+# currently available values for <inputmethod>:
+#     TEXTFIELD
+#     FILECHOOSER
+#     DIRCHOOSER
+#     COLORCHOOSER
+#
+# Example 1:
+#     /rtExperiment/environment/dataFolder
+#     DIRCHOOSER
+# 
+# Specifies a button that popups a directory chooser for the EDL entry 
+# dataFolder.
+#
+# Example 2:
+#     anyURI
+#     FILECHOOSER
+#
+# Specifies a file chooser for every configuration entry that has the type 
+# anyURI.
+#
+# IMPORTANT: 
+# Input methods specified with a XPath override input methods specified with a
+# XSDtype. So if you define FILECHOOSER for anyURI (example 2) and DIRCHOOSER 
+# for /rtExperiment/environment/dataFolder (which is of type anyURI), the 
+# dataFolder entry will have a directory chooser component for input. All other  
+# entries of type anyURI will have a file chooser.
+#
+# All XPaths are based on EDL specification v1.4.
+
+/rtExperiment/environment/dataFolder
+DIRCHOOSER
+
+anyURI
+FILECHOOSER
+
+

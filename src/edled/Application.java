@@ -1,0 +1,359 @@
+package edled;
+
+import java.io.File;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
+
+import javax.xml.validation.Schema;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathExpression;
+import javax.xml.xpath.XPathExpressionException;
+
+import org.apache.log4j.Logger;
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
+
+
+import edled.core.Model;
+import edled.core.MetaTreeBuilder;
+import edled.core.XSOMMetaTreeBuilder;
+import edled.core.validation.EDLRuleValidator;
+import edled.plugin.ReplacementManager;
+import edled.plugin.Plugin;
+import edled.plugin.PluginLoader;
+import edled.util.Configuration;
+import edled.view.View;
+import edled.xml.XMLUtility;
+
+/**
+ * Application entry point for EDLed. Main controller of the app.
+ * 
+ * @author Oliver Zscheyge
+ */
+public class Application implements Runnable {
+	
+	private static final String APPLICATION_NAME = "EDLed";
+	private static final String VERSION = "1.1.0";
+	private static final String AUTHOR = "Oliver Zscheyge";
+	
+	private static final Logger logger = Logger.getLogger(Application.class);
+	
+	/** The application configuration. */
+	private Configuration config = null;
+	
+	/** All plugins identified by their qualified names. */
+	private Map<String, Plugin> plugins = null;
+	
+	/** The application's model. */
+	private Model model = null;
+	/** The application's view. */
+	private View view = null;
+	
+	/** The file containing the XSD. */
+	private File xsdFile = null;
+	/** The EDLRules file. */
+	private File edlRulesFile = null;
+	/** 
+	 * A validator object for the purpose of validating the model against 
+	 * the EDLRules.
+	 */
+	private EDLRuleValidator edlValidator = null;
+	
+	/** The XML (EDL) file that currently used by the app. */
+	private File currentXML = null;
+	
+	public Application(final String[] args) {
+		init();
+		setupPlugins();
+		
+		// If first argument is a file path: open that file
+		if (args.length >= 1) {
+			File initialFile = new File(args[0]);
+			if (initialFile.exists()) {
+				this.load(initialFile);
+			}
+		}
+	}
+
+	/**
+	 * Application entry point.
+	 * 
+	 * @param args Command line arguments passed to the application.
+	 */
+	public static void main(String[] args) {
+		(new Application(args)).run();
+	}
+	
+	public String getName() {
+		return Application.APPLICATION_NAME;
+	}
+	public String getVersion() {
+		return Application.VERSION;
+	}
+	public String getAuthor() {
+		return Application.AUTHOR;
+	}
+	
+	@Override
+	public void run() {
+//		System.out.println("os.arch: " + System.getProperty("os.arch"));
+//		System.out.println("user.dir: " + System.getProperty("user.dir"));
+	}
+	
+	/**
+	 * Initializes the app:
+	 * - config setup
+	 * - reading the XSD and EDLRules file
+	 */
+	private void init() {
+		this.config = Configuration.getInstance();
+		logger.info("Application initialized.");
+		
+		this.view = new View(this);
+		
+		// TODO: exception in case the document element was not found!
+		this.xsdFile = new File(this.config.getProp(Configuration.XSD));
+		if (this.xsdFile != null) {
+			logger.info("XSD file loaded.");
+		} else {
+			logger.warn("Could not find/read XSD file.");
+		}
+		
+		this.edlRulesFile = new File(this.config.getProp(Configuration.EDLRULES));
+		this.edlValidator = new EDLRuleValidator(edlRulesFile);
+	}
+	/**
+	 * Adds all the plugins that should be loaded according the configuration.
+	 */
+	private void setupPlugins() {
+		this.plugins = new LinkedHashMap<String, Plugin>();
+		
+		PluginLoader factory = PluginLoader.newInstance();
+		for (String qualifiedPluginName : this.config.getUsedPlugins()) {
+			Plugin plugin = factory.createPlugin(this, qualifiedPluginName);
+			if (plugin != null) {
+				logger.info("Using plugin " + plugin.getQualifiedName() + " (" + plugin.getName() + ").");
+				this.plugins.put(qualifiedPluginName, plugin);
+				this.view.addPlugin(plugin);
+			}
+		}
+	}
+	
+	/**
+	 * Creates a new XML (EDL) document to work on.
+	 */
+	public void newDocument() {
+		if (xsdFile.exists()) {
+//			Schema schema = XMLUtility.loadSchema(this.xsdFile);
+			MetaTreeBuilder metaTreeBuilder = new XSOMMetaTreeBuilder(this.xsdFile);
+			this.model = new Model(this.config.getProp(Configuration.DOCUMENTELEMENT), 
+								   metaTreeBuilder,
+								   this.edlValidator);
+			
+//			this.model.printToStdout();
+//			this.model.printAllDistinctBaseTypes();
+		}
+		this.currentXML = null;
+		if (this.model != null) {
+//			this.plugins.put(StimulusPlugin.class.toString(), new StimulusPlugin(this.model.getDocument(), ""));
+			this.view.setModel(this.model);
+			logger.info("New document created.");
+		} else {
+			logger.error("Could not create new document!");
+		}
+	}
+	
+	/**
+	 * Writes the current XML (EDL) document to a file.
+	 * 
+	 * @param to        The file the XML document should be written to.
+	 * @param overwrite Flag indicating whether an existing file should be replaced
+	 */
+	// TODO: use overwrite flag!
+	public void save(final File to, final boolean overwrite) {
+		XMLUtility.saveDocument(this.model.getDocument(), to);
+		XMLUtility.loadDocument(to, XMLUtility.loadSchema(this.xsdFile));
+		this.currentXML = to;
+		logger.info("Saved document to " + to.getPath());
+	}
+	
+	/**
+	 * Loads a XML (EDL) document from a given file.
+	 * 
+	 * @param from The file representing the XML (EDL) configuration.
+	 * @return     Boolean indication whether the read/load process was successful
+	 * 			   and whether the document is an instance of the given XSD.
+	 */
+	public boolean load(final File from) {
+		
+		Schema schema = XMLUtility.loadSchema(this.xsdFile);
+		Document document = XMLUtility.loadDocument(from, schema);
+		MetaTreeBuilder metaTreeBuilder = new XSOMMetaTreeBuilder(this.xsdFile);
+		
+		Model newModel = null;
+		
+		if (document != null) {
+			try {
+				newModel = new Model(document, metaTreeBuilder, this.edlValidator);
+			} catch (RuntimeException e) {
+				logger.warn("XML/EDL file is not schema compliant!");
+				newModel = null;
+			}
+		} else {
+			return false;
+		}
+		
+		if (newModel != null) {
+			this.currentXML = from;
+			this.model = newModel;
+			this.view.setModel(this.model);
+			
+//			logger.info("starting rules validation");
+//			for (EDLRule violatedRule : this.edlValidator.validate(this.model.getDocument())) {
+//				logger.info("Violated rule: " + violatedRule.getID());
+//				logger.info(" Parameters in scope:");
+//				for (RuleParameter param : violatedRule.getParameters().values()) {
+//					logger.info("  " + param.toString());
+//				}
+//				logger.info(" Message: " + violatedRule.getMessage());
+//			}
+//			logger.info("ending rules validation");
+			
+			logger.info("Opened " + from.getPath());
+			
+			return true;
+		} else {
+			return false;
+		}
+	}
+	
+	//choose XSD
+	//load template
+	
+	/** 
+	 * Model getter.
+	 * @return The application model.
+	 */
+	public Model getModel() {
+		return this.model;
+	}
+	/**
+	 * View getter.
+	 * @return The application view.
+	 */
+	public View getView() {
+		return this.view;
+	}
+	
+//	public Plugin getPlugin(final String qualifiedName) {
+//		return null;
+//	}
+	
+	/**
+	 * Returns the file which is currently edited.
+	 * 
+	 * @return The file the app is currently working on. Can be null if
+	 * 		   no file has been loaded/saved yet.
+	 */
+	public File getCurrentXMLFile() {
+		return this.currentXML;
+	}
+	
+	/**
+	 * Updates a plugin (model) specified by its qualified name with
+	 * the information from the application's main model.
+	 * 
+	 * @param qualifiedName The qualified name of the plugin that needs an update.
+	 */
+	public void updatePlugin(final String qualifiedName) {
+		Plugin plugin = this.plugins.get(qualifiedName);
+		if (plugin != null) {
+			logger.debug("Updating plugin: " + qualifiedName);
+			if (this.model != null) {
+				plugin.update(this.model);
+			}
+		}
+	}
+	
+	/**
+	 * Tries to incooperate information from a plugin's model to the main
+	 * application model.
+	 * 
+	 * @param qualifiedName The qualified name of the plugin to update from.
+	 */
+	public void updateFromPlugin(final String qualifiedName) {
+		if (this.model == null) {
+			return;
+		}
+		
+		Plugin plugin = this.plugins.get(qualifiedName);
+		if (plugin != null) {
+			logger.debug("Updating from plugin: " + qualifiedName);
+			ReplacementManager mapper = plugin.getReplacementManager(true);
+			if (mapper != null) {
+				for (XPathExpression xpathOfNodeToReplace : mapper.getXPaths()) {
+					try {
+						Node toReplace = (Node) xpathOfNodeToReplace.evaluate(this.model.getDocument(), XPathConstants.NODE);
+						logger.debug("Node to replace: " + toReplace);
+						if (toReplace != null) {
+							this.model.replace(toReplace, mapper.nodeFor(xpathOfNodeToReplace));
+						}
+					} catch (XPathExpressionException e) {
+						logger.debug("XPathException while updating the application from a plugin.", e);
+					}
+				}
+			}
+		}
+	}
+	
+	/**
+	 * Getter for all the plugins.
+	 * @return A new LinkedHashMap that contains all plugins identified by their
+	 *         qualified names.
+	 */
+	public Map<String, Plugin> getPlugins() {
+		return new LinkedHashMap<String, Plugin>(this.plugins);
+	}
+	
+	/**
+	 * Returns all the DOM nodes that are also modelled by plugins.
+	 * 
+	 * @return A map containing all DOM nodes of the current application model
+	 * 		   that may be also created/modelled by a plugin.
+	 */
+	public Map<Node, Plugin> getNodesConfiguredByPlugins() {
+		Map<Node, Plugin> nodes = new HashMap<Node, Plugin>();
+		
+		Document xmlDocument = this.model.getDocument();
+		for (Plugin plugin : this.plugins.values()) {
+			ReplacementManager mapper = plugin.getReplacementManager(false);
+			if (mapper != null) {
+				for (XPathExpression xpath : mapper.getXPaths()) {
+					try {
+						Node node = (Node) xpath.evaluate(xmlDocument, XPathConstants.NODE);
+						if (node != null) {
+							nodes.put(node, plugin);
+						}
+					} catch (XPathExpressionException e) {
+						logger.debug("XPathException while querying for nodes which are configured by plugins", e);
+					}
+				}
+			}
+		}
+		
+		return nodes;
+	}
+	
+//	private boolean loadDefaultProperties() {
+//		return false;
+//	}
+//	
+//	private boolean loadAppProperties() {
+//		return false;
+//	}
+//	
+//	private boolean saveAppProperties() {
+//		return false;
+//	}
+}
