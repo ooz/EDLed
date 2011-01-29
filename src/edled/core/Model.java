@@ -272,7 +272,10 @@ public class Model {
 			if (attrConstraint.hasAttributeUse()) {
 				switch (attrConstraint.getAttributeUse()) {
 				case OPTIONAL:
-					option = new ManipulationRemoveOption(this, attr);
+					if (!attrConstraint.hasDefaultValue()
+							&& !attrConstraint.hasFixedValue()) {
+						option = new ManipulationRemoveOption(this, attr);
+					}
 					break;
 				case PROHIBITED:
 					break;
@@ -302,7 +305,9 @@ public class Model {
 					Attr attr = elem.getAttributeNode(metaAttr.getName());
 					switch (attrConstraint.getAttributeUse()) {
 					case OPTIONAL:
-						if (attr == null) {
+						if (attr == null
+								&& !attrConstraint.hasDefaultValue()
+								&& !attrConstraint.hasFixedValue()) {
 							options.add(new ManipulationAddOption(this, metaAttr, elem));
 						}
 						break;

@@ -350,8 +350,10 @@ public class InspectorPanel extends JPanel implements TreeReceiver {
 		default:
 			// NOT_SPECIFIED and TEXTFIELD result in a textfield
 			// (or drop down menu if an enumeration type is used)
-			List<String> valueEnum = constraint.getTypeRestriction()
-					.getEnumeration();
+			List<String> valueEnum = null;
+			if (constraint.hasTypeRestriction()) {
+				valueEnum = constraint.getTypeRestriction().getEnumeration();
+			}
 
 			if (valueEnum == null) {
 				// textfield

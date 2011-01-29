@@ -10,7 +10,10 @@
   <!--+++++++++++++ Root: rtExperiment +++++++++++++++++-->
   <xs:element name="rtExperiment">
     <xs:annotation>
-      <xs:appinfo>Root Element - This contains all sections: environment, experimentData, mriParams (optional), preprocessing(optional), statistics(optional), activationProcessing(optional), stimulusData(optional), viewProperties(optional)</xs:appinfo>
+      <xs:appinfo>
+			Root Element 
+			This contains all sections: 
+			environment, experimentData, mriParams (optional], preprocessing (optional), statistics (optional), activationProcessing (optional), stimulusData (optional), viewProperties (optional)</xs:appinfo>
     </xs:annotation>
       <xs:complexType>
       <xs:sequence>
@@ -136,13 +139,12 @@
     </xs:complexType>
   </xs:element>
   
-  <!--+++ Struct for Sliding  Window designs +++-->
+  <!--+++ Structure for Growing  Window designs +++-->
   <xs:element name="gwDesignStruct">
      <xs:annotation>
       <xs:appinfo>
-	    Struct for Growing-Window designs.
-		
-		Attributes: none 
+	    This element describes a Growing-Window designs. That means that all scans acquired before the actual
+			one are included in the analysis (the analysis window grows). 
 	  </xs:appinfo>
     </xs:annotation>
     <xs:complexType>
@@ -154,13 +156,12 @@
   </xs:element>
   
   
-  <!--+++ Struct for Sliding  Window designs +++-->
+  <!--+++ Structure for Sliding  Window designs +++-->
    <xs:element name="swDesignStruct">
    	<xs:annotation>
       <xs:appinfo>
-	    Struct for Sliding-Window designs.
-		
-		Attributes: none 
+	    This element describes a Sliding-Window designs. That means that all scans acquired before the actual
+			one minus defined window-size are NOT included in the analysis (the analysis window moves). 
 	  </xs:appinfo>
     </xs:annotation>
     <xs:complexType>
@@ -177,9 +178,8 @@
    	<xs:annotation>
       <xs:appinfo>
 	    Dynamic Design for unknown design timing. 
-		Just the maximal duration has to be given.
-		
-		Attributes: maxLength - maximal length of design [ms] 
+		  Just the maximal duration has to be given.
+		  Attributes: maxLength - maximal length of design [ms) 
 	  </xs:appinfo>
     </xs:annotation>
     <xs:complexType>
@@ -208,6 +208,19 @@
    
   <!--+++ scanBasedRegressor +++-->
   <xs:element name="scanBasedRegressor">
+	  <xs:annotation>
+      <xs:appinfo>
+	      This element describes the timing of an analysis using the unit scans.
+				Attributes:  
+				 regressorID - unique identifier
+				 name        - name
+				 size        - over all number of scans in regressor
+				 useRefFct   - reference to the HRF-model (referenceFunction) that should be used
+				 useRefFctFirstDerivative - include first derivative in the model (optional)
+				 useRefFctSecondDerivative - include second derivative in the model (optional)
+				 scaleHeightToZeroMean - indicate if convolved regressor should be scaled to mean zero height (usually no)
+	    </xs:appinfo>
+    </xs:annotation>
     <xs:complexType>
       <xs:sequence>
         <xs:element minOccurs="1" maxOccurs="1" ref="sbrDesign"/>
@@ -225,6 +238,19 @@
    
 	<!--+++ timeBasedRegressor +++-->
   <xs:element name="timeBasedRegressor">
+		<xs:annotation>
+      <xs:appinfo>
+	      This element describes the timing of an analysis using the unit milliseconds.
+				Attributes:  
+				 regressorID - unique identifier
+				 name        - name
+				 size        - over all time length of regressor
+				 useRefFct   - reference to the HRF-model (referenceFunction) that should be used
+				 useRefFctFirstDerivative - include first derivative in the model (optional)
+				 useRefFctSecondDerivative - include second derivative in the model (optional)
+				 scaleHeightToZeroMean - indicate if convolved regressor should be scaled to mean zero height (usually no)
+	    </xs:appinfo>
+    </xs:annotation>
     <xs:complexType>
       <xs:sequence>
         <xs:element minOccurs="1" maxOccurs="1" ref="tbrDesign"/>
@@ -266,13 +292,14 @@
 	<xs:element name="scan">
 	<xs:annotation>
       <xs:appinfo>
-	    Attributes: height - scaleFactor for parametric modulation [scalar] 
+	    Attributes: 
+			  height - scaleFactor for parametric modulation [scalar, default=1] 
 	  </xs:appinfo>
     </xs:annotation>
 	  <xs:complexType>
 		<xs:simpleContent>
 		  <xs:extension base="xs:boolean">
-			<xs:attribute name="height" use="required" type="xs:double"/>
+			<xs:attribute name="height" use="required" type="xs:double" default="1"/>
 		   </xs:extension>
 		</xs:simpleContent>
 	   </xs:complexType> 
@@ -297,7 +324,7 @@
     <xs:complexType>
       <xs:attribute name="time"     use="required" type="xs:unsignedLong"/>
       <xs:attribute name="duration" use="required" type="xs:unsignedInt"/>
-	  <xs:attribute name="height"   use="optional" type="xs:double"/>
+	  <xs:attribute name="height"   use="required" type="xs:double" default="1"/>
     </xs:complexType>
   </xs:element>
   <!--+++ END Struct for Sliding Window designs +++  -->

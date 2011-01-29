@@ -43,12 +43,11 @@ public class FileUtility {
         // Undo the changes to the separators made by normalization
         if (fileSeparator.equals("/")) {
             normalizedTargetPath = FilenameUtils.separatorsToUnix(normalizedTargetPath);
-            normalizedBasePath = FilenameUtils.separatorsToUnix(normalizedBasePath);
+            normalizedBasePath   = FilenameUtils.separatorsToUnix(normalizedBasePath);
 
         } else if (fileSeparator.equals("\\")) {
             normalizedTargetPath = FilenameUtils.separatorsToWindows(normalizedTargetPath);
-            normalizedBasePath = FilenameUtils.separatorsToWindows(normalizedBasePath);
-
+            normalizedBasePath   = FilenameUtils.separatorsToWindows(normalizedBasePath);
         } else {
             throw new IllegalArgumentException("Unrecognised dir separator '" + fileSeparator + "'");
         }

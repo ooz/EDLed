@@ -457,13 +457,19 @@ public class TreeManager {
 		MetaXMLNodeKind metaChildKind = metaNode.getKind();
 		switch (metaChildKind) {
 		case ATTRIBUTE:
-			if (nodeConstraint.hasAttributeUse()) {
-				AttributeUse attrUse = nodeConstraint.getAttributeUse();
-				if (attrUse == AttributeUse.REQUIRED || isTopNode) {
-					Attr attr = this.xmlDocument.createAttribute(metaNode.getName());
-					this.put(attr, metaNode);
-					xmlNodes.add(attr);
+			if ((nodeConstraint.hasAttributeUse() 
+					&& nodeConstraint.getAttributeUse() == AttributeUse.REQUIRED)
+				|| isTopNode
+				|| nodeConstraint.hasDefaultValue()
+				|| nodeConstraint.hasFixedValue()) {
+				Attr attr = this.xmlDocument.createAttribute(metaNode.getName());
+				if (nodeConstraint.hasDefaultValue()) {
+					attr.setNodeValue(nodeConstraint.getDefaultValue());
+				} else if (nodeConstraint.hasFixedValue()) {
+					attr.setNodeValue(nodeConstraint.getFixedValue());
 				}
+				this.put(attr, metaNode);
+				xmlNodes.add(attr);
 			}
 			break;
 		case ELEMENT:
@@ -472,6 +478,12 @@ public class TreeManager {
 			while (occurs < nodeConstraint.getMinOccurs()
 				   || doAtLeastOnce) {
 				Element elem = this.xmlDocument.createElement(metaNode.getName());
+				if (nodeConstraint.hasDefaultValue()) {
+					XMLUtility.setNodeValue(elem, nodeConstraint.getDefaultValue());
+				} 
+				if (nodeConstraint.hasFixedValue()) {
+					XMLUtility.setNodeValue(elem, nodeConstraint.getFixedValue());
+				}
 				this.put(elem, metaNode);
 				xmlNodes.add(elem);
 				

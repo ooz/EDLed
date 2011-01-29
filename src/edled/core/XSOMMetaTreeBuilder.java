@@ -209,8 +209,18 @@ public class XSOMMetaTreeBuilder implements MetaTreeBuilder {
 			
 		} else if (elemType.isSimpleType()) {
 			XSSimpleType elemSimpleType = elemType.asSimpleType();
-			
 			elemConstraint.initCanHaveTextContent(true);
+			
+			XSTerm term = elemSimpleType.asParticle().getTerm();
+			if (term.isElementDecl()) {
+				XSElementDecl elemDecl = term.asElementDecl();
+				if (elemDecl.getDefaultValue() != null) {
+					elemConstraint.initDefaultValue(elemDecl.getDefaultValue().value);
+				}
+				if (elemDecl.getFixedValue() != null) {
+					elemConstraint.initFixedValue(elemDecl.getFixedValue().value);
+				}
+			}
 			
 			if (elemSimpleType.isRestriction()) {
 				elemConstraint.initTypeRestriction(buildTypeRestriction(typeName, elemSimpleType.asRestriction()));
