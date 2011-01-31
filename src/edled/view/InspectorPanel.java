@@ -8,21 +8,24 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.io.File;
+import java.net.MalformedURLException;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.JTree;
 import javax.swing.SpringLayout;
 
+import org.apache.log4j.Logger;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 
@@ -45,19 +48,23 @@ import edled.xml.XMLUtility;
  * @author Oliver Zscheyge
  */
 public class InspectorPanel extends JPanel implements TreeReceiver {
+	/** */
+	private static final Logger logger = Logger.getLogger(InspectorPanel.class);
 
 	private static final long serialVersionUID = 1L;
 
 	/** Width for all textfields showing node values. */
 	private static final int TEXTFIELD_WIDTH = 20;
-	/** Width for the text areas showing node descriptions. */
-	private static final int TEXTAREA_WIDTH = 40;
-	private static final int TEXTAREA_HEIGHT = 1;
 
 	private static final int ATTR_FIELD_PADDING = 10;
 	
 	/** Default file name shown in the file chooser caller button. */
 	private static final String DEFAULT_FILE_NAME = "...";
+	
+	/** Unqualified file name of the "info/appinfo/annotation"-icon. */
+	private static final String INFO_FILENAME = "info.png";
+	/** Alternative text that will be rendered if no "info/appinfo/annotation"-icon is available. */
+	private static final String INFO_ALT_TEXT = "[?]";
 
 	/** Reference to the view fascade. */
 	private final View view;
@@ -68,12 +75,34 @@ public class InspectorPanel extends JPanel implements TreeReceiver {
 	 */
 	private JTree tree = null;
 	private SpringLayout layout;
+	
+	/** Icon indicating that mouseovering the icon or associated node name label
+	 *  will show the node description/annotation. */
+	private Icon infoIcon = null;
 
 	/** Constructor. */
 	public InspectorPanel(final View view) {
 		this.view = view;
 		this.layout = new SpringLayout();
 		this.setLayout(this.layout);
+		
+		Configuration config = Configuration.getInstance();
+		String imgPath = config.resolveVariables("$IMG_DIR");
+		
+		// Load plugin icon.
+		File iconFile = new File(imgPath 
+								 + Configuration.FILE_SEPARATOR 
+								 + view.getIconSizeModifier() 
+								 + INFO_FILENAME);
+		if (iconFile.isFile()) {
+			try {
+				this.infoIcon = new ImageIcon(iconFile.toURI().toURL());
+			} catch (MalformedURLException e) {
+				logger.debug("Info icon URL malformed!", e);
+			}
+		} else {
+			logger.info("Could not find plugin icon.");
+		}
 	}
 
 	@Override
@@ -106,8 +135,24 @@ public class InspectorPanel extends JPanel implements TreeReceiver {
 			// Build node name (heading).
 			JPanel nodeNamePane = new JPanel();
 			Component prefComp = nodeNamePane;
-			final JLabel nodeNameLabel = new JLabel("<html><b>"
-					+ xmlNode.getNodeName() + "</b></html>");
+			final JLabel nodeNameLabel;
+			String labelText = "<html><b>" + xmlNode.getNodeName() + "</b></html>";
+			if (edlNodeConstraint.hasAppInfo()) {
+				if (this.infoIcon == null) {
+					nodeNameLabel = new JLabel("<html><b>" + INFO_ALT_TEXT + " "
+											   + xmlNode.getNodeName() + "</b></html>");
+				} else {
+					nodeNameLabel = new JLabel(labelText, this.infoIcon, JLabel.TRAILING);
+				}
+				
+				// Add node description tooltip to nodeNameLabel.
+				String tooltipText = edlNodeConstraint.getAppInfo().replace("\n", "<br>");
+				tooltipText = "<html>" + tooltipText + "</html>";
+				nodeNameLabel.setToolTipText(tooltipText);
+			} else {
+				nodeNameLabel = new JLabel(labelText);
+			}
+			
 			ValidationResult validationResult = view
 					.getValidationResultForNode(xmlNode, false);
 			if (!validationResult.isValid()) {
@@ -120,27 +165,6 @@ public class InspectorPanel extends JPanel implements TreeReceiver {
 					SpringLayout.NORTH, this);
 			this.layout.putConstraint(SpringLayout.WEST, nodeNamePane, 0,
 					SpringLayout.WEST, this);
-
-			// Build node description.
-			if (edlNodeConstraint.hasAppInfo()) {
-				// nodeNamePane.setToolTipText(edlNodeConstraint.getAppInfo());
-				JPanel nodeDescriptionPane = new JPanel();
-				JTextArea description = new JTextArea(edlNodeConstraint
-						.getAppInfo(), InspectorPanel.TEXTAREA_HEIGHT,
-						InspectorPanel.TEXTAREA_WIDTH);
-				description.setEditable(false);
-				description.setLineWrap(true);
-				description.setWrapStyleWord(true);
-				nodeDescriptionPane.add(description);
-
-				this.layout.putConstraint(SpringLayout.NORTH,
-						nodeDescriptionPane, 0, SpringLayout.SOUTH, prefComp);
-				this.layout.putConstraint(SpringLayout.WEST,
-						nodeDescriptionPane, 0, SpringLayout.WEST, this);
-
-				this.add(nodeDescriptionPane);
-				prefComp = nodeDescriptionPane;
-			}
 
 			// Build text field for text value of node (also showing type).
 			if (edlNodeConstraint.canHaveTextContent()) {

@@ -27,8 +27,13 @@ import edled.plugin.Plugin;
  * @author Oliver Zscheyge
  */
 public class View {
-	
+	/** */
 	private static final Logger logger = Logger.getLogger(View.class);
+	
+	/** File name segment qualifying 12x12-pixel icons. */
+	public static final String ICON_SIZE_MODIFIER_12 = "12_";
+	/** File name segment qualifying 16x16-pixel icons. */
+	public static final String ICON_SIZE_MODIFIER_16 = "16_";
 	
 	/** Main frame/window of the application. */
 	private MainFrame mainWindow;
@@ -252,6 +257,14 @@ public class View {
 	}
 	public String getAuthor() {
 		return this.controller.getAuthor();
+	}
+	
+	public String getIconSizeModifier() {
+		if (System.getProperty("os.name").contains("Linux")) {
+			return View.ICON_SIZE_MODIFIER_16;
+		} else {
+			return View.ICON_SIZE_MODIFIER_12;
+		}
 	}
 
 }

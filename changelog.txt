@@ -1,0 +1,46 @@
+######
+EDLed v1.1.???????
+
+ * EDLed is now shipped with rtExperiment_v14.xsd r27
+ * A "?"-icon next to a element name now indicates that the element has a
+   tooltip description. 
+ * The content of the XSD annotation/appinfo tags is now shown as a tooltip on 
+   mouseover of the element label.
+
+=== Bug fixes ===
+ * Corrected argument order and improved MacOS X support in edled.sh 
+   (launch script).
+ * Attributes that provide a default or fixed value will now always be present
+   unaffected by their use value.
+ * TODO TODO TODO TODO ###############################
+   Fixed Values for Elements still buggy! (look at metatreebuilder!!!)
+   ###################################################
+
+
+######
+EDLed v1.1.0
+2011-01-21
+
+=== New features ===
+ * Added evaluation of type restrictions.
+ * Added support for input methods other than text fields and drop down menus:
+    Alternative input methods can be specified in the file 
+    EDLed/res/config/inputmethods.map either on a XPath or a XSD type basis.
+    
+ * The "Open"-Dialog now starts in the directory of last opened XML/EDL file.
+   (Does not carry over to subsequent invocations of EDLed!)
+ * A single EDL file can now be passed as a command line parameter.
+ * The entire XML document/EDL configuration is now validated upon saving.
+  
+=== Bug fixes ===
+ * Fixed a bug in the validation of xs:NMTOKEN types.
+ * Textfield inputs: the node is no longer validated when modifier key is
+    pressed (shift/ctrl/super/alt/altgr).
+    
+
+######
+EDLed v1.0.1
+
+=== Bug fixes ===
+ * Fixed a bug in the ID validation
+

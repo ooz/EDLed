@@ -41,11 +41,6 @@ public class TreeRenderer implements TreeCellRenderer {
 	/** Default height of a rendered node. */
 	private static final int RENDERED_COMP_HEIGHT = 20;
 	
-	/** File name segment qualifying 12x12-pixel icons. */
-	private static final String ICON_SIZE_MODIFIER_12 = "12_";
-	/** File name segment qualifying 16x16-pixel icons. */
-	private static final String ICON_SIZE_MODIFIER_16 = "16_";
-	
 	/* 
 	 * All following unqualified file names will be preceeded either by
 	 * ICON_SIZE_MODIFIER_12 or ICON_SIZE_MODIFIER_16. 
@@ -123,10 +118,7 @@ public class TreeRenderer implements TreeCellRenderer {
 		this.defaultRenderer = new DefaultTreeCellRenderer();
 		Configuration config = Configuration.getInstance();
 		String imgPath = config.resolveVariables("$IMG_DIR");
-		String iconSizeModifier = ICON_SIZE_MODIFIER_12;
-		if (System.getProperty("os.name").contains("Linux")) {
-			iconSizeModifier = ICON_SIZE_MODIFIER_16;
-		}
+		String iconSizeModifier = view.getIconSizeModifier();
 		
 		// Load plugin icon.
 		File iconFile = new File(imgPath + Configuration.FILE_SEPARATOR + iconSizeModifier + PLUGIN_FILENAME);
@@ -134,7 +126,7 @@ public class TreeRenderer implements TreeCellRenderer {
 			try {
 				this.pluginIcon = new ImageIcon(iconFile.toURI().toURL());
 			} catch (MalformedURLException e) {
-				logger.debug("Add icon URL malformed!", e);
+				logger.debug("Plugin icon URL malformed!", e);
 			}
 		} else {
 			logger.info("Could not find plugin icon.");
