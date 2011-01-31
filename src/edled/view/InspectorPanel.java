@@ -139,8 +139,8 @@ public class InspectorPanel extends JPanel implements TreeReceiver {
 			String labelText = "<html><b>" + xmlNode.getNodeName() + "</b></html>";
 			if (edlNodeConstraint.hasAppInfo()) {
 				if (this.infoIcon == null) {
-					nodeNameLabel = new JLabel("<html><b>" + INFO_ALT_TEXT + " "
-											   + xmlNode.getNodeName() + "</b></html>");
+					labelText = "<html><b>" + INFO_ALT_TEXT + " " + xmlNode.getNodeName() + "</b></html>";
+					nodeNameLabel = new JLabel(labelText);
 				} else {
 					nodeNameLabel = new JLabel(labelText, this.infoIcon, JLabel.TRAILING);
 				}
