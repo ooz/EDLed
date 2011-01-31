@@ -1,7 +1,8 @@
 ######
 EDLed v1.1.???????
 
- * EDLed is now shipped with rtExperiment_v14.xsd r27
+ * EDLed is now shipped with rtExperiment_v15.xsd r30 (choosen by default) and
+   rtExperiment_v14.xsd r27 
  * A "?"-icon next to a element name now indicates that the element has a
    tooltip description. 
  * The content of the XSD annotation/appinfo tags is now shown as a tooltip on 
