@@ -11,6 +11,9 @@ EDLed v1.1.???????
 === Bug fixes ===
  * Corrected argument order and improved MacOS X support in edled.sh 
    (launch script).
+ * Fixed a bug in the build process resulting in packaging every class file 
+   into the main executable jar. Needed libraries have to be in res/lib/, 
+   plugins go to plugin/.
  * Attributes that provide a default or fixed value will now always be present
    unaffected by their use value.
  * TODO TODO TODO TODO ###############################
