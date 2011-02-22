@@ -346,7 +346,6 @@ public class Model {
 				|| force
 				// || !validationResult.isValid()
 				) {
-			
 			validate(node);
 			validationResult = this.treeManager.getValidationResult(node);
 		}

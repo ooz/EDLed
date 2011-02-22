@@ -51,6 +51,16 @@ public class EDLRuleValidator {
 		return validatedRules;
 	}
 	
+	public Map<EDLRule, List<Node>> validate(final Document xmlDocument) {
+		Map<EDLRule, List<Node>> validatedRules = new HashMap<EDLRule, List<Node>>();
+		
+		for (EDLRule rule : this.rules) {
+			validatedRules.put(rule, rule.evaluate(xmlDocument));
+		}
+		
+		return validatedRules;
+	}
+	
 	private void buildRules() {
 		try {
 			NodeList ruleNodes = (NodeList) XPathFactory.newInstance()

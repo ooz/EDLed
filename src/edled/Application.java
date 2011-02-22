@@ -14,14 +14,13 @@ import org.apache.log4j.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
-
-import edled.core.Model;
 import edled.core.MetaTreeBuilder;
+import edled.core.Model;
 import edled.core.XSOMMetaTreeBuilder;
 import edled.core.validation.EDLRuleValidator;
-import edled.plugin.ReplacementManager;
 import edled.plugin.Plugin;
 import edled.plugin.PluginLoader;
+import edled.plugin.ReplacementManager;
 import edled.util.Configuration;
 import edled.view.View;
 import edled.xml.XMLUtility;
@@ -114,10 +113,12 @@ public class Application implements Runnable {
 		
 		// TODO: exception in case the document element was not found!
 		this.xsdFile = new File(this.config.getProp(Configuration.XSD));
-		if (this.xsdFile != null) {
-			logger.info("XSD file loaded.");
+		if (this.xsdFile.exists()) {
+			logger.info("XSD file found.");
 		} else {
-			logger.warn("Could not find/read XSD file.");
+			logger.warn("Could not find XSD file!");
+			this.view.showWarnDialog("No XSD file was found!\n" +
+					"Please correct the XSD setting in Edit > Preferences and restart the application.");
 		}
 		
 		this.edlRulesFile = new File(this.config.getProp(Configuration.EDLRULES));
@@ -208,17 +209,6 @@ public class Application implements Runnable {
 			this.currentXML = from;
 			this.model = newModel;
 			this.view.setModel(this.model);
-			
-//			logger.info("starting rules validation");
-//			for (EDLRule violatedRule : this.edlValidator.validate(this.model.getDocument())) {
-//				logger.info("Violated rule: " + violatedRule.getID());
-//				logger.info(" Parameters in scope:");
-//				for (RuleParameter param : violatedRule.getParameters().values()) {
-//					logger.info("  " + param.toString());
-//				}
-//				logger.info(" Message: " + violatedRule.getMessage());
-//			}
-//			logger.info("ending rules validation");
 			
 			logger.info("Opened " + from.getPath());
 			

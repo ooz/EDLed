@@ -244,7 +244,6 @@ public class TreeRenderer implements TreeCellRenderer {
 		indicatorPane.setBorder(null);
 		
 		JLabel label = null;
-		
 		if (!this.view.getValidationResultForNode(currentXMLNode, true).isValid()) {
 			if (this.errorIcon == null) {
 				label = new JLabel(ERROR_ALT_TEXT);

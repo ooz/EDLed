@@ -1,6 +1,9 @@
 # Map file for the design plugin.
 # Based EDL specification v1.4.
 
+PARADIGM
+/experimentData/paradigm
+
 REFERENCE_FUNCTIONS
 /statistics/referenceFunctions
 
