@@ -11,9 +11,9 @@ public class DesignGloverKernel implements DesignKernel {
 	double samplingRateInMs; // unsigned long
 	double scaleTimeUnit;
 	
-	final FFTW.Complex[] kernelDeriv0 = {};
-	final FFTW.Complex[] kernelDeriv1 = {};
-	final FFTW.Complex[] kernelDeriv2 = {};
+//	final FFTW.Complex[] kernelDeriv0 = {};
+//	final FFTW.Complex[] kernelDeriv1 = {};
+//	final FFTW.Complex[] kernelDeriv2 = {};
 	
 	public DesignGloverKernel(final GloverParams gammaParams, 
 							  final double numberSamplesForInit, 
