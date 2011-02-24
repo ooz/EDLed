@@ -2,23 +2,23 @@ package design.bart;
 
 /* From NEDesignKernel.h */
 public interface DesignKernel {
-	public enum DesignKernelTimeUnit {
+	public static enum DesignKernelTimeUnit {
 		KERNEL_TIME_MS,
 		KERNEL_TIME_S;
 	}
 	
 	public static class GloverParams {
-		public long maxLengthHrfInMs; // unsigned int
-		public double peak1;
-		public double scale1;
-		public double peak2;
-		public double scale2;
-		public double offset;
-		public double relationP1P2;
-		public double heightScale;
+		public int maxLengthHrfInMs; // must be positive
+		public double peak1; //fka a1 - 6
+		public double scale1; //fka b1 - 0.9
+		public double peak2; // fka a2 - 12
+		public double scale2; //fka b2 - 0.9
+		public double offset;	// fka hard coded - for gamma 0.0, gauss 5.0
+		public double relationP1P2; // fka cc cx - for block 0.1, event 0.35
+		public double heightScale; //fka hard coded voodoo scale - for block 120, event 20
 		public DesignKernelTimeUnit timeUnit;
 		/** Constructor */
-		public GloverParams(long maxLengthHrfInMs, double peak1, double scale1,
+		public GloverParams(int maxLengthHrfInMs, double peak1, double scale1,
 				double peak2, double scale2, double offset,
 				double relationP1P2, double heightScale,
 				DesignKernelTimeUnit timeUnit) {
@@ -36,7 +36,7 @@ public interface DesignKernel {
 	}
 	
 	public static class GeneralGammaParams {
-		public long maxLengthHrfInMs; // unsigned int
+		public int maxLengthHrfInMs; // unsigned int
 		public double peak1;
 		public double scale1;
 		public double peak2;

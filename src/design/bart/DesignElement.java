@@ -1,6 +1,6 @@
 package design.bart;
 
-import java.awt.image.SampleModel;
+import java.util.LinkedList;
 import java.util.List;
 
 import flanagan.complex.Complex;
@@ -19,23 +19,31 @@ public class DesignElement {
 	
 	/* From BADesignElement.h */
 	public static class Trial {
-		public long id; // Stimulus number: unsigned int
-		float onset;
-		float duration; // in seconds
-		float height;
+		public long id = 0; // Stimulus number: unsigned int
+		public float onset = 0.0f;
+		public float duration = 1.0f; // in seconds
+		public float height = 1.0f;
+		public Trial() {
+		}
+		public Trial(final long id, final float onset, final float duration, final float height) {
+			this.id = id;
+			this.onset = onset;
+			this.duration = duration;
+			this.height = height;
+		}
 	}
 	
 	/* From NEDesignElementDyn */
 	public static class Regressor {
-		public List<Trial> regTrialList;
-		public long regDerivations; // unsigned int
-		public String regID;
-		public String regDescription;
-		public DesignKernel regConvolKernel;
+		public List<Trial> regTrialList = new LinkedList<Trial>();
+		public long regDerivations = 0; // unsigned int
+		public String regID = null;
+		public String regDescription = null;
+		public DesignKernel regConvolKernel = null;
 	}
 	
 	/* ===== Constants ===== */
-	double SAMPLING_RATE_IN_MS = 20.0; /* Temporal resolution for convolution is 20 ms. */
+	public static final double SAMPLING_RATE_IN_MS = 20.0; /* Temporal resolution for convolution is 20 ms. */
 	
 	/* ===== Attributes ===== */
 	/* From BADesignElement.h */
@@ -45,11 +53,11 @@ public class DesignElement {
 	private long numberRegressors = 0; 			 // unsigned int
 	private long numberCovariates = 0; 		     // unsigned int
 	private ImageDataType imageDataType = ImageDataType.IMAGE_DATA_FLOAT;
-	/* From NEDesignElement.h */
-	private List<Regressor> regressorList;
-	private int numberEvents; 				// unsigned int
-	private long numberSamplesForInit; 		// unsigned long
-	private long numberSamplesNeededForExp; // unsigned long
+	/* From NEDesignElementDyn.h */
+	private List<Regressor> regressorList = new LinkedList<Regressor>();
+	private int numberEvents = 0; 				// unsigned int
+	private long numberSamplesForInit = 0; 		// unsigned long
+	private long numberSamplesNeededForExp = 0; // unsigned long
 	private double[] timeOfRepetitionStartInMs;
 	/** Generated/resulting design */
 	private float[][] regressorValues;
@@ -67,9 +75,9 @@ public class DesignElement {
 	
 	
 	/* ===== Methods ===== */
-	private void convolve(int col, 
-						  int eventNr, 
-						  Complex[] kernel) {
+	private void convolve(final int col, 
+						  final int eventNr, 
+						  final Complex[] kernel) {
 		if (kernel == null) {
 			throw new IllegalArgumentException("called DesignElement.convolve with kernel=null!");
 		}
@@ -125,5 +133,15 @@ public class DesignElement {
 	public void setNumberCovariates(long numberCovariates) { this.numberCovariates = numberCovariates; }
 	public ImageDataType getImageDataType() { return imageDataType;	}
 	public void setImageDataType(ImageDataType imageDataType) {	this.imageDataType = imageDataType;	}
+	
+	// regressorList
+	public List<Regressor> getRegressorList() { return regressorList; }
+	public void setRegressorList(List<Regressor> regressorList) { this.regressorList = regressorList; }
+	// numberEvents
+	public int getNumberEvents() { return numberEvents; }
+	public void setNumberEvents(int numberEvents) {	this.numberEvents = numberEvents; }
+	// numberSamplesForInit
+	public long getNumberSamplesForInit() { return numberSamplesForInit; }
+	public void setNumberSamplesForInit(long numberSamplesForInit) { this.numberSamplesForInit = numberSamplesForInit; }
 	
 }

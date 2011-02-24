@@ -3,6 +3,13 @@ package design;
 import java.io.File;
 
 import javax.swing.JPanel;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathExpressionException;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
+
+import design.DOMFormatter;
 
 import edled.Application;
 import edled.core.Model;
@@ -16,6 +23,11 @@ import edled.util.Configuration;
  * @author Oliver Zscheyge
  */
 public class DesignPlugin implements Plugin {
+	
+	private static final String PARADIGM_KEY = "PARADIGM";
+	private static final String TR_KEY = "TR";
+	private static final String MEASUREMENTS_KEY = "MEASUREMENTS";
+	private static final String REFERENCE_FUNCTIONS_KEY = "REFERENCE_FUNCTIONS";
 	
 	private static final String NAME = "Design";
 	private static final String AUTHOR = "Oliver Zscheyge";
@@ -66,8 +78,28 @@ public class DesignPlugin implements Plugin {
 
 	@Override
 	public void update(Model model) {
-		// TODO Auto-generated method stub
-		
+		Document doc = model.getDocument();
+		try {
+			Node paradigmNode = (Node) this.nodeMapper.xpathFor(PARADIGM_KEY).evaluate(doc, XPathConstants.NODE);
+			Node trNode       = (Node) this.nodeMapper.xpathFor(TR_KEY).evaluate(doc, XPathConstants.NODE);
+			Node measurementsNode = (Node) this.nodeMapper.xpathFor(MEASUREMENTS_KEY).evaluate(doc, XPathConstants.NODE);
+			Node refFctsNode  = (Node) this.nodeMapper.xpathFor(REFERENCE_FUNCTIONS_KEY).evaluate(doc, XPathConstants.NODE);
+			DOMFormatter formatter = new DOMFormatter();
+			if (model.getValidationResult(paradigmNode, true).isValid()) {
+				formatter.fill(this.pluginModel.getDesign(), paradigmNode, trNode, measurementsNode, refFctsNode);
+			}
+			if (model.getValidationResult(refFctsNode, true).isValid()) {
+				// TODO
+//				MediaObjectList mediaObjList = this.pluginModel.getMediaObjectList();
+//				formatter.fill(mediaObjList, mediaObjListNode, appController.getCurrentXMLFile());
+//				if (model.getValidationResult(timetableNode, true).isValid()) {
+//					formatter.fill(this.pluginModel.getTimetable(), timetableNode, mediaObjList);
+//				}
+			}
+		} catch (XPathExpressionException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 }

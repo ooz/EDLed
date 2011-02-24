@@ -2,8 +2,14 @@
 # Based EDL specification v1.4.
 
 PARADIGM
-/experimentData/paradigm
+/rtExperiment/experimentData/paradigm
+
+TR
+/rtExperiment/experimentData/imageModalities/TR
 
 REFERENCE_FUNCTIONS
-/statistics/referenceFunctions
+/rtExperiment/statistics/referenceFunctions
+
+MEASUREMENTS
+/rtExperiment/mriParams/MR_TAG_MEASUREMENTS
 

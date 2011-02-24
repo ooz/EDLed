@@ -449,7 +449,8 @@ public class DOMFormatter {
 		
 		int repeats;
 		Element designElem = (Element) timetableElem.getElementsByTagName("*").item(0);
-		if (designElem.getNodeName().equals("blockStimulusDesign")) {
+		if (designElem != null 
+			&& designElem.getNodeName().equals("blockStimulusDesign")) {
 			try {
 				repeats = Integer.parseInt(designElem.getAttribute("repeats").trim());
 			} catch (NumberFormatException e) {
