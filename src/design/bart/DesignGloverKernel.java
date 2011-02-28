@@ -1,19 +1,16 @@
 package design.bart;
 
-import design.bart.DesignKernel.GeneralGammaParams;
-import design.bart.DesignKernel.GloverParams;
+import flanagan.complex.Complex;
+import flanagan.math.FourierTransform;
+
 
 /** From NEDesignGloverKernel.h/m */
-public class DesignGloverKernel implements DesignKernel {
+public class DesignGloverKernel extends DesignKernel {
 	
 	private GloverParams params;
 	double numberSamplesForInit; // unsigned long
 	double samplingRateInMs; // unsigned long
 	double scaleTimeUnit;
-	
-//	final FFTW.Complex[] kernelDeriv0 = {};
-//	final FFTW.Complex[] kernelDeriv1 = {};
-//	final FFTW.Complex[] kernelDeriv2 = {};
 	
 	public DesignGloverKernel(final GloverParams gammaParams, 
 							  final double numberSamplesForInit, 
@@ -42,50 +39,47 @@ public class DesignGloverKernel implements DesignKernel {
 //	}
 	
 	private void generateGammaKernel() {
-//		// unsigned long
-//		long numberSamplesInResult = ((long) this.numberSamplesForInit / 2) + 1;//defined for results of fftw3
-//		/*always generate with both derivates - so you can ask member variables if you need them*/
-//		double[] kernel0 = new double[(int) this.numberSamplesForInit];//just temp to write values in
-//		mKernelDeriv0 = (fftw_complex *)fftw_malloc (sizeof(fftw_complex) * numberSamplesInResult);
-//		memset(kernel0, 0.0, sizeof(double) * mNumberSamplesForInit);
-//		
-//		double *kernel1 = NULL;
-//		kernel1  = (double *)fftw_malloc(sizeof(double) * mNumberSamplesForInit);
-//		mKernelDeriv1 = (fftw_complex *)fftw_malloc (sizeof (fftw_complex) * numberSamplesInResult);
-//		memset(kernel1,0.0,sizeof(double) * mNumberSamplesForInit);
-//		
-//		double *kernel2 = NULL;
-//		kernel2  = (double *)fftw_malloc(sizeof(double) * mNumberSamplesForInit);
-//		mKernelDeriv2 = (fftw_complex *)fftw_malloc (sizeof (fftw_complex) * numberSamplesInResult);
-//		memset(kernel2,0.0,sizeof(double) * mNumberSamplesForInit);
-//		
-//		// sample the whole stuff e.g. something bout 20 ms;
-//		unsigned int indexS = 0;
-//		for (unsigned long timeSample = 0; timeSample < mParams.maxLengthHrfInMs; timeSample += mSamplingRateInMs) {
-//			if (indexS >= mNumberSamplesForInit) break;        
-//			//unsigned long indexS = (unsigned long)timeSample/mSamplingRateInMs;
-//			kernel0[indexS] = getGammaValue(timeSample, this.params.offset);
-//			kernel1[indexS] = getGammaDeriv1Value(timeSample, params.offset);
-//			kernel2[indexS] = getGammaDeriv2Value(timeSample, params.offset);
-//			indexS++;
-//		}
-//
-//		/* do fft for kernels right now - result buffers are the members the convolution will ask for*/
-//		fftw_plan pk0;
-//		pk0 = fftw_plan_dft_r2c_1d(mNumberSamplesForInit, kernel0, mKernelDeriv0, FFTW_ESTIMATE);
-//		fftw_execute(pk0);
-//		
-//		fftw_plan pk1;
-//		pk1 = fftw_plan_dft_r2c_1d(mNumberSamplesForInit, kernel1, mKernelDeriv1, FFTW_ESTIMATE);
-//		fftw_execute(pk1);
-//		
-//		fftw_plan pk2;
-//		pk2 = fftw_plan_dft_r2c_1d(mNumberSamplesForInit, kernel2, mKernelDeriv2, FFTW_ESTIMATE);
-//		fftw_execute(pk2);
-//		
-//		fftw_free(kernel0);
-//		fftw_free(kernel1);
-//		fftw_free(kernel2);
+		// unsigned long
+		long numberSamplesInResult = ((long) this.numberSamplesForInit / 2) + 1;//defined for results of fftw3
+		/*always generate with both derivates - so you can ask member variables if you need them*/
+		double[] kernel0 = new double[(int) this.numberSamplesForInit];//just temp to write values in
+		this.kernelDeriv0 =  new Complex[(int) numberSamplesInResult];
+		
+		double[] kernel1 = new double[(int) this.numberSamplesForInit];
+		this.kernelDeriv1 = new Complex[(int) numberSamplesInResult];
+		
+		double[] kernel2 = new double[(int) this.numberSamplesForInit];
+		this.kernelDeriv2 = new Complex[(int) numberSamplesInResult];
+		
+		for (int i = 0; i < this.numberSamplesForInit; i++) {
+			kernel0[i] = 0.0;
+			kernel1[i] = 0.0;
+			kernel2[i] = 0.0;
+		}
+		
+		// sample the whole stuff e.g. something bout 20 ms;
+		int indexS = 0;
+		for (long timeSample = 0; timeSample < this.params.maxLengthHrfInMs; timeSample += this.samplingRateInMs) {
+			if (indexS >= this.numberSamplesForInit) break;        
+			//unsigned long indexS = (unsigned long)timeSample/mSamplingRateInMs;
+			kernel0[indexS] = getGammaValue(timeSample, this.params.offset);
+			kernel1[indexS] = getGammaDeriv1Value(timeSample, params.offset);
+			kernel2[indexS] = getGammaDeriv2Value(timeSample, params.offset);
+			indexS++;
+		}
+
+		/* do fft for kernels right now - result buffers are the members the convolution will ask for*/
+		FourierTransform pk0 = new FourierTransform(kernel0);
+		pk0.transform();
+		this.kernelDeriv0 = pk0.getTransformedDataAsComplex();
+		
+		FourierTransform pk1 = new FourierTransform(kernel1);
+		pk0.transform();
+		this.kernelDeriv1 = pk1.getTransformedDataAsComplex();
+		
+		FourierTransform pk2 = new FourierTransform(kernel2);
+		pk2.transform();
+		this.kernelDeriv2 = pk2.getTransformedDataAsComplex();
 	}
 
 	@Override

@@ -2,10 +2,12 @@ package design.bart;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Observable;
 
 import flanagan.complex.Complex;
+import flanagan.math.FourierTransform;
 
-public class DesignElement {
+public class DesignElement extends Observable {
 	
 	/* ===== Classes ===== */
 	/* From BAElement.h */
@@ -30,6 +32,10 @@ public class DesignElement {
 			this.onset = onset;
 			this.duration = duration;
 			this.height = height;
+		}
+		@Override
+		public String toString() {
+			return "Trial[id="+id+",onset="+onset+",duration="+duration+",height="+height+"]";
 		}
 	}
 	
@@ -57,27 +63,28 @@ public class DesignElement {
 	private List<Regressor> regressorList = new LinkedList<Regressor>();
 	private int numberEvents = 0; 				// unsigned int
 	private long numberSamplesForInit = 0; 		// unsigned long
-	private long numberSamplesNeededForExp = 0; // unsigned long
+//	private long numberSamplesNeededForExp = 0; // unsigned long
 	private double[] timeOfRepetitionStartInMs;
+
 	/** Generated/resulting design */
 	private float[][] regressorValues;
 	private float[][] covariateValues;
 	/** FFT buffers */
 	private double[][] buffersForwardIn;  // one per each event
-	private double[][] buffersInverseOut; // one per each event
 	private Complex[][] buffersForwardOut; // resulting HRFs (one per event)
 	private Complex[][] buffersInverseIn;
+	private double[][] buffersInverseOut; // one per each event
 	/** Plans for FFT */
-//	private fftw_plan fftPlanForward;
-//	private fftw_plan fftPlanInverse;
+	private FourierTransform[] fftPlanForward;
+	private FourierTransform[] fftPlanInverse;
 	
 	/* ===== Constructors ===== */
 	
 	
 	/* ===== Methods ===== */
-	private void convolve(final int col, 
-						  final int eventNr, 
-						  final Complex[] kernel) {
+	public void convolve(final int col, 
+						 final int eventNr, 
+						 final Complex[] kernel) {
 		if (kernel == null) {
 			throw new IllegalArgumentException("called DesignElement.convolve with kernel=null!");
 		}
@@ -119,6 +126,56 @@ public class DesignElement {
 						   a.getReal() * b.getImag() + a.getImag() * b.getReal());
 	}
 	
+	// TODO refactor: make private method when DesignElement is directly
+	// updated with the data from the DOM nodes (not via DOMFormatter)
+	public void correctForZeromean() {
+		for (int i = 0; i < this.numberEvents; i++) {
+			float sum1 = 0.0f;
+			float sum2 = 0.0f;
+//			float nx   = 0.0f;
+			
+			List<Trial> trials = this.regressorList.get(i).regTrialList;
+			for (Trial trial : trials) {
+				sum1 += trial.height;
+				sum2 += trial.height * trial.height;
+//				nx++;
+			}
+			
+			float trialCount = (float) trials.size();
+			if (trialCount > 1.0) {
+				float mean = sum1 / trialCount;
+				float sigma = (float) Math.sqrt((double) ((sum2 - trialCount * mean * mean) / (trialCount - 1.0)));
+				if (sigma < 0.01f) {
+					continue; // Not a parametric covariate.
+				}
+				
+				for (Trial trial : trials) {
+					trial.height -= mean;
+				}
+			}
+		}
+	}
+	public void initRegressorValues() {
+		this.regressorValues = new float[(int) this.numberRegressors][this.numberTimesteps];
+		for (int col = 0; col < this.numberRegressors; col++) {
+			for (int ts = 0; ts < this.numberTimesteps; ts++) {
+				if (col == this.numberRegressors - 1) {
+					this.regressorValues[col][ts] = 1.0f;
+				} else {
+					this.regressorValues[col][ts] = 0.0f;
+				}
+			}
+	    }
+	}
+	public void initCovariateValues() {
+		this.covariateValues = new float[(int) this.numberCovariates][this.numberTimesteps];
+		for (int cov = 0; cov < this.numberCovariates; cov++) {
+			for (int ts = 0; ts < this.numberTimesteps; ts++) {
+				this.covariateValues[cov][ts] = 0.0f;
+			}
+		}
+	}
+	
 	
 	/* Getter and setters. */
 	public long getRepetitionTimeInMs() { return repetitionTimeInMs; }
@@ -143,5 +200,31 @@ public class DesignElement {
 	// numberSamplesForInit
 	public long getNumberSamplesForInit() { return numberSamplesForInit; }
 	public void setNumberSamplesForInit(long numberSamplesForInit) { this.numberSamplesForInit = numberSamplesForInit; }
+	// timeOfRepetitionStartInMs
+	public double[] getTimeOfRepetitionStartInMs() { return timeOfRepetitionStartInMs; }
+	public void setTimeOfRepetitionStartInMs(double[] timeOfRepetitionStartInMs) { this.timeOfRepetitionStartInMs = timeOfRepetitionStartInMs; }
+	
+	// Generated design
+	public float[][] getRegressorValues() { return regressorValues;	}
+	
+	// buffersForwardIn
+	public double[][] getBuffersForwardIn() { return buffersForwardIn; }
+	public void setBuffersForwardIn(double[][] buffersForwardIn) { this.buffersForwardIn = buffersForwardIn; }
+	// buffersForwardOut
+	public Complex[][] getBuffersForwardOut() { return buffersForwardOut; }
+	public void setBuffersForwardOut(Complex[][] buffersForwardOut) { this.buffersForwardOut = buffersForwardOut; }
+	// buffersInverseIn
+	public Complex[][] getBuffersInverseIn() { return buffersInverseIn; }
+	public void setBuffersInverseIn(Complex[][] buffersInverseIn) { this.buffersInverseIn = buffersInverseIn; }
+	// buffersInverseOut
+	public double[][] getBuffersInverseOut() { return buffersInverseOut; }
+	public void setBuffersInverseOut(double[][] buffersInverseOut) { this.buffersInverseOut = buffersInverseOut; }
+	
+	// fftPlanFoward
+	public FourierTransform[] getFftPlanForward() { return this.fftPlanForward; }
+	public void setFftPlanForward(FourierTransform[] fftPlanForward) { this.fftPlanForward = fftPlanForward; }
+	// fftPlanInverse
+	public FourierTransform[] getFftPlanInverse() { return this.fftPlanInverse; }
+	public void setFftPlanInverse(FourierTransform[] fftPlanInverse) { this.fftPlanInverse = fftPlanInverse; }
 	
 }

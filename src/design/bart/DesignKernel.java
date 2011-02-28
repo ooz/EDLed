@@ -1,7 +1,10 @@
 package design.bart;
 
+import flanagan.complex.Complex;
+
 /* From NEDesignKernel.h */
-public interface DesignKernel {
+public abstract class DesignKernel {
+	/* Helper classes */
 	public static enum DesignKernelTimeUnit {
 		KERNEL_TIME_MS,
 		KERNEL_TIME_S;
@@ -43,5 +46,11 @@ public interface DesignKernel {
 		public double scale2;
 	}
 	
-	public float[][] plotGammaWithDerivs(final int derivs); // unsigned int
+	/* Attributes */
+	public Complex[] kernelDeriv0 = {};
+	public Complex[] kernelDeriv1 = {};
+	public Complex[] kernelDeriv2 = {};
+	
+	/* Methods */
+	public abstract float[][] plotGammaWithDerivs(final int derivs); // unsigned int
 }

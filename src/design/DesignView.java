@@ -23,7 +23,7 @@ public class DesignView extends JPanel {
 		this.controller = controller;
 		
 		this.tabs = new JTabbedPane();
-		this.convolutionView = new ConvolutionView();
+		this.convolutionView = new ConvolutionView(controller.getModel().getDesign());
 		this.orthogonalityView = new OrthogonalityView();
 		this.tabs.addTab(ConvolutionView.DISPLAY_NAME, this.convolutionView);
 		this.tabs.addTab(OrthogonalityView.DISPLAY_NAME, this.orthogonalityView);

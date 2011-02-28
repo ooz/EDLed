@@ -102,4 +102,8 @@ public class DesignPlugin implements Plugin {
 		}
 	}
 	
+	public DesignData getModel() {
+		return this.pluginModel;
+	}
+	
 }
