@@ -10,8 +10,6 @@ import java.util.Observer;
 import javax.swing.JPanel;
 
 import design.bart.DesignElement;
-import design.bart.DesignElement.Regressor;
-import design.bart.DesignElement.Trial;
 
 public class ConvolutionView extends JPanel implements Observer {
 	
@@ -20,11 +18,15 @@ public class ConvolutionView extends JPanel implements Observer {
 	
 	public static final String DISPLAY_NAME = "Convolution";
 	
+	private static final double TIMESTEPS_PER_PIXEL = 0.5;
+	private static final double COLUMN_WIDTH = 100.0;
+	
 	private DesignElement design;
 	
 	public ConvolutionView(final DesignElement design) {
 		this.design = design;
 		this.design.addObserver(this);
+		this.setBackground(Color.BLACK);
 	}
 	
 	@Override
@@ -41,36 +43,81 @@ public class ConvolutionView extends JPanel implements Observer {
 //		g2D.setFont(this.captionFont);
 		g2D.setStroke(new BasicStroke(1.0f));
 		
-//		List<String> mediaObjIDs = this.timetable.getMediaObjectIDs();
 //		FontMetrics fontMetrics = g2D.getFontMetrics();
 		
-		int widthPerReg = 100;
-		int heightPerSec = 1;
-		
 		g2D.setBackground(Color.BLACK);
+		g2D.setColor(Color.BLACK);
 		g2D.fillRect(0, 0, getWidth(), getHeight());
 		
-		g2D.setColor(Color.WHITE);
-		g2D.setBackground(Color.WHITE);
+//		g2D.setColor(Color.WHITE);
+//		g2D.setBackground(Color.WHITE);
+//		
+//		int regNr = 0;
+//		for (Regressor reg : this.design.getRegressorList()) {
+//			for (Trial trial : reg.regTrialList) {
+//				g2D.fillRect(regNr * widthPerReg, 
+//							 (int) ((trial.onset / 1000.0f) * heightPerSec), 
+//							 widthPerReg, 
+//							 (int) ((trial.duration / 1000.0f) * heightPerSec));
+////				System.out.println(trial);
+//			}
+//			regNr++;
+//		}
 		
-		int regNr = 0;
-		for (Regressor reg : this.design.getRegressorList()) {
-			for (Trial trial : reg.regTrialList) {
-				g2D.fillRect(regNr * widthPerReg, 
-							 (int) ((trial.onset / 1000.0f) * heightPerSec), 
-							 widthPerReg, 
-							 (int) ((trial.duration / 1000.0f) * heightPerSec));
-//				System.out.println(trial);
+		// Find min/maxRegValue
+		float[][] regValues = this.design.getRegressorValues();
+		float minRegValue = Float.MAX_VALUE;
+		float maxRegValue = Float.MIN_VALUE;
+		for (int row = 0; row < regValues.length; row++) {
+			for (int col = 0; col < regValues[row].length; col++) {
+				float regValue = regValues[row][col];
+				if (regValue < minRegValue) {
+					minRegValue = regValue;
+				}
+				if (regValue > maxRegValue) {
+					maxRegValue = regValue;
+				}
 			}
-			regNr++;
 		}
+		
+		if (minRegValue < 0.0f) {
+			maxRegValue += Math.abs(minRegValue);
+		} else {
+			maxRegValue -= minRegValue;
+		}
+		
+		// Draw regressor value matrix
+		for (int row = 0; row < regValues.length; row++) {
+			for (int col = 0; col < regValues[row].length; col++) {
+				float colorValue = regValues[row][col];
+				if (minRegValue < 0.0f) {
+					colorValue += Math.abs(minRegValue);
+				} else {
+					colorValue -= minRegValue;
+				}
+				colorValue /= maxRegValue;
+				Color color = new Color(colorValue, colorValue, colorValue);
+				g2D.setColor(color);
+				g2D.setBackground(color);
+				
+				g2D.fillRect((int) (row * COLUMN_WIDTH), 
+					 		 (int) (col / TIMESTEPS_PER_PIXEL), 
+					 		 (int) COLUMN_WIDTH, 
+						  	 (int) (1 / TIMESTEPS_PER_PIXEL));
+			}
+		}
+		
+		// TODO: remove (drawing orientation test)
+		g2D.setBackground(Color.YELLOW);
+		g2D.setColor(Color.YELLOW);
+		g2D.fillRect(0, 0, 5, 5);
 	}
 
 	@Override
 	public void update(Observable o, Object arg) {
 		if (o == this.design) {
 			removeAll();
-			paintComponent(getGraphics()); // paint(getGraphics()); caused a deadlock - don't know why yet
+			paintComponent(getGraphics());
 			revalidate();
 		}
 	}

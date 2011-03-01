@@ -67,7 +67,7 @@ public class DesignElement extends Observable {
 	private double[] timeOfRepetitionStartInMs;
 
 	/** Generated/resulting design */
-	private float[][] regressorValues;
+	private float[][] regressorValues = new float[0][0];
 	private float[][] covariateValues;
 	/** FFT buffers */
 	private double[][] buffersForwardIn;  // one per each event
@@ -102,6 +102,9 @@ public class DesignElement extends Observable {
 		
 		// Inverse FFT
 		// TODO: translate!!!
+		this.fftPlanInverse[eventNr] = new FourierTransform(buffersInverseIn[eventNr]); //= fftw_plan_dft_c2r_1d(mNumberSamplesForInit, mBuffersInverseIn[eventNr], mBuffersInverseOut[eventNr], FFTW_ESTIMATE);
+		this.fftPlanInverse[eventNr].transform();
+		this.buffersInverseOut[eventNr] = this.fftPlanInverse[eventNr].getTransformedDataAsAlternate();
 //		fftw_execute(this.fftPlanInverse[eventNr]);
 		
 		// Scaling

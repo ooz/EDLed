@@ -9,7 +9,7 @@ public class DesignView extends JPanel {
 	/** */
 	private static final long serialVersionUID = -1410868044151014221L;
 	
-	private final DesignPlugin controller;
+//	private final DesignPlugin controller;
 	
 	private final JTabbedPane tabs;
 	
@@ -20,7 +20,7 @@ public class DesignView extends JPanel {
 	DesignView(final DesignPlugin controller) {
 		super(new BorderLayout());
 		
-		this.controller = controller;
+//		this.controller = controller;
 		
 		this.tabs = new JTabbedPane();
 		this.convolutionView = new ConvolutionView(controller.getModel().getDesign());

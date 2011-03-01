@@ -21,6 +21,10 @@ import flanagan.math.FourierTransform;
 public class DOMFormatter {
 	
 	private static final Logger logger = Logger.getLogger(DOMFormatter.class);
+	
+	private static final float ONSET_DEFAULT = 0.0f;
+	private static final float DURATION_DEFAULT = 0.0f;
+	private static final float HEIGHT_DEFAULT = 1.0f;
 
 	public boolean fill(final DesignElement design, 
 						final Node paradigmNode,
@@ -102,9 +106,14 @@ public class DOMFormatter {
 			List<Trial> trials = new LinkedList<Trial>();
 			for (int trialNr = 0; trialNr < statEventNodes.getLength(); trialNr++) {
 				Element statEventElem = (Element) statEventNodes.item(trialNr);
-				float onset = Float.parseFloat(statEventElem.getAttribute("time"));
-				float duration = Float.parseFloat(statEventElem.getAttribute("duration"));
-				float height = Float.parseFloat(statEventElem.getAttribute("parametricScaleFactor"));
+				
+				String timeAttrValue = statEventElem.getAttribute("time");
+				float onset = timeAttrValue.equals("") ? ONSET_DEFAULT : Float.parseFloat(timeAttrValue);
+				String durationAttrValue = statEventElem.getAttribute("duration");
+				float duration = durationAttrValue.equals("") ? DURATION_DEFAULT : Float.parseFloat(durationAttrValue);
+				String heightAttrValue = statEventElem.getAttribute("parametricScaleFactor");
+				float height = heightAttrValue.equals("") ? HEIGHT_DEFAULT : Float.parseFloat(heightAttrValue);
+				
 				if (duration < 0.0f) { 
 					duration = 1.0f; 
 				}
@@ -224,11 +233,9 @@ public class DOMFormatter {
 		/* alloc gamma kernels one per each event*/
 	    for (int eventNr = 0; eventNr < design.getNumberEvents(); eventNr++) {
 	    	for (int sampleNr = 0; sampleNr < design.getNumberSamplesForInit(); sampleNr++) {
-	    		buffersForwardIn[eventNr][sampleNr] = 0.0f;
-	    		buffersInverseOut[eventNr][sampleNr] = 0.0f;
+	    		buffersForwardIn[eventNr][sampleNr] = 0.0;
+	    		buffersInverseOut[eventNr][sampleNr] = 0.0;
 	    	}
-	        fftPlanForward[eventNr].setData(buffersForwardIn[eventNr]); //= fftw_plan_dft_r2c_1d(mNumberSamplesForInit, mBuffersForwardIn[eventNr], mBuffersForwardOut[eventNr], FFTW_ESTIMATE);
-	        fftPlanInverse[eventNr].setData(buffersInverseIn[eventNr]); //= fftw_plan_dft_c2r_1d(mNumberSamplesForInit, mBuffersInverseIn[eventNr], mBuffersInverseOut[eventNr], FFTW_ESTIMATE);
 	    }
 	    design.setBuffersForwardIn(buffersForwardIn);
 	    design.setBuffersForwardOut(buffersForwardOut);
@@ -265,6 +272,7 @@ public class DOMFormatter {
 	        /* Removed trialcount checks */
 	        
 	        /* fft */
+	        fftPlanForward[eventNr] = new FourierTransform(buffersForwardIn[eventNr]); //= fftw_plan_dft_r2c_1d(mNumberSamplesForInit, mBuffersForwardIn[eventNr], mBuffersForwardOut[eventNr], FFTW_ESTIMATE);
 	        FourierTransform plan = design.getFftPlanForward()[eventNr];
 	        plan.transform();
 	        design.getBuffersForwardOut()[eventNr] = plan.getTransformedDataAsComplex();

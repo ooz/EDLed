@@ -63,8 +63,8 @@ public class DesignGloverKernel extends DesignKernel {
 			if (indexS >= this.numberSamplesForInit) break;        
 			//unsigned long indexS = (unsigned long)timeSample/mSamplingRateInMs;
 			kernel0[indexS] = getGammaValue(timeSample, this.params.offset);
-			kernel1[indexS] = getGammaDeriv1Value(timeSample, params.offset);
-			kernel2[indexS] = getGammaDeriv2Value(timeSample, params.offset);
+			kernel1[indexS] = getGammaDeriv1Value(timeSample, this.params.offset);
+			kernel2[indexS] = getGammaDeriv2Value(timeSample, this.params.offset);
 			indexS++;
 		}
 
@@ -74,7 +74,7 @@ public class DesignGloverKernel extends DesignKernel {
 		this.kernelDeriv0 = pk0.getTransformedDataAsComplex();
 		
 		FourierTransform pk1 = new FourierTransform(kernel1);
-		pk0.transform();
+		pk1.transform();
 		this.kernelDeriv1 = pk1.getTransformedDataAsComplex();
 		
 		FourierTransform pk2 = new FourierTransform(kernel2);
