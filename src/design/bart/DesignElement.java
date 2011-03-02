@@ -43,8 +43,8 @@ public class DesignElement extends Observable {
 	public static class Regressor {
 		public List<Trial> regTrialList = new LinkedList<Trial>();
 		public long regDerivations = 0; // unsigned int
-		public String regID = null;
-		public String regDescription = null;
+		public String regID = "";
+		public String regDescription = "";
 		public DesignKernel regConvolKernel = null;
 	}
 	
@@ -80,6 +80,47 @@ public class DesignElement extends Observable {
 	
 	/* ===== Constructors ===== */
 	
+	/* ===== Static functions ===== */
+	public static double[] padToNextPowerOfTwo(final double[] data) {
+		double[] result = new double[FourierTransform.nextPowerOfTwo(data.length)];
+		
+//		for (int i = 0; i < data.length; i++) {
+//			result[i] = data[i];
+//		}
+//		for (int i = data.length; i < result.length; i++) {
+//			result[i] = 0.0;
+//		}
+		int j = data.length - 1;
+		for (int i = result.length - 1; i >= 0; i--) {
+			if (j >= 0) {
+				result[i] = data[j--];
+			} else {
+				result[i] = 0.0;
+			}
+		}
+		
+		return result;
+	}
+	public static Complex[] padToNextPowerOfTwo(final Complex[] data) {
+		Complex[] result = new Complex[FourierTransform.nextPowerOfTwo(data.length)];
+		
+//		for (int i = 0; i < data.length; i++) {
+//			result[i] = data[i];
+//		}
+//		for (int i = data.length; i < result.length; i++) {
+//			result[i] = new Complex();
+//		}
+		int j = data.length - 1;
+		for (int i = result.length - 1; i >= 0; i--) {
+			if (j >= 0) {
+				result[i] = data[j--];
+			} else {
+				result[i] = new Complex();
+			}
+		}
+		
+		return result;
+	}
 	
 	/* ===== Methods ===== */
 	public void convolve(final int col, 
@@ -101,14 +142,11 @@ public class DesignElement extends Observable {
 		}
 		
 		// Inverse FFT
-		// TODO: translate!!!
-		this.fftPlanInverse[eventNr] = new FourierTransform(buffersInverseIn[eventNr]); //= fftw_plan_dft_c2r_1d(mNumberSamplesForInit, mBuffersInverseIn[eventNr], mBuffersInverseOut[eventNr], FFTW_ESTIMATE);
+		this.fftPlanInverse[eventNr] = new FourierTransform(DesignElement.padToNextPowerOfTwo(buffersInverseIn[eventNr])); //= fftw_plan_dft_c2r_1d(mNumberSamplesForInit, mBuffersInverseIn[eventNr], mBuffersInverseOut[eventNr], FFTW_ESTIMATE);
 		this.fftPlanInverse[eventNr].transform();
 		this.buffersInverseOut[eventNr] = this.fftPlanInverse[eventNr].getTransformedDataAsAlternate();
-//		fftw_execute(this.fftPlanInverse[eventNr]);
 		
 		// Scaling
-		// TODO: translate (buffersInverseOut is written in the above line (fftw_execute)!)
 		for (int j = 0; j < this.numberSamplesForInit; j++) {
 			this.buffersInverseOut[eventNr][j] /= (double) this.numberSamplesForInit;
 		}

@@ -272,7 +272,7 @@ public class DOMFormatter {
 	        /* Removed trialcount checks */
 	        
 	        /* fft */
-	        fftPlanForward[eventNr] = new FourierTransform(buffersForwardIn[eventNr]); //= fftw_plan_dft_r2c_1d(mNumberSamplesForInit, mBuffersForwardIn[eventNr], mBuffersForwardOut[eventNr], FFTW_ESTIMATE);
+	        fftPlanForward[eventNr] = new FourierTransform(DesignElement.padToNextPowerOfTwo(buffersForwardIn[eventNr])); //= fftw_plan_dft_r2c_1d(mNumberSamplesForInit, mBuffersForwardIn[eventNr], mBuffersForwardOut[eventNr], FFTW_ESTIMATE);
 	        FourierTransform plan = design.getFftPlanForward()[eventNr];
 	        plan.transform();
 	        design.getBuffersForwardOut()[eventNr] = plan.getTransformedDataAsComplex();

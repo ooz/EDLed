@@ -69,15 +69,15 @@ public class DesignGloverKernel extends DesignKernel {
 		}
 
 		/* do fft for kernels right now - result buffers are the members the convolution will ask for*/
-		FourierTransform pk0 = new FourierTransform(kernel0);
+		FourierTransform pk0 = new FourierTransform(DesignElement.padToNextPowerOfTwo(kernel0));
 		pk0.transform();
 		this.kernelDeriv0 = pk0.getTransformedDataAsComplex();
 		
-		FourierTransform pk1 = new FourierTransform(kernel1);
+		FourierTransform pk1 = new FourierTransform(DesignElement.padToNextPowerOfTwo(kernel1));
 		pk1.transform();
 		this.kernelDeriv1 = pk1.getTransformedDataAsComplex();
 		
-		FourierTransform pk2 = new FourierTransform(kernel2);
+		FourierTransform pk2 = new FourierTransform(DesignElement.padToNextPowerOfTwo(kernel2));
 		pk2.transform();
 		this.kernelDeriv2 = pk2.getTransformedDataAsComplex();
 	}
