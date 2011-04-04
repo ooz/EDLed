@@ -83,8 +83,8 @@ public class DesignElement extends Observable {
 	/* ===== Static functions ===== */
 	public static double[] padToNextPowerOfTwo(final double[] data) {
 		double[] result = new double[FourierTransform.nextPowerOfTwo(data.length)];
-		System.out.println("(double) Data length: " + data.length + " Padded length: " + FourierTransform.nextPowerOfTwo(data.length));
-		System.out.println("    Padded " + (FourierTransform.nextPowerOfTwo(data.length) - data.length) + " elements");
+//		System.out.println("(double) Data length: " + data.length + " Padded length: " + FourierTransform.nextPowerOfTwo(data.length));
+//		System.out.println("    Padded " + (FourierTransform.nextPowerOfTwo(data.length) - data.length) + " elements");
 		
 		// Pad at end (data at beginning)
 //		for (int i = 0; i < data.length; i++) {
@@ -118,8 +118,8 @@ public class DesignElement extends Observable {
 	}
 	public static Complex[] padToNextPowerOfTwo(final Complex[] data) {
 		Complex[] result = new Complex[FourierTransform.nextPowerOfTwo(data.length)];
-		System.out.println("(Complex) Data length: " + data.length + " Padded length: " + FourierTransform.nextPowerOfTwo(data.length));
-		System.out.println("    Padded " + (FourierTransform.nextPowerOfTwo(data.length) - data.length) + " elements");
+//		System.out.println("(Complex) Data length: " + data.length + " Padded length: " + FourierTransform.nextPowerOfTwo(data.length));
+//		System.out.println("    Padded " + (FourierTransform.nextPowerOfTwo(data.length) - data.length) + " elements");
 		
 		// Pad at end (data at beginning)
 		for (int i = 0; i < data.length; i++) {
@@ -181,7 +181,7 @@ public class DesignElement extends Observable {
 			this.buffersInverseOut[eventNr][j] /= (double) this.numberSamplesForInit;
 		}
 		
-		System.out.println("inverseOut.length: " + this.buffersInverseOut[eventNr].length);
+//		System.out.println("inverseOut.length: " + this.buffersInverseOut[eventNr].length);
 		
 		// TODO: get from FFT wrap around (currently 10000 ms, see DOMFormatter)
 		int padding = 9998;
