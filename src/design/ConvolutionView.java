@@ -173,10 +173,17 @@ public class ConvolutionView extends JPanel implements Observer {
 					g2D.setColor(color);
 					g2D.setBackground(color);
 					
+					// Draw values top down
 					g2D.fillRect((int) (row * COLUMN_WIDTH + LEFT_PADDING), 
 						 		 (int) (col / TIMESTEPS_PER_PIXEL + TOP_PADDING), 
 						 		 (int) COLUMN_WIDTH, 
 							  	 (int) (1 / TIMESTEPS_PER_PIXEL));
+					
+					// Draw values bottom up
+//					g2D.fillRect((int) (row * COLUMN_WIDTH + LEFT_PADDING), 
+//					 		     (int) ((regValues[row].length - col) / TIMESTEPS_PER_PIXEL + TOP_PADDING), 
+//					 		     (int) COLUMN_WIDTH, 
+//						  	     (int) (1 / TIMESTEPS_PER_PIXEL));
 				}
 			}
 			

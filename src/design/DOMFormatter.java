@@ -88,7 +88,7 @@ public class DOMFormatter {
 		design.setNumberEvents(regressorNodes.getLength());
 		
 		// NumberSamples for FFT; add some seconds to avoid wrap around problems with fft (10 seconds)
-		long numberSamplesForInit = (long) ((numberTimesteps * design.getRepetitionTimeInMs()) / DesignElement.SAMPLING_RATE_IN_MS + 10000);
+		long numberSamplesForInit = (long) ((numberTimesteps * design.getRepetitionTimeInMs()) / DesignElement.SAMPLING_RATE_IN_MS + 10000); // 13000
 		design.setNumberSamplesForInit(numberSamplesForInit);
 		
 		// Fetch reference functions (gGamma/gloverKernel)

@@ -1,5 +1,11 @@
 package design.bart;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.text.DecimalFormat;
+
 import flanagan.complex.Complex;
 import flanagan.math.FourierTransform;
 
@@ -11,6 +17,9 @@ public class DesignGloverKernel extends DesignKernel {
 	double numberSamplesForInit; // unsigned long
 	double samplingRateInMs; // unsigned long
 	double scaleTimeUnit;
+	
+	// TODO: remove
+	double[] kernelDeriv0_inverse;
 	
 	public DesignGloverKernel(final GloverParams gammaParams, 
 							  final double numberSamplesForInit, 
@@ -69,9 +78,27 @@ public class DesignGloverKernel extends DesignKernel {
 		}
 
 		/* do fft for kernels right now - result buffers are the members the convolution will ask for*/
-		FourierTransform pk0 = new FourierTransform(DesignElement.padToNextPowerOfTwo(kernel0));
+		double[] paddedKernel0 = DesignElement.padToNextPowerOfTwo(kernel0);
+		FourierTransform pk0 = new FourierTransform(paddedKernel0);
 		pk0.transform();
 		this.kernelDeriv0 = pk0.getTransformedDataAsComplex();
+		
+		// TODO: remove
+//		FourierTransform pk0_inverse = new FourierTransform(DesignElement.padToNextPowerOfTwo(this.kernelDeriv0));
+//		pk0_inverse.inverse();
+//		this.kernelDeriv0_inverse = pk0_inverse.getTransformedDataAsAlternate();
+//		
+//		DecimalFormat decFormat = new DecimalFormat("0.00");
+//		try {
+//			BufferedWriter out = new BufferedWriter(new FileWriter("/home/olli/testout.txt"));
+//			for (int i = 0; i < paddedKernel0.length; i++) {
+//				out.write(decFormat.format(paddedKernel0[i]) + " " + decFormat.format(this.kernelDeriv0_inverse[i * 2]) + "\n");
+//			}
+//			out.close();
+//		}
+//		catch (IOException e) {
+//		}
+		// TODO: remove end
 		
 		FourierTransform pk1 = new FourierTransform(DesignElement.padToNextPowerOfTwo(kernel1));
 		pk1.transform();

@@ -83,19 +83,34 @@ public class DesignElement extends Observable {
 	/* ===== Static functions ===== */
 	public static double[] padToNextPowerOfTwo(final double[] data) {
 		double[] result = new double[FourierTransform.nextPowerOfTwo(data.length)];
+		System.out.println("(double) Data length: " + data.length + " Padded length: " + FourierTransform.nextPowerOfTwo(data.length));
+		System.out.println("    Padded " + (FourierTransform.nextPowerOfTwo(data.length) - data.length) + " elements");
 		
+		// Pad at end (data at beginning)
 //		for (int i = 0; i < data.length; i++) {
 //			result[i] = data[i];
 //		}
 //		for (int i = data.length; i < result.length; i++) {
 //			result[i] = 0.0;
 //		}
-		int j = data.length - 1;
-		for (int i = result.length - 1; i >= 0; i--) {
-			if (j >= 0) {
-				result[i] = data[j--];
-			} else {
+		// Pad at beginning (data at end)
+//		int j = data.length - 1;
+//		for (int i = result.length - 1; i >= 0; i--) {
+//			if (j >= 0) {
+//				result[i] = data[j--];
+//			} else {
+//				result[i] = 0.0;
+//			}
+//		}
+		// Center data, pad at beginning and end
+		int j = 0;
+		int beginningLength = (result.length - data.length) / 2;
+		for (int i = 0; i < result.length; i++) {
+			if (i < beginningLength
+				|| i >= beginningLength + data.length) {
 				result[i] = 0.0;
+			} else {
+				result[i] = data[j++];
 			}
 		}
 		
@@ -103,21 +118,36 @@ public class DesignElement extends Observable {
 	}
 	public static Complex[] padToNextPowerOfTwo(final Complex[] data) {
 		Complex[] result = new Complex[FourierTransform.nextPowerOfTwo(data.length)];
+		System.out.println("(Complex) Data length: " + data.length + " Padded length: " + FourierTransform.nextPowerOfTwo(data.length));
+		System.out.println("    Padded " + (FourierTransform.nextPowerOfTwo(data.length) - data.length) + " elements");
 		
-//		for (int i = 0; i < data.length; i++) {
-//			result[i] = data[i];
-//		}
-//		for (int i = data.length; i < result.length; i++) {
-//			result[i] = new Complex();
-//		}
-		int j = data.length - 1;
-		for (int i = result.length - 1; i >= 0; i--) {
-			if (j >= 0) {
-				result[i] = data[j--];
-			} else {
-				result[i] = new Complex();
-			}
+		// Pad at end (data at beginning)
+		for (int i = 0; i < data.length; i++) {
+			result[i] = data[i];
 		}
+		for (int i = data.length; i < result.length; i++) {
+			result[i] = new Complex();
+		}
+		// Pad at beginning (data at end)
+//		int j = data.length - 1;
+//		for (int i = result.length - 1; i >= 0; i--) {
+//			if (j >= 0) {
+//				result[i] = data[j--];
+//			} else {
+//				result[i] = new Complex();
+//			}
+//		}
+		// Center data, pad at beginning and end
+//		int j = 0;
+//		int beginningLength = (result.length - data.length) / 2;
+//		for (int i = 0; i < result.length; i++) {
+//			if (i < beginningLength
+//				|| i >= beginningLength + data.length) {
+//				result[i] = new Complex();
+//			} else {
+//				result[i] = data[j++];
+//			}
+//		}
 		
 		return result;
 	}
@@ -151,12 +181,19 @@ public class DesignElement extends Observable {
 			this.buffersInverseOut[eventNr][j] /= (double) this.numberSamplesForInit;
 		}
 		
+		System.out.println("inverseOut.length: " + this.buffersInverseOut[eventNr].length);
+		
+		// TODO: get from FFT wrap around (currently 10000 ms, see DOMFormatter)
+		int padding = 9998;
+		
+		int transformedTSCount = (int) (this.numberTimesteps * (this.repetitionTimeInMs / SAMPLING_RATE_IN_MS)) + padding;
 		// Sampling
 		for (int timestep = 0; timestep < this.numberTimesteps; timestep++) {
 			int j = (int) (this.timeOfRepetitionStartInMs[timestep] / SAMPLING_RATE_IN_MS);
-			
+//			System.out.println("start time: " + this.timeOfRepetitionStartInMs[timestep]);
+//			System.out.println("j = " + j);
 			if (j >= 0 && j < this.numberSamplesForInit) {
-				this.regressorValues[col][timestep] = (float) this.buffersInverseOut[eventNr][j];
+				this.regressorValues[col][timestep] = (float) this.buffersInverseOut[eventNr][transformedTSCount - j];
 			}
 		}
 	}
