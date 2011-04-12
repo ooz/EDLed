@@ -1,5 +1,4 @@
-######
-EDLed v1.1.???????
+In dev: # EDLed v1.2.0 #
 
  * EDLed is now shipped with rtExperiment_v15.xsd r30 (choosen by default) and
    rtExperiment_v14.xsd r27 
@@ -17,13 +16,13 @@ EDLed v1.1.???????
  * A warning will be shown now if the specified XSD file could not be found.
  * Attributes that provide a default or fixed value will now always be present
    unaffected by their use value.
- * TODO TODO TODO TODO ###############################
+ * ############### TODO TODO TODO TODO ###############
    Fixed Values for Elements still buggy! (look at metatreebuilder!!!)
    ###################################################
 
 
-######
-EDLed v1.1.0
+
+# EDLed v1.1.0 #
 2011-01-21
 
 === New features ===
@@ -43,8 +42,8 @@ EDLed v1.1.0
     pressed (shift/ctrl/super/alt/altgr).
     
 
-######
-EDLed v1.0.1
+
+# EDLed v1.0.1 #
 
 === Bug fixes ===
  * Fixed a bug in the ID validation

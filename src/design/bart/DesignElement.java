@@ -21,7 +21,7 @@ public class DesignElement extends Observable {
 	
 	/* From BADesignElement.h */
 	public static class Trial {
-		public long id = 0; // Stimulus number: unsigned int
+		public long  id = 0; // Stimulus number: unsigned int
 		public float onset = 0.0f;
 		public float duration = 1.0f; // in seconds
 		public float height = 1.0f;
@@ -35,7 +35,10 @@ public class DesignElement extends Observable {
 		}
 		@Override
 		public String toString() {
-			return "Trial[id="+id+",onset="+onset+",duration="+duration+",height="+height+"]";
+			return "Trial[id="       + this.id 
+			          + ",onset="    + this.onset 
+			          + ",duration=" + this.duration 
+			          + ",height="   + this.height + "]";
 		}
 	}
 	
@@ -46,10 +49,21 @@ public class DesignElement extends Observable {
 		public String regID = "";
 		public String regDescription = "";
 		public DesignKernel regConvolKernel = null;
+		
+		@Override
+		public String toString() {
+			return "Regressor[regTrialList.size()="       + this.regTrialList.size() 
+			             + ", regDerivations="            + this.regDerivations 
+			             + ", regID=" 					  + this.regID 
+			             + ", regDescription="   		  + this.regDescription + "]";
+		}
 	}
 	
 	/* ===== Constants ===== */
-	public static final double SAMPLING_RATE_IN_MS = 20.0; /* Temporal resolution for convolution is 20 ms. */
+	/** Temporal resolution for convolution is 20 ms. */
+	public static final double SAMPLING_RATE_IN_MS = 20.0; 
+	/** Add some seconds to avoid wrap around problems with FFT. */
+	public static final int    WRAP_AROUND_PADDING_IN_MS = 10000;
 	
 	/* ===== Attributes ===== */
 	/* From BADesignElement.h */
@@ -183,8 +197,7 @@ public class DesignElement extends Observable {
 		
 //		System.out.println("inverseOut.length: " + this.buffersInverseOut[eventNr].length);
 		
-		// TODO: get from FFT wrap around (currently 10000 ms, see DOMFormatter)
-		int padding = 9998;
+		int padding = DesignElement.WRAP_AROUND_PADDING_IN_MS - 2;
 		
 		int transformedTSCount = (int) (this.numberTimesteps * (this.repetitionTimeInMs / SAMPLING_RATE_IN_MS)) + padding;
 		// Sampling
@@ -196,12 +209,62 @@ public class DesignElement extends Observable {
 				this.regressorValues[col][timestep] = (float) this.buffersInverseOut[eventNr][transformedTSCount - j];
 			}
 		}
+		
+		this.setChanged();
 	}
 	
 	private Complex multiplComplex(final Complex a, 
 								   final Complex b) {
 		return new Complex(a.getReal() * b.getReal() - a.getImag() * b.getImag(),
 						   a.getReal() * b.getImag() + a.getImag() * b.getReal());
+	}
+	
+	/**
+	 * Computes the orthogonality between two design matrix columns.
+	 * Column numbers start at 0, so regressor 1 is at column 0.
+	 * 
+	 * Column ordering:
+	 *  Regressor 1 (column 0), 
+	 *  optional first Deriv 1 (col 1), 
+	 *  optional second Deriv 1 (col 2), 
+	 *  Regressor 2 (col 3), etc.
+	 * 
+	 * If there are no/not all derivatives the indices collapse.
+	 * 
+	 * @param regA Index of regressor A. Ranges from 0 to (regressorList.size() - 1).
+	 * @param regB Index of regressor B. Ranges from 0 to (regressorList.size() - 1).
+	 * @return
+	 */
+	public float computeOrthogonality(final int regA, final int regB) {
+		int colsPerReg = (int) (this.numberRegressors / this.regressorList.size());
+		
+		float orthogonality = 0.0f;
+		for (int ts = 0; ts < this.numberTimesteps; ts++) {
+			orthogonality +=   Math.abs(this.regressorValues[regA * colsPerReg][ts]) 
+			                 * Math.abs(this.regressorValues[regB * colsPerReg][ts]);
+		}
+		
+		return orthogonality;
+	}
+	public float[][] computeOrthogonalityMatrix() {
+		int regCount = this.regressorList.size();
+		float[][] matrix = new float[regCount][regCount];
+		
+		for (int regA = 0; regA < regCount; regA++) {
+			for (int regB = 0; regB < regCount; regB++) {
+				if (regA == regB) {
+					// orthogonal
+					matrix[regA][regA] = 0.0f; 
+				} else if (regB < regA) {
+					// value was already computed
+					matrix[regA][regB] = matrix[regB][regA];
+				} else {
+					matrix[regA][regB] = computeOrthogonality(regA, regB);
+				}
+			}
+		}
+		
+		return matrix;
 	}
 	
 	// TODO refactor: make private method when DesignElement is directly
@@ -253,7 +316,6 @@ public class DesignElement extends Observable {
 			}
 		}
 	}
-	
 	
 	/* Getter and setters. */
 	public long getRepetitionTimeInMs() { return repetitionTimeInMs; }

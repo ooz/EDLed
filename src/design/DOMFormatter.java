@@ -88,7 +88,8 @@ public class DOMFormatter {
 		design.setNumberEvents(regressorNodes.getLength());
 		
 		// NumberSamples for FFT; add some seconds to avoid wrap around problems with fft (10 seconds)
-		long numberSamplesForInit = (long) ((numberTimesteps * design.getRepetitionTimeInMs()) / DesignElement.SAMPLING_RATE_IN_MS + 10000); // 13000
+		long numberSamplesForInit = (long) ((numberTimesteps * design.getRepetitionTimeInMs()) / DesignElement.SAMPLING_RATE_IN_MS 
+											+ DesignElement.WRAP_AROUND_PADDING_IN_MS);
 		design.setNumberSamplesForInit(numberSamplesForInit);
 		
 		// Fetch reference functions (gGamma/gloverKernel)
@@ -294,6 +295,8 @@ public class DOMFormatter {
 	            design.convolve(col, eventNr, reg.regConvolKernel.kernelDeriv2);
 	        }
 	    }
+	    
+		design.notifyObservers();
 		
 		return true;
 	}
