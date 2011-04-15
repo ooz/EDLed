@@ -231,30 +231,31 @@ public class DesignElement extends Observable {
 	 * 
 	 * If there are no/not all derivatives the indices collapse.
 	 * 
-	 * @param regA Index of regressor A. Ranges from 0 to (regressorList.size() - 1).
-	 * @param regB Index of regressor B. Ranges from 0 to (regressorList.size() - 1).
+	 * @param colA Index of column A. Ranges from 0 to (numberRegressors - 2).
+	 * @param colB Index of column B. Ranges from 0 to (numberRegressors - 2).
 	 * @return
 	 */
-	public float computeOrthogonality(final int regA, final int regB) {
-		int colsPerReg = (int) (this.numberRegressors / this.regressorList.size());
-		
+	public float computeOrthogonality(final int colA, final int colB) {
+//		int colsPerReg = (int) (this.numberRegressors / this.regressorList.size());
+
 		float orthogonality = 0.0f;
 		for (int ts = 0; ts < this.numberTimesteps; ts++) {
-			orthogonality +=   Math.abs(this.regressorValues[regA * colsPerReg][ts]) 
-			                 * Math.abs(this.regressorValues[regB * colsPerReg][ts]);
+			orthogonality +=   Math.abs(this.regressorValues[colA /* * colsPerReg */][ts]) 
+			                 * Math.abs(this.regressorValues[colB /* * colsPerReg */][ts]);
 		}
 		
 		return orthogonality;
 	}
 	public float[][] computeOrthogonalityMatrix() {
-		int regCount = this.regressorList.size();
+//		int regCount = this.regressorList.size();
+		int regCount = (int) this.numberRegressors - 1;
 		float[][] matrix = new float[regCount][regCount];
 		
 		for (int regA = 0; regA < regCount; regA++) {
 			for (int regB = 0; regB < regCount; regB++) {
 				if (regA == regB) {
-					// orthogonal
-					matrix[regA][regA] = 0.0f; 
+					// Parallel
+					matrix[regA][regA] = computeOrthogonality(regA, regA);; 
 				} else if (regB < regA) {
 					// value was already computed
 					matrix[regA][regB] = matrix[regB][regA];
