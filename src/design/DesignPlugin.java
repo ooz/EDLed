@@ -32,7 +32,7 @@ public class DesignPlugin implements Plugin {
 	private static final String NAME = "Design";
 	private static final String AUTHOR = "Oliver Zscheyge";
 	private static final String DESCRIPTION = "Plugin for graphical display of fMRI design data like regressors, HRF, etc.";
-	private static final String VERSION = "0.1";
+	private static final String VERSION = "0.1.0";
 	
 	private Application appController = null;
 	private final DesignView pluginView;

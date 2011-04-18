@@ -1,0 +1,5 @@
+# Design v0.1.0 (DesignPlugin) #
+2011-04-18
+
+ * Initial release featuring convolution and orthogonality view.
+

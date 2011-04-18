@@ -1,8 +1,7 @@
-######
-Stimuli v1.1 (StimulusPlugin)
+# Stimuli v1.1.0 (StimulusPlugin) #
 2011-01-21
 
-=== New features ===
+## New features ##
  * File references in media objects (image/audio/video) are now resolved based 
    on the EDL file location (relative).
  * Added support for dragging text and image media objects on the presentation

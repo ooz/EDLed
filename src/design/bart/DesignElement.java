@@ -238,13 +238,19 @@ public class DesignElement extends Observable {
 	public float computeOrthogonality(final int colA, final int colB) {
 //		int colsPerReg = (int) (this.numberRegressors / this.regressorList.size());
 
+		float colAmagnitude = computeColumnMagnitude(colA);
+		float colBmagnitude = computeColumnMagnitude(colB);
+		
 		float orthogonality = 0.0f;
 		for (int ts = 0; ts < this.numberTimesteps; ts++) {
-			orthogonality +=   Math.abs(this.regressorValues[colA /* * colsPerReg */][ts]) 
-			                 * Math.abs(this.regressorValues[colB /* * colsPerReg */][ts]);
+			orthogonality +=   Math.abs(this.regressorValues[colA /* * colsPerReg */][ts] / colAmagnitude) 
+			                 * Math.abs(this.regressorValues[colB /* * colsPerReg */][ts] / colBmagnitude);
 		}
 		
+//		float magnitudeProduct = computeColumnMagnitude(colA) * computeColumnMagnitude(colB);
+		
 		return orthogonality;
+		//return (magnitudeProduct == 0.0f) ? 0.0f : (orthogonality / magnitudeProduct);
 	}
 	public float[][] computeOrthogonalityMatrix() {
 //		int regCount = this.regressorList.size();
@@ -266,6 +272,16 @@ public class DesignElement extends Observable {
 		}
 		
 		return matrix;
+	}
+	private float computeColumnMagnitude(final int colNr) {
+		float magnitude = 0.0f;
+		
+		for (int ts = 0; ts < this.numberTimesteps; ts++) {
+			float value = this.regressorValues[colNr][ts];
+			magnitude += value * value; 
+		}
+		
+		return (float) Math.sqrt(magnitude);
 	}
 	
 	// TODO refactor: make private method when DesignElement is directly

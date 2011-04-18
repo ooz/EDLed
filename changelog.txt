@@ -1,4 +1,4 @@
-In dev: # EDLed v1.2.0 #
+# EDLed v1.2.0 #
 
  * EDLed is now shipped with rtExperiment_v15.xsd r30 (choosen by default) and
    rtExperiment_v14.xsd r27 
@@ -7,7 +7,7 @@ In dev: # EDLed v1.2.0 #
  * The content of the XSD annotation/appinfo tags is now shown as a tooltip on 
    mouseover of the element label.
 
-=== Bug fixes ===
+## Bug fixes ##
  * Corrected argument order and improved MacOS X support in edled.sh 
    (launch script).
  * Fixed a bug in the build process resulting in packaging every class file 
@@ -25,7 +25,7 @@ In dev: # EDLed v1.2.0 #
 # EDLed v1.1.0 #
 2011-01-21
 
-=== New features ===
+## New features ##
  * Added evaluation of type restrictions.
  * Added support for input methods other than text fields and drop down menus:
     Alternative input methods can be specified in the file 
@@ -36,7 +36,7 @@ In dev: # EDLed v1.2.0 #
  * A single EDL file can now be passed as a command line parameter.
  * The entire XML document/EDL configuration is now validated upon saving.
   
-=== Bug fixes ===
+## Bug fixes ##
  * Fixed a bug in the validation of xs:NMTOKEN types.
  * Textfield inputs: the node is no longer validated when modifier key is
     pressed (shift/ctrl/super/alt/altgr).
@@ -45,6 +45,6 @@ In dev: # EDLed v1.2.0 #
 
 # EDLed v1.0.1 #
 
-=== Bug fixes ===
+## Bug fixes ##
  * Fixed a bug in the ID validation
 
