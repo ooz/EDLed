@@ -155,15 +155,14 @@ public class XSOMMetaTreeBuilder implements MetaTreeBuilder {
 	@Override
 	public MetaNode buildMetaXMLTree(final String elemName) {
 		MetaElem documentElem = new MetaElem(elemName, new NodeConstraint());
-		this.buildXMLtreeStartingAt(documentElem, null);
+		this.buildXMLtreeStartingAt(documentElem, null, null);
 		return documentElem;
 	}
 	
-	private void buildXMLtreeStartingAt(final MetaElem elem, XSType elemType) {
-		
+	private void buildXMLtreeStartingAt(final MetaElem elem, XSElementDecl elemDecl, XSType elemType) {
 		XSAnnotation annotation = null;
 		if (elemType == null) {
-			XSElementDecl elemDecl = this.schemaset.getElementDecl("", elem.getName());
+			elemDecl = this.schemaset.getElementDecl("", elem.getName());
 			annotation = elemDecl.getAnnotation();
 			elemType = elemDecl.getType();
 		}
@@ -208,18 +207,14 @@ public class XSOMMetaTreeBuilder implements MetaTreeBuilder {
 			this.buildAttributesFor(elem, elemType.asComplexType());
 			
 		} else if (elemType.isSimpleType()) {
+			
 			XSSimpleType elemSimpleType = elemType.asSimpleType();
 			elemConstraint.initCanHaveTextContent(true);
-			
-			XSTerm term = elemSimpleType.asParticle().getTerm();
-			if (term.isElementDecl()) {
-				XSElementDecl elemDecl = term.asElementDecl();
-				if (elemDecl.getDefaultValue() != null) {
-					elemConstraint.initDefaultValue(elemDecl.getDefaultValue().value);
-				}
-				if (elemDecl.getFixedValue() != null) {
-					elemConstraint.initFixedValue(elemDecl.getFixedValue().value);
-				}
+			if (elemDecl.getDefaultValue() != null) {
+				elemConstraint.initDefaultValue(elemDecl.getDefaultValue().value);
+			}
+			if (elemDecl.getFixedValue() != null) {
+				elemConstraint.initFixedValue(elemDecl.getFixedValue().value);
 			}
 			
 			if (elemSimpleType.isRestriction()) {
@@ -267,7 +262,7 @@ public class XSOMMetaTreeBuilder implements MetaTreeBuilder {
 															childElemConstraint);
 					metaModelGroup.add(childElem);
 					
-					this.buildXMLtreeStartingAt(childElem, childElemDecl.getType());
+					this.buildXMLtreeStartingAt(childElem, childElemDecl, childElemDecl.getType());
 				} catch (Exception e) {
 					
 				}

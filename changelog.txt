@@ -1,4 +1,5 @@
 # EDLed v1.2.0 #
+2011-04-26
 
  * EDLed is now shipped with rtExperiment_v15.xsd r30 (choosen by default) and
    rtExperiment_v14.xsd r27 
@@ -8,6 +9,7 @@
    mouseover of the element label.
 
 ## Bug fixes ##
+
  * Corrected argument order and improved MacOS X support in edled.sh 
    (launch script).
  * Fixed a bug in the build process resulting in packaging every class file 
@@ -16,9 +18,7 @@
  * A warning will be shown now if the specified XSD file could not be found.
  * Attributes that provide a default or fixed value will now always be present
    unaffected by their use value.
- * ############### TODO TODO TODO TODO ###############
-   Fixed Values for Elements still buggy! (look at metatreebuilder!!!)
-   ###################################################
+ * Now supporting default and fixed values for elements correctly.
 
 
 
@@ -37,6 +37,7 @@
  * The entire XML document/EDL configuration is now validated upon saving.
   
 ## Bug fixes ##
+
  * Fixed a bug in the validation of xs:NMTOKEN types.
  * Textfield inputs: the node is no longer validated when modifier key is
     pressed (shift/ctrl/super/alt/altgr).
@@ -46,5 +47,6 @@
 # EDLed v1.0.1 #
 
 ## Bug fixes ##
+
  * Fixed a bug in the ID validation
 
