@@ -41,6 +41,7 @@ SOURCE_DIR  = "src/"
 PLUGIN_DIR = "plugin/"
 RES_DIR = "res/"
 
+EDLED_APP_DIR = "EDLed/"
 EDLED_DIR     = "edled/"
 EDLED_MAIN    = "Application.java"
 STIMULUS_DIR  = "stimulus/"
@@ -67,20 +68,50 @@ def build(libs, mainFile):
 
 # MAIN #
 if __name__ == "__main__":
+    print("Building EDLed")
+
+    print(" Cleaning previous builds...")
+    system("rm -rf " + BUILD_DIR)
+    system("mkdir " + BUILD_DIR)
+
     libsWithPaths = readClasspathFile(CLASSPATH_FILE)
 
-    # Build EDLed
+    print(" Compiling EDLed...")
     build(libsWithPaths, SOURCE_DIR + EDLED_DIR + EDLED_MAIN)
 
-    # Build Stimuli
+    print(" Compiling Stimuli plugin...")
     build(libsWithPaths, SOURCE_DIR + STIMULUS_DIR + STIMULUS_MAIN)
 
-    # Build Design
+    print(" Compiling Design plugin...")
     build(libsWithPaths, SOURCE_DIR + DESIGN_DIR + DESIGN_MAIN)
 
+    print(" Packaging .jar archives...")
     system("echo \"pushd ./;cd build/;jar cmf ../MANIFEST.MF edled.jar edled/;jar cf stimulus.StimulusPlugin.jar stimulus/;jar cf design.DesignPlugin.jar design/;popd\" > createJARs.sh")
     system("bash createJARs.sh")
     system("rm createJARs.sh")
+
+    print(" Remove directory/packages containing the compiled .class files...")
+    system("rm -rf build/design/")
+    system("rm -rf build/edled/")
+    system("rm -rf build/stimulus/")
+
+    print(" Copying ressource directory...")
+    targetDir = BUILD_DIR + EDLED_APP_DIR
+    system("mkdir -p " + targetDir)
+    system("cp -r " + RES_DIR + " " + targetDir)
+
+    print(" Copying plugin directory...")
+    system("cp -r " + PLUGIN_DIR + " " + targetDir)
+
+    print(" Moving main application JAR file...")
+    system("mv -f " + BUILD_DIR + "edled.jar" + " " + targetDir + "edled.jar")
+
+    print(" Moving plugin JAR files...")
+    system("mv -f " + BUILD_DIR + "*.jar" + " " + targetDir + PLUGIN_DIR)
+
+    print(" Copying various documentation files...")
+    system("cp changelog.txt" + " " + targetDir)
+    system("cp edled.sh" + " " + targetDir)
 
     # TODO
     #  * create directory structure
@@ -88,3 +119,4 @@ if __name__ == "__main__":
     #  * place plugins
     #  * cleanup
 
+    print("Build complete. Location: " + BUILD_DIR + EDLED_APP_DIR)

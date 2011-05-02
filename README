@@ -1,0 +1,10 @@
+Author: Oliver Zscheyge
+
+# Building
+
+Requires 
+
+ * GNU/Linux or Mac OS X
+ * Python
+ * Java Language Compiler (javac) and jar tool
+
