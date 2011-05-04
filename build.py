@@ -58,7 +58,7 @@ MANIFEST_FILE = "MANIFEST.MF"
 def build(libs, mainFile):
     terminal(["javac", 
               "-sourcepath",
-              SOURCE_DIR,
+              BUILD_DIR,
               "-classpath",
               createJavacClasspath(libs),
               "-d",
@@ -74,16 +74,19 @@ if __name__ == "__main__":
     system("rm -rf " + BUILD_DIR)
     system("mkdir " + BUILD_DIR)
 
+    system("cp -r " + SOURCE_DIR + "*" + " " + BUILD_DIR)
+
+    print(" Extracting classpath from Eclipse classpath file.")
     libsWithPaths = readClasspathFile(CLASSPATH_FILE)
 
     print(" Compiling EDLed...")
-    build(libsWithPaths, SOURCE_DIR + EDLED_DIR + EDLED_MAIN)
+    build(libsWithPaths, BUILD_DIR + EDLED_DIR + EDLED_MAIN)
 
     print(" Compiling Stimuli plugin...")
-    build(libsWithPaths, SOURCE_DIR + STIMULUS_DIR + STIMULUS_MAIN)
+    build(libsWithPaths, BUILD_DIR + STIMULUS_DIR + STIMULUS_MAIN)
 
     print(" Compiling Design plugin...")
-    build(libsWithPaths, SOURCE_DIR + DESIGN_DIR + DESIGN_MAIN)
+    build(libsWithPaths, BUILD_DIR + DESIGN_DIR + DESIGN_MAIN)
 
     print(" Packaging .jar archives...")
     system("echo \"pushd ./;cd build/;jar cmf ../MANIFEST.MF edled.jar edled/;jar cf stimulus.StimulusPlugin.jar stimulus/;jar cf design.DesignPlugin.jar design/;popd\" > createJARs.sh")
