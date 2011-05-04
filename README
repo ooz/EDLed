@@ -1,10 +1,37 @@
-Author: Oliver Zscheyge
+EDLed is a graphical editor for EDL files used in real-time fMRI applications.
 
-# Building
 
-Requires 
+
+Installing and running EDLed
+============================
+
+Just copy the application directory "EDLed" to your preferred location.
+Use
+"edled.jar" (Windows: double click)
+or
+"edled.sh" (GNU/Linux, Mac OS X: double click or run from terminal)
+to start the application.
+
+
+
+Building EDLed from scratch
+===========================
+
+Requirements:
 
  * GNU/Linux or Mac OS X
- * Python
- * Java Language Compiler (javac) and jar tool
+ * Python (tested with version 2.6.5)
+ * Java Language Compiler (javac) and jar tool,
+   requires at least Java 6
+
+Build process:
+
+ 1. Run "build.py" from terminal.
+ 2. Goto "build" directory.
+ 3. "EDLed" is the freshly built application directory.
+
+
+
+Copyright (c) 2010-2011 Oliver Zscheyge <zscheyge@cbs.mpg.de>
+See LICENSE file for further information.
 
