@@ -4,6 +4,15 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Observable;
 
+import org.apache.log4j.Logger;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+
+import design.bart.DesignKernel.DesignKernelTimeUnit;
+import design.bart.DesignKernel.GloverParams;
+
+import edled.xml.XMLUtility;
 import flanagan.complex.Complex;
 import flanagan.math.FourierTransform;
 
@@ -60,10 +69,17 @@ public class DesignElement extends Observable {
 	}
 	
 	/* ===== Constants ===== */
+	/**  */
+	private static final Logger LOGGER = Logger.getLogger(DesignElement.class);
+	
 	/** Temporal resolution for convolution is 20 ms. */
 	public static final double SAMPLING_RATE_IN_MS = 20.0; 
 	/** Add some seconds to avoid wrap around problems with FFT. */
 	public static final int    WRAP_AROUND_PADDING_IN_MS = 10000;
+	
+	private static final float ONSET_DEFAULT = 0.0f;
+	private static final float DURATION_DEFAULT = 0.0f;
+	private static final float HEIGHT_DEFAULT = 1.0f;
 	
 	/* ===== Attributes ===== */
 	/* From BADesignElement.h */
@@ -92,7 +108,276 @@ public class DesignElement extends Observable {
 	private FourierTransform[] fftPlanForward;
 	private FourierTransform[] fftPlanInverse;
 	
+	
+	
 	/* ===== Constructors ===== */
+	public DesignElement(final Node paradigmNode,
+						 final Node trNode,
+						 final Node measurementsNode,
+						 final Node refFctsNode) {
+		if (paradigmNode == null
+			|| paradigmNode.getNodeType() != Node.ELEMENT_NODE
+			|| trNode == null
+			|| trNode.getNodeType() != Node.ELEMENT_NODE
+			|| measurementsNode == null
+			|| measurementsNode.getNodeType() != Node.ELEMENT_NODE
+			|| refFctsNode == null
+			|| refFctsNode.getNodeType() != Node.ELEMENT_NODE) {
+			throw new IllegalArgumentException("Passed nodes are null or no element nodes.");
+		}
+		
+		Element paradigmElem = (Element) paradigmNode;
+		Element designElem = (Element) paradigmElem.getElementsByTagName("*").item(0);
+		
+		if (designElem == null) {
+			throw new IllegalArgumentException("Tried to create DesignElement from node with no design struct specified.");
+		}
+		if (!designElem.getNodeName().equals("gwDesignStruct")
+			&& !designElem.getNodeName().equals("swDesignStruct")
+			&& !designElem.getNodeName().equals("dynamicDesignStruct")) {
+			throw new IllegalArgumentException("Tried to create DesignElement from node with not yet supported design type.");
+		}
+		
+		// TR
+		long tr = Long.parseLong(XMLUtility.getNodeValue(trNode));
+		if (tr < 0) {
+			throw new IllegalArgumentException("Tried to create DesignElement with negative repetition time (TR).");
+		} else {
+			this.setRepetitionTimeInMs(tr);
+		}
+		
+		// NumberTimesteps
+		int numberTimesteps = Integer.parseInt(XMLUtility.getNodeValue(measurementsNode));
+		if (numberTimesteps < 0) {
+			throw new IllegalArgumentException("Tried to create DesignElement with negative timestep count.");
+		} else {
+			this.setNumberTimesteps(numberTimesteps);
+		}
+		
+		// NumberCovariates
+		Element covariateStructElem = (Element) paradigmElem.getElementsByTagName("covariateStruct").item(0);
+		if (covariateStructElem != null) {
+			long numberCovariates = covariateStructElem.getElementsByTagName("covariate").getLength();
+			this.setNumberCovariates(numberCovariates);
+		}
+		
+		// NumberEvents
+		NodeList regressorNodes = designElem.getElementsByTagName("timeBasedRegressor");
+		this.setNumberEvents(regressorNodes.getLength());
+		
+		// NumberSamples for FFT; add some seconds to avoid wrap around problems with fft (10 seconds)
+		long numberSamplesForInit = (long) ((numberTimesteps * this.getRepetitionTimeInMs()) / DesignElement.SAMPLING_RATE_IN_MS 
+											+ DesignElement.WRAP_AROUND_PADDING_IN_MS);
+		this.setNumberSamplesForInit(numberSamplesForInit);
+		
+		// Fetch reference functions (gGamma/gloverKernel)
+		NodeList gloverKernelNodes = ((Element) refFctsNode).getElementsByTagName("gloverKernel");
+		NodeList gammaKernelNodes = ((Element) refFctsNode).getElementsByTagName("dGamma");
+//		int nrRefFcts = gloverKernelNodes.getLength() + gammaKernelNodes.getLength();
+		
+		List<Regressor> regressorList = new LinkedList<Regressor>();
+		// Build all trials (statEvent) for each event (timeBasedRegressor)
+		int nrDerivs = 0; // Count number of derivations per event = number of cols needed at the end
+		for (int eventNr = 0; eventNr < this.getNumberEvents(); eventNr++) {
+			Element regressorElem = (Element) regressorNodes.item(eventNr);
+			NodeList statEventNodes = ((Element) regressorElem.getElementsByTagName("tbrDesign").item(0)).getElementsByTagName("statEvent");
+			
+			List<Trial> trials = new LinkedList<Trial>();
+			for (int trialNr = 0; trialNr < statEventNodes.getLength(); trialNr++) {
+				Element statEventElem = (Element) statEventNodes.item(trialNr);
+				
+				String timeAttrValue = statEventElem.getAttribute("time");
+				float onset = timeAttrValue.equals("") ? ONSET_DEFAULT : Float.parseFloat(timeAttrValue);
+				String durationAttrValue = statEventElem.getAttribute("duration");
+				float duration = durationAttrValue.equals("") ? DURATION_DEFAULT : Float.parseFloat(durationAttrValue);
+				String heightAttrValue = statEventElem.getAttribute("parametricScaleFactor");
+				float height = heightAttrValue.equals("") ? HEIGHT_DEFAULT : Float.parseFloat(heightAttrValue);
+				
+				if (duration < 0.0f) { 
+					duration = 1.0f; 
+				}
+				if (height < 0.0f) {
+					height = 1.0f;
+				}
+				trials.add(new Trial((long) eventNr + 1, onset, duration, height));
+			}
+			
+			Regressor regressor = new Regressor();
+			regressor.regTrialList = trials;
+			regressor.regID = regressorElem.getAttribute("regressorID");
+			regressor.regDescription = regressorElem.getAttribute("name");
+			
+			// Number of derivations used per each event
+			if (Boolean.parseBoolean(regressorElem.getAttribute("useRefFctSecondDerivative"))) {
+				regressor.regDerivations = 2;
+				nrDerivs += 2;
+			} else if (Boolean.parseBoolean(regressorElem.getAttribute("useRefFctFirstDerivative"))) {
+				regressor.regDerivations = 1;
+				nrDerivs += 1;
+			} else {
+				regressor.regDerivations = 0;
+			}
+			
+			String hrfKernelName = regressorElem.getAttribute("useRefFct");
+			
+			// TODO skipped timeUnit check!
+			LOGGER.debug("DesignElement creation: Skipped timeUnit check.");
+			
+			for (int refNr = 0; refNr < gloverKernelNodes.getLength(); refNr++) {
+				Element gloverKernelElem = (Element) gloverKernelNodes.item(refNr);
+				String refFctID = gloverKernelElem.getAttribute("refFctID");
+				if (!refFctID.equals("") && hrfKernelName.equals(refFctID)) {
+					int overallWidth = Integer.parseInt(XMLUtility.getNodeValue(gloverKernelElem.getElementsByTagName("overallWidth").item(0)));
+					double peak1 = Double.parseDouble(XMLUtility.getNodeValue(gloverKernelElem.getElementsByTagName("tPeak1").item(0)));
+					double scale1 = Double.parseDouble(XMLUtility.getNodeValue(gloverKernelElem.getElementsByTagName("tPeak1Scale").item(0)));
+					double peak2 = Double.parseDouble(XMLUtility.getNodeValue(gloverKernelElem.getElementsByTagName("tPeak2").item(0)));
+					double scale2 = Double.parseDouble(XMLUtility.getNodeValue(gloverKernelElem.getElementsByTagName("tPeak2Scale").item(0)));
+					double offset = Double.parseDouble(XMLUtility.getNodeValue(gloverKernelElem.getElementsByTagName("offset").item(0)));
+					double ratioTPeaks = Double.parseDouble(XMLUtility.getNodeValue(gloverKernelElem.getElementsByTagName("ratioTPeaks").item(0)));
+					double heightScale = Double.parseDouble(XMLUtility.getNodeValue(gloverKernelElem.getElementsByTagName("heightScale").item(0)));
+					
+					GloverParams params = new GloverParams(overallWidth, 
+														   peak1, 
+														   scale1, 
+														   peak2, 
+														   scale2, 
+														   offset, 
+														   ratioTPeaks, 
+														   heightScale, 
+														   DesignKernelTimeUnit.KERNEL_TIME_MS);
+					regressor.regConvolKernel = new DesignGloverKernel(params, 
+																	   this.getNumberSamplesForInit(), 
+																	   DesignElement.SAMPLING_RATE_IN_MS);
+				}
+			} 
+			for (int refNr = 0; refNr < gammaKernelNodes.getLength(); refNr++) {
+				Element gammaKernelElem = (Element) gammaKernelNodes.item(refNr);
+				String refFctID = gammaKernelElem.getAttribute("refFctID");
+				if (!refFctID.equals("") && hrfKernelName.equals(refFctID)) {
+					// TODO
+					LOGGER.warn("Tried to use a gamma kernel. Feature is not yet implemented!");
+				}
+			}
+			
+			regressorList.add(regressor);
+		}
+		
+		this.setRegressorList(regressorList);
+		this.setNumberRegressors(this.getNumberEvents() + nrDerivs + 1);
+		this.setNumberExplanatoryVariables(this.getNumberRegressors() + this.getNumberCovariates());
+		
+		// initDesign:
+		boolean zeromean = true;
+		
+		double[] timeOfRepetitionStartInMs = new double[this.getNumberTimesteps()];
+		for (int i = 0; i < this.getNumberTimesteps(); i++) {
+			timeOfRepetitionStartInMs[i] = (double) (i) * this.getRepetitionTimeInMs();//TODO: Gabi fragen letzter Zeitschritt im moment nicht einbezogen xx[i] = (double) i * tr * 1000.0;
+		}
+		this.setTimeOfRepetitionStartInMs(timeOfRepetitionStartInMs);
+
+//	    long maxExpLengthInMs = (long) (timeOfRepetitionStartInMs[0] + timeOfRepetitionStartInMs[design.getNumberTimesteps() - 1] + design.getRepetitionTimeInMs());//+1 repetition to add time of last rep
+	     /*
+	     ** check amplitude: must have zero mean for parametric designs
+		 ** for not parametric nothing will be corrected due to check of stddev
+	     */
+	    if (zeromean == true) { 
+			this.correctForZeromean();
+		}
+	    if (this.getNumberEvents() < 1) {
+	    	LOGGER.error("No events were found in the experiment design!");
+	    }
+
+		/* alloc memory for all NEDesignDyn specific stuff*/
+		this.initRegressorValues();
+	   
+		if (this.getNumberCovariates() > 0) {
+	        this.initCovariateValues();
+		}
+	        
+	    int numberSamplesInResult = (int) (this.getNumberSamplesForInit() / 2) + 1;//defined for results of fftw3
+
+//	    /* make plans one per each event*/
+//	    mFftPlanForward = (fftw_plan *) malloc(sizeof(fftw_plan) * mNumberEvents);
+//	    mFftPlanInverse = (fftw_plan *) malloc(sizeof(fftw_plan) * mNumberEvents);
+		
+		/* alloc input/output buffers for forward/inverse fft one per each event*/
+		double[][] buffersForwardIn = new double[this.getNumberEvents()][(int) this.getNumberSamplesForInit()];
+	    Complex[][] buffersForwardOut = new Complex[this.getNumberEvents()][numberSamplesInResult];
+	    Complex[][] buffersInverseIn = new Complex[this.getNumberEvents()][numberSamplesInResult];
+	    double[][] buffersInverseOut = new double[this.getNumberEvents()][(int) this.getNumberSamplesForInit()];
+
+	    FourierTransform[] fftPlanForward = new FourierTransform[this.getNumberEvents()];
+	    FourierTransform[] fftPlanInverse = new FourierTransform[this.getNumberEvents()];
+	    
+		/* alloc gamma kernels one per each event*/
+	    for (int eventNr = 0; eventNr < this.getNumberEvents(); eventNr++) {
+	    	for (int sampleNr = 0; sampleNr < this.getNumberSamplesForInit(); sampleNr++) {
+	    		buffersForwardIn[eventNr][sampleNr] = 0.0;
+	    		buffersInverseOut[eventNr][sampleNr] = 0.0;
+	    	}
+	    }
+	    this.setBuffersForwardIn(buffersForwardIn);
+	    this.setBuffersForwardOut(buffersForwardOut);
+	    this.setBuffersInverseIn(buffersInverseIn);
+	    this.setBuffersInverseOut(buffersInverseOut);
+	    this.setFftPlanForward(fftPlanForward);
+	    this.setFftPlanInverse(fftPlanInverse);
+	    
+		// TODO generateDesign:
+	    for (int eventNr = 0; eventNr < this.getNumberEvents(); eventNr++) {   
+	        /* get data */
+	        int trialcount = 0;
+	        double t0;
+	        double h;
+			    
+	        Regressor reg = this.getRegressorList().get(eventNr);
+	        List<Trial> trials = reg.regTrialList;
+	        for (Trial trial : trials) {
+	        	trialcount++;
+	        	
+	        	t0 = trial.onset;
+	        	double tmax = t0 + trial.duration;
+	        	h = trial.height;
+	        	int k = (int) (t0 / DesignElement.SAMPLING_RATE_IN_MS);
+	        	
+	        	for (double t = t0; t <= tmax; t += DesignElement.SAMPLING_RATE_IN_MS) {
+	                if (k >= this.getNumberSamplesForInit()) {
+	                    break;
+	                }
+	                this.getBuffersForwardIn()[eventNr][k++] += h;
+	            }
+	        }
+	        
+	        /* Removed trialcount checks */
+	        
+	        /* fft */
+	        fftPlanForward[eventNr] = new FourierTransform(DesignElement.padToNextPowerOfTwo(buffersForwardIn[eventNr])); //= fftw_plan_dft_r2c_1d(mNumberSamplesForInit, mBuffersForwardIn[eventNr], mBuffersForwardOut[eventNr], FFTW_ESTIMATE);
+	        FourierTransform plan = this.getFftPlanForward()[eventNr];
+	        plan.transform();
+	        this.getBuffersForwardOut()[eventNr] = plan.getTransformedDataAsComplex();
+			// the actual column is added from all events and their derivations before
+			int columnsForDerivs = 0;
+			for (int countCols = 0; countCols < eventNr; countCols++) {
+				columnsForDerivs += this.getRegressorList().get(countCols).regDerivations;
+			}
+			
+			int col = eventNr + columnsForDerivs;
+			this.convolve(col, eventNr, reg.regConvolKernel.kernelDeriv0);
+	        col++;
+	        if (1 <= reg.regDerivations) {
+	            this.convolve(col, eventNr, reg.regConvolKernel.kernelDeriv1);
+	            col++;
+	        }
+	        
+	        if (2 == reg.regDerivations) {
+	            this.convolve(col, eventNr, reg.regConvolKernel.kernelDeriv2);
+	        }
+	    }
+	    
+		this.notifyObservers();
+	}
+	
+	
 	
 	/* ===== Static functions ===== */
 	public static double[] padToNextPowerOfTwo(final double[] data) {

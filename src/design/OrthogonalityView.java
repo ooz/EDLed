@@ -15,7 +15,7 @@ import javax.swing.JPanel;
 import design.bart.DesignElement;
 import design.bart.DesignElement.Regressor;
 
-public class OrthogonalityView extends JPanel implements Observer {
+public class OrthogonalityView extends JPanel implements Observer, DesignElementReceiver {
 	
 	/** */
 	private static final long serialVersionUID = 1L;
@@ -38,16 +38,29 @@ public class OrthogonalityView extends JPanel implements Observer {
 	
 	public OrthogonalityView(final DesignElement design) {
 		this.design = design;
-		this.design.addObserver(this);
-		this.setBackground(Color.BLACK);
+		if (this.design != null) {
+			this.design.addObserver(this);
+		}
 		
+		this.setBackground(Color.BLACK);
 		this.captionFont = new Font("SansSerif", Font.PLAIN, 12);
 		this.numberFormat = new DecimalFormat("##########################0.##");
 	}
 	
 	@Override
 	public void finalize() {
-		this.design.deleteObserver(this);
+		if (this.design != null) this.design.deleteObserver(this);
+	}
+	
+	@Override
+	public void register(final DesignElement design) {
+		if (this.design != null) {
+			this.design.deleteObserver(this);
+		}
+		
+		this.design = design;
+		this.design.addObserver(this);
+		this.update(design, design);
 	}
 	
 	@Override

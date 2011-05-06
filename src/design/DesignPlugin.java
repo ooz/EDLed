@@ -6,11 +6,11 @@ import javax.swing.JPanel;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
 
+import org.apache.log4j.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
-import design.DOMFormatter;
-
+import design.bart.DesignElement;
 import edled.Application;
 import edled.core.Model;
 import edled.plugin.Plugin;
@@ -23,6 +23,9 @@ import edled.util.Configuration;
  * @author Oliver Zscheyge
  */
 public class DesignPlugin implements Plugin {
+	
+	/** */
+	private static final Logger LOGGER = Logger.getLogger(DesignPlugin.class);
 	
 	private static final String PARADIGM_KEY = "PARADIGM";
 	private static final String TR_KEY = "TR";
@@ -84,9 +87,10 @@ public class DesignPlugin implements Plugin {
 			Node trNode       = (Node) this.nodeMapper.xpathFor(TR_KEY).evaluate(doc, XPathConstants.NODE);
 			Node measurementsNode = (Node) this.nodeMapper.xpathFor(MEASUREMENTS_KEY).evaluate(doc, XPathConstants.NODE);
 			Node refFctsNode  = (Node) this.nodeMapper.xpathFor(REFERENCE_FUNCTIONS_KEY).evaluate(doc, XPathConstants.NODE);
-			DOMFormatter formatter = new DOMFormatter();
 			if (model.getValidationResult(paradigmNode, true).isValid()) {
-				formatter.fill(this.pluginModel.getDesign(), paradigmNode, trNode, measurementsNode, refFctsNode);
+				DesignElement newDesign = new DesignElement(paradigmNode, trNode, measurementsNode, refFctsNode);
+				this.pluginModel.setDesign(newDesign);
+				this.pluginView.register(newDesign);
 			}
 			if (model.getValidationResult(refFctsNode, true).isValid()) {
 				// TODO
@@ -97,8 +101,8 @@ public class DesignPlugin implements Plugin {
 //				}
 			}
 		} catch (XPathExpressionException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			LOGGER.debug("XPathExpressionException while fetching nodes from the main model "
+					     + "(check map file for design plugin!)", e);
 		}
 	}
 	

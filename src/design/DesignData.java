@@ -7,9 +7,12 @@ public class DesignData {
 	private DesignElement design;
 	
 	public DesignData() {
-		this.design = new DesignElement();
+		this.design = null;
 	}
 	
+	public void setDesign(final DesignElement design) {
+		this.design = design;
+	}
 	public DesignElement getDesign() {
 		return this.design;
 	}

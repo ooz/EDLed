@@ -5,7 +5,9 @@ import java.awt.BorderLayout;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 
-public class DesignView extends JPanel {
+import design.bart.DesignElement;
+
+public class DesignView extends JPanel implements DesignElementReceiver {
 	/** */
 	private static final long serialVersionUID = -1410868044151014221L;
 	
@@ -29,6 +31,12 @@ public class DesignView extends JPanel {
 		this.tabs.addTab(OrthogonalityView.DISPLAY_NAME, this.orthogonalityView);
 		
 		add(this.tabs, BorderLayout.CENTER);
+	}
+	
+	@Override
+	public void register(final DesignElement design) {
+		this.convolutionView.register(design);
+		this.orthogonalityView.register(design);
 	}
 
 }
