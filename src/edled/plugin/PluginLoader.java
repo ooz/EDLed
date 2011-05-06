@@ -10,7 +10,6 @@ import org.apache.log4j.Logger;
 import edled.Application;
 import edled.util.Configuration;
 
-
 /**
  * Factory class for plugins.
  * 
