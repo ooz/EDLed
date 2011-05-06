@@ -5,21 +5,47 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 
+import org.apache.log4j.Logger;
+
 import edled.Application;
 import edled.util.Configuration;
 
 
-
+/**
+ * Factory class for plugins.
+ * 
+ * @author Oliver Zscheyge
+ */
 public class PluginLoader {
 	
+	/**  */
+	private static final Logger LOGGER = Logger.getLogger(PluginLoader.class);
+
+	/** Private default constructor. */
 	private PluginLoader() {
-		
 	}
 	
+	/**
+	 * Static instantiation of a PluginLoader object.
+	 * 
+	 * @return A new PluginLoader.
+	 */
 	public static PluginLoader newInstance() {
 		return new PluginLoader();
 	}
 	
+	/**
+	 * Dynamically loads a plugin from the plugin directory (specified in the
+	 * app config).
+	 * 
+	 * @param appController The application root controller that is passed to
+	 * 						the plugin inorder to get access to the application's
+	 * 						data and operations.
+	 * @param qualifiedName Qualified name of the plugin class to load.
+	 * @return				Plugin object of class qualifiedName. Null if no
+	 * 						plugin named qualifiedName could be found or other
+	 * 						errors occured. 
+	 */
 	public Plugin createPlugin(final Application appController,
 							   final String qualifiedName) {
 		
@@ -38,17 +64,13 @@ public class PluginLoader {
 				plugin.initAppController(appController);
 				return plugin;
 			} catch (MalformedURLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				LOGGER.debug("MalformedURLException while loading plugin: " + pluginFile.getPath(), e);
 			} catch (ClassNotFoundException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				LOGGER.debug("ClassNotFoundException while loading plugin: " + pluginFile.getPath(), e);
 			} catch (InstantiationException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				LOGGER.debug("InstantiationException while loading plugin: " + pluginFile.getPath(), e);
 			} catch (IllegalAccessException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				LOGGER.debug("IllegalAccessException while loading plugin: " + pluginFile.getPath(), e);
 			}
 		}
 		
