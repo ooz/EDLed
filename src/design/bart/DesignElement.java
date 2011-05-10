@@ -16,6 +16,12 @@ import edled.xml.XMLUtility;
 import flanagan.complex.Complex;
 import flanagan.math.FourierTransform;
 
+/**
+ * DesignElement from BART.
+ * 
+ * @author Lydia Hellrung (original)
+ * @author Oliver Zscheyge (port)
+ */
 public class DesignElement extends Observable {
 	
 	/* ===== Classes ===== */

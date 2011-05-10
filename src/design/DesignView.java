@@ -7,18 +7,33 @@ import javax.swing.JTabbedPane;
 
 import design.bart.DesignElement;
 
+/**
+ * Root view for the design plugin.
+ * Contains the tab view for additional views on the design (convolution,
+ * orthogonality etc.)
+ * 
+ * @author Oliver Zscheyge
+ */
 public class DesignView extends JPanel implements DesignElementReceiver {
 	/** */
 	private static final long serialVersionUID = -1410868044151014221L;
 	
 //	private final DesignPlugin controller;
 	
+	/** Tabs for selecting the appropriate design view  (convolution, orthogonality etc.)*/
 	private final JTabbedPane tabs;
 	
+	/** Convolution view. */
 	private final ConvolutionView convolutionView;
+	/** Orthogonality view. */
 	private final OrthogonalityView orthogonalityView;
 //	private final HRFView hrfView;
 	
+	/**
+	 * Constructor.
+	 * 
+	 * @param controller Main design plugin controller.
+	 */
 	DesignView(final DesignPlugin controller) {
 		super(new BorderLayout());
 		

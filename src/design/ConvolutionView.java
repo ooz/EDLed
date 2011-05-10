@@ -2,7 +2,6 @@ package design;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
-import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -15,28 +14,39 @@ import javax.swing.JPanel;
 import design.bart.DesignElement;
 import design.bart.DesignElement.Regressor;
 
+/**
+ * Convolution view of a DesignElement.
+ * This view gives an approximate overview of which events/regressors
+ * are active in parallel.
+ * 
+ * @author Oliver Zscheyge
+ */
 public class ConvolutionView extends JPanel implements Observer, DesignElementReceiver {
 	
 	/** */
 	private static final long serialVersionUID = 1L;
 	
+	/** Name of the view (e.g. used as the tab label) */
 	public static final String DISPLAY_NAME = "Convolution";
 	
+	/** Number of timesteps per pixel while rendering the convolution data. */
 	private static final double TIMESTEPS_PER_PIXEL = 0.5;
+	/** Visual column (regressor) width. */
 	private static final double COLUMN_WIDTH = 100.0;
 	
-	private static final int TOP_PADDING = 65;
-	private static final int TOP_CAPTION_PADDING = 5;
-	private static final int LEFT_PADDING = 55;
-	private static final int LEFT_CAPTION_PADDING = 10;
-	
+	/** Set a timestep caption after this many timesteps. */
 	private static final int TIMESTEP_STEP_WIDTH = 50;
+	/** Length of the small dashes that are drawn on an axis. */
 	private static final int Y_AXSIS_DASH_LENGTH = 5;
 	
+	/** The design data to display. */
 	private DesignElement design;
 	
-	private Font captionFont;
-	
+	/**
+	 * Constructor.
+	 * 
+	 * @param design The DesignElement to display in ConvolutionView.
+	 */
 	public ConvolutionView(final DesignElement design) {
 		this.design = design;
 		if (this.design != null) {
@@ -44,7 +54,6 @@ public class ConvolutionView extends JPanel implements Observer, DesignElementRe
 		}
 		
 		this.setBackground(Color.BLACK);
-		this.captionFont = new Font("SansSerif", Font.PLAIN, 12);
 	}
 	
 	@Override
@@ -71,7 +80,7 @@ public class ConvolutionView extends JPanel implements Observer, DesignElementRe
 		Graphics2D g2D = (Graphics2D) g;
 //		g2D.setFont(this.captionFont);
 		g2D.setStroke(new BasicStroke(1.0f));
-		g2D.setFont(this.captionFont);
+		g2D.setFont(DesignViewConstants.CAPTION_FONT);
 		
 //		FontMetrics fontMetrics = g2D.getFontMetrics();
 		
@@ -113,18 +122,18 @@ public class ConvolutionView extends JPanel implements Observer, DesignElementRe
 			for (int col = 0; col < colCount; col++) {
 				String colNrStr = "" + (col + 1);
 				g2D.drawString(colNrStr, 
-							   (int) (col * COLUMN_WIDTH + COLUMN_WIDTH / 2 + LEFT_PADDING - fontMetrics.stringWidth(colNrStr) / 2), 
-							   fontHeight + TOP_CAPTION_PADDING);
+							   (int) (col * COLUMN_WIDTH + COLUMN_WIDTH / 2 + DesignViewConstants.LEFT_PADDING - fontMetrics.stringWidth(colNrStr) / 2), 
+							   fontHeight + DesignViewConstants.TOP_CAPTION_PADDING);
 				// Print regressor ID and description/name
 				if (col % colsPerReg == 0
 					&& col < colCount - 1) {
 					Regressor reg = regressors.get(col / colsPerReg);
 					g2D.drawString(reg.regID, 
-							       (int) (col * COLUMN_WIDTH + COLUMN_WIDTH / 2 + LEFT_PADDING - fontMetrics.stringWidth(reg.regID) / 2), 
-							       2 * fontHeight + TOP_CAPTION_PADDING);
+							       (int) (col * COLUMN_WIDTH + COLUMN_WIDTH / 2 + DesignViewConstants.LEFT_PADDING - fontMetrics.stringWidth(reg.regID) / 2), 
+							       2 * fontHeight + DesignViewConstants.TOP_CAPTION_PADDING);
 					g2D.drawString(reg.regDescription, 
-						           (int) (col * COLUMN_WIDTH + COLUMN_WIDTH / 2 + LEFT_PADDING - fontMetrics.stringWidth(reg.regDescription) / 2), 
-						           3 * fontHeight + TOP_CAPTION_PADDING);
+						           (int) (col * COLUMN_WIDTH + COLUMN_WIDTH / 2 + DesignViewConstants.LEFT_PADDING - fontMetrics.stringWidth(reg.regDescription) / 2), 
+						           3 * fontHeight + DesignViewConstants.TOP_CAPTION_PADDING);
 				}
 			}
 			
@@ -134,7 +143,7 @@ public class ConvolutionView extends JPanel implements Observer, DesignElementRe
 				 timestepCaptionNr <= (timestepCount / TIMESTEP_STEP_WIDTH); 
 				 timestepCaptionNr++) {
 				
-				int yPos = (int) ((timestepCaptionNr * TIMESTEP_STEP_WIDTH) / TIMESTEPS_PER_PIXEL + TOP_PADDING);
+				int yPos = (int) ((timestepCaptionNr * TIMESTEP_STEP_WIDTH) / TIMESTEPS_PER_PIXEL + DesignViewConstants.TOP_PADDING);
 				String timestepCaption = "";
 				if (timestepCaptionNr == 0) {
 					timestepCaption += "1"; // Start counting with 1
@@ -145,10 +154,10 @@ public class ConvolutionView extends JPanel implements Observer, DesignElementRe
 				
 				// Caption
 				g2D.drawString(timestepCaption, 
-					       	   LEFT_CAPTION_PADDING, 
+							   DesignViewConstants.LEFT_CAPTION_PADDING, 
 					       	   yPos + (fontHeight / 2));
 				// Dash
-				g2D.fillRect(LEFT_PADDING - Y_AXSIS_DASH_LENGTH, 
+				g2D.fillRect(DesignViewConstants.LEFT_PADDING - Y_AXSIS_DASH_LENGTH, 
 							 yPos, 
 							 (int) Y_AXSIS_DASH_LENGTH, 
 							 (int) (1 / TIMESTEPS_PER_PIXEL));
@@ -192,8 +201,8 @@ public class ConvolutionView extends JPanel implements Observer, DesignElementRe
 					g2D.setBackground(color);
 					
 					// Draw values top down
-					g2D.fillRect((int) (row * COLUMN_WIDTH + LEFT_PADDING), 
-						 		 (int) (col / TIMESTEPS_PER_PIXEL + TOP_PADDING), 
+					g2D.fillRect((int) (row * COLUMN_WIDTH + DesignViewConstants.LEFT_PADDING), 
+						 		 (int) (col / TIMESTEPS_PER_PIXEL + DesignViewConstants.TOP_PADDING), 
 						 		 (int) COLUMN_WIDTH, 
 							  	 (int) (1 / TIMESTEPS_PER_PIXEL));
 					

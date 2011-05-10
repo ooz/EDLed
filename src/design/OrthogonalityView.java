@@ -2,7 +2,6 @@ package design;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
-import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -15,25 +14,35 @@ import javax.swing.JPanel;
 import design.bart.DesignElement;
 import design.bart.DesignElement.Regressor;
 
+/**
+ * Orthogonality view of a DesignElement.
+ * This view displays a grayscale matrix indicating the orthogonality
+ * of each design column/regressor.
+ * 
+ * @author Oliver Zscheyge
+ */
 public class OrthogonalityView extends JPanel implements Observer, DesignElementReceiver {
 	
 	/** */
 	private static final long serialVersionUID = 1L;
-	
+
+	/** Name of the view (e.g. used as the tab label) */
 	public static final String DISPLAY_NAME = "Orthogonality";
 	
-	private static final int TOP_PADDING = 65;
-	private static final int TOP_CAPTION_PADDING = 5;
-	private static final int LEFT_PADDING = 50;
-	private static final int LEFT_CAPTION_PADDING = 10;
+	private static final int TOP_PADDING = DesignViewConstants.TOP_PADDING;
+	private static final int TOP_CAPTION_PADDING = DesignViewConstants.TOP_CAPTION_PADDING;
+	private static final int LEFT_PADDING = DesignViewConstants.LEFT_PADDING - 5;
+	private static final int LEFT_CAPTION_PADDING = DesignViewConstants.LEFT_CAPTION_PADDING;
 	private static final double SQUARE_SIZE = 75.0;
 	
+	/** Gray value threshold. Below: invert font color for better
+	 *  readability. */
 	private static final float INVERSE_COLOR_THRESHOLD = 0.40f;
 	
+	/** The design data to display. */
 	private DesignElement design;
 	private float[][] orthogonalityMatrix = null;
 	
-	private final Font captionFont;
 	private final DecimalFormat numberFormat;
 	
 	public OrthogonalityView(final DesignElement design) {
@@ -43,7 +52,6 @@ public class OrthogonalityView extends JPanel implements Observer, DesignElement
 		}
 		
 		this.setBackground(Color.BLACK);
-		this.captionFont = new Font("SansSerif", Font.PLAIN, 12);
 		this.numberFormat = new DecimalFormat("##########################0.##");
 	}
 	
@@ -69,7 +77,7 @@ public class OrthogonalityView extends JPanel implements Observer, DesignElement
 		
 		// Setting up graphics.
 		Graphics2D g2D = (Graphics2D) g;
-		g2D.setFont(this.captionFont);
+		g2D.setFont(DesignViewConstants.CAPTION_FONT);
 		g2D.setStroke(new BasicStroke(1.0f));
 		g2D.setPaint(Color.WHITE);
 		
