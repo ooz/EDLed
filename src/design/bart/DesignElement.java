@@ -145,36 +145,32 @@ public class DesignElement extends Observable {
 		}
 		
 		// TR
-		long tr = Long.parseLong(XMLUtility.getNodeValue(trNode));
-		if (tr < 0) {
+		this.repetitionTimeInMs = Long.parseLong(XMLUtility.getNodeValue(trNode));
+		if (this.repetitionTimeInMs < 0) {
 			throw new IllegalArgumentException("Tried to create DesignElement with negative repetition time (TR).");
-		} else {
-			this.setRepetitionTimeInMs(tr);
 		}
 		
 		// NumberTimesteps
-		int numberTimesteps = Integer.parseInt(XMLUtility.getNodeValue(measurementsNode));
-		if (numberTimesteps < 0) {
+		this.numberTimesteps = Integer.parseInt(XMLUtility.getNodeValue(measurementsNode));
+		if (this.numberTimesteps < 0) {
 			throw new IllegalArgumentException("Tried to create DesignElement with negative timestep count.");
-		} else {
-			this.setNumberTimesteps(numberTimesteps);
 		}
 		
 		// NumberCovariates
 		Element covariateStructElem = (Element) paradigmElem.getElementsByTagName("covariateStruct").item(0);
 		if (covariateStructElem != null) {
 			long numberCovariates = covariateStructElem.getElementsByTagName("covariate").getLength();
-			this.setNumberCovariates(numberCovariates);
+			this.numberCovariates = numberCovariates;
 		}
 		
 		// NumberEvents
 		NodeList regressorNodes = designElem.getElementsByTagName("timeBasedRegressor");
-		this.setNumberEvents(regressorNodes.getLength());
+		this.numberEvents = regressorNodes.getLength();
 		
 		// NumberSamples for FFT; add some seconds to avoid wrap around problems with fft (10 seconds)
 		long numberSamplesForInit = (long) ((numberTimesteps * this.getRepetitionTimeInMs()) / DesignElement.SAMPLING_RATE_IN_MS 
 											+ DesignElement.WRAP_AROUND_PADDING_IN_MS);
-		this.setNumberSamplesForInit(numberSamplesForInit);
+		this.numberSamplesForInit = numberSamplesForInit;
 		
 		// Fetch reference functions (gGamma/gloverKernel)
 		NodeList gloverKernelNodes = ((Element) refFctsNode).getElementsByTagName("gloverKernel");
@@ -260,7 +256,7 @@ public class DesignElement extends Observable {
 				Element gammaKernelElem = (Element) gammaKernelNodes.item(refNr);
 				String refFctID = gammaKernelElem.getAttribute("refFctID");
 				if (!refFctID.equals("") && hrfKernelName.equals(refFctID)) {
-					// TODO
+					// TODO implement!
 					LOGGER.warn("Tried to use a gamma kernel. Feature is not yet implemented!");
 				}
 			}
@@ -268,18 +264,19 @@ public class DesignElement extends Observable {
 			regressorList.add(regressor);
 		}
 		
-		this.setRegressorList(regressorList);
-		this.setNumberRegressors(this.getNumberEvents() + nrDerivs + 1);
-		this.setNumberExplanatoryVariables(this.getNumberRegressors() + this.getNumberCovariates());
+		this.regressorList = regressorList;
+		this.numberRegressors = this.getNumberEvents() + nrDerivs + 1;
+		this.numberExplanatoryVariables = this.getNumberRegressors() + this.getNumberCovariates();
 		
 		// initDesign:
 		boolean zeromean = true;
 		
 		double[] timeOfRepetitionStartInMs = new double[this.getNumberTimesteps()];
 		for (int i = 0; i < this.getNumberTimesteps(); i++) {
-			timeOfRepetitionStartInMs[i] = (double) (i) * this.getRepetitionTimeInMs();//TODO: Gabi fragen letzter Zeitschritt im moment nicht einbezogen xx[i] = (double) i * tr * 1000.0;
+			// TODO: Gabi fragen letzter Zeitschritt im moment nicht einbezogen xx[i] = (double) i * tr * 1000.0;
+			timeOfRepetitionStartInMs[i] = (double) (i) * this.getRepetitionTimeInMs();
 		}
-		this.setTimeOfRepetitionStartInMs(timeOfRepetitionStartInMs);
+		this.timeOfRepetitionStartInMs = timeOfRepetitionStartInMs;
 
 //	    long maxExpLengthInMs = (long) (timeOfRepetitionStartInMs[0] + timeOfRepetitionStartInMs[design.getNumberTimesteps() - 1] + design.getRepetitionTimeInMs());//+1 repetition to add time of last rep
 	     /*
@@ -302,10 +299,7 @@ public class DesignElement extends Observable {
 	        
 	    int numberSamplesInResult = (int) (this.getNumberSamplesForInit() / 2) + 1;//defined for results of fftw3
 
-//	    /* make plans one per each event*/
-//	    mFftPlanForward = (fftw_plan *) malloc(sizeof(fftw_plan) * mNumberEvents);
-//	    mFftPlanInverse = (fftw_plan *) malloc(sizeof(fftw_plan) * mNumberEvents);
-		
+	    /* make plans one per each event*/
 		/* alloc input/output buffers for forward/inverse fft one per each event*/
 		double[][] buffersForwardIn = new double[this.getNumberEvents()][(int) this.getNumberSamplesForInit()];
 	    Complex[][] buffersForwardOut = new Complex[this.getNumberEvents()][numberSamplesInResult];
@@ -322,14 +316,13 @@ public class DesignElement extends Observable {
 	    		buffersInverseOut[eventNr][sampleNr] = 0.0;
 	    	}
 	    }
-	    this.setBuffersForwardIn(buffersForwardIn);
-	    this.setBuffersForwardOut(buffersForwardOut);
-	    this.setBuffersInverseIn(buffersInverseIn);
-	    this.setBuffersInverseOut(buffersInverseOut);
-	    this.setFftPlanForward(fftPlanForward);
-	    this.setFftPlanInverse(fftPlanInverse);
+	    this.buffersForwardIn = buffersForwardIn;
+	    this.buffersForwardOut = buffersForwardOut;
+	    this.buffersInverseIn  = buffersInverseIn;
+	    this.buffersInverseOut = buffersInverseOut;
+	    this.fftPlanForward = fftPlanForward;
+	    this.fftPlanInverse = fftPlanInverse;
 	    
-		// TODO generateDesign:
 	    for (int eventNr = 0; eventNr < this.getNumberEvents(); eventNr++) {   
 	        /* get data */
 	        int trialcount = 0;
@@ -350,7 +343,7 @@ public class DesignElement extends Observable {
 	                if (k >= this.getNumberSamplesForInit()) {
 	                    break;
 	                }
-	                this.getBuffersForwardIn()[eventNr][k++] += h;
+	                this.buffersForwardIn[eventNr][k++] += h;
 	            }
 	        }
 	        
@@ -360,7 +353,7 @@ public class DesignElement extends Observable {
 	        fftPlanForward[eventNr] = new FourierTransform(DesignElement.padToNextPowerOfTwo(buffersForwardIn[eventNr])); //= fftw_plan_dft_r2c_1d(mNumberSamplesForInit, mBuffersForwardIn[eventNr], mBuffersForwardOut[eventNr], FFTW_ESTIMATE);
 	        FourierTransform plan = this.getFftPlanForward()[eventNr];
 	        plan.transform();
-	        this.getBuffersForwardOut()[eventNr] = plan.getTransformedDataAsComplex();
+	        this.buffersForwardOut[eventNr] = plan.getTransformedDataAsComplex();
 			// the actual column is added from all events and their derivations before
 			int columnsForDerivs = 0;
 			for (int countCols = 0; countCols < eventNr; countCols++) {
@@ -486,16 +479,13 @@ public class DesignElement extends Observable {
 			this.buffersInverseOut[eventNr][j] /= (double) this.numberSamplesForInit;
 		}
 		
-//		System.out.println("inverseOut.length: " + this.buffersInverseOut[eventNr].length);
-		
 		int padding = DesignElement.WRAP_AROUND_PADDING_IN_MS - 2;
 		
 		int transformedTSCount = (int) (this.numberTimesteps * (this.repetitionTimeInMs / SAMPLING_RATE_IN_MS)) + padding;
 		// Sampling
 		for (int timestep = 0; timestep < this.numberTimesteps; timestep++) {
 			int j = (int) (this.timeOfRepetitionStartInMs[timestep] / SAMPLING_RATE_IN_MS);
-//			System.out.println("start time: " + this.timeOfRepetitionStartInMs[timestep]);
-//			System.out.println("j = " + j);
+
 			if (j >= 0 && j < this.numberSamplesForInit) {
 				this.regressorValues[col][timestep] = (float) this.buffersInverseOut[eventNr][transformedTSCount - j];
 			}
@@ -575,19 +565,15 @@ public class DesignElement extends Observable {
 		return (float) Math.sqrt(magnitude);
 	}
 	
-	// TODO refactor: make private method when DesignElement is directly
-	// updated with the data from the DOM nodes (not via DOMFormatter)
-	public void correctForZeromean() {
+	private void correctForZeromean() {
 		for (int i = 0; i < this.numberEvents; i++) {
 			float sum1 = 0.0f;
 			float sum2 = 0.0f;
-//			float nx   = 0.0f;
 			
 			List<Trial> trials = this.regressorList.get(i).regTrialList;
 			for (Trial trial : trials) {
 				sum1 += trial.height;
 				sum2 += trial.height * trial.height;
-//				nx++;
 			}
 			
 			float trialCount = (float) trials.size();
@@ -625,54 +611,23 @@ public class DesignElement extends Observable {
 		}
 	}
 	
-	/* Getter and setters. */
+	/* Getters. */
 	public long getRepetitionTimeInMs() { return repetitionTimeInMs; }
-	public void setRepetitionTimeInMs(long repetitionTimeInMs) { this.repetitionTimeInMs = repetitionTimeInMs; }
 	public long getNumberExplanatoryVariables() { return numberExplanatoryVariables; }
-	public void setNumberExplanatoryVariables(long numberExplanatoryVariables) { this.numberExplanatoryVariables = numberExplanatoryVariables; }
 	public int getNumberTimesteps() { return numberTimesteps; }
-	public void setNumberTimesteps(int numberTimesteps) { this.numberTimesteps = numberTimesteps; }
 	public long getNumberRegressors() { return numberRegressors; }
-	public void setNumberRegressors(long numberRegressors) { this.numberRegressors = numberRegressors; }
 	public long getNumberCovariates() { return numberCovariates; }
-	public void setNumberCovariates(long numberCovariates) { this.numberCovariates = numberCovariates; }
 	public ImageDataType getImageDataType() { return imageDataType;	}
-	public void setImageDataType(ImageDataType imageDataType) {	this.imageDataType = imageDataType;	}
 	
-	// regressorList
 	public List<Regressor> getRegressorList() { return regressorList; }
-	public void setRegressorList(List<Regressor> regressorList) { this.regressorList = regressorList; }
-	// numberEvents
 	public int getNumberEvents() { return numberEvents; }
-	public void setNumberEvents(int numberEvents) {	this.numberEvents = numberEvents; }
-	// numberSamplesForInit
 	public long getNumberSamplesForInit() { return numberSamplesForInit; }
-	public void setNumberSamplesForInit(long numberSamplesForInit) { this.numberSamplesForInit = numberSamplesForInit; }
-	// timeOfRepetitionStartInMs
+
 	public double[] getTimeOfRepetitionStartInMs() { return timeOfRepetitionStartInMs; }
-	public void setTimeOfRepetitionStartInMs(double[] timeOfRepetitionStartInMs) { this.timeOfRepetitionStartInMs = timeOfRepetitionStartInMs; }
 	
-	// Generated design
+	/** Returns the generated design. */
 	public float[][] getRegressorValues() { return regressorValues;	}
 	
-	// buffersForwardIn
-	public double[][] getBuffersForwardIn() { return buffersForwardIn; }
-	public void setBuffersForwardIn(double[][] buffersForwardIn) { this.buffersForwardIn = buffersForwardIn; }
-	// buffersForwardOut
-	public Complex[][] getBuffersForwardOut() { return buffersForwardOut; }
-	public void setBuffersForwardOut(Complex[][] buffersForwardOut) { this.buffersForwardOut = buffersForwardOut; }
-	// buffersInverseIn
-	public Complex[][] getBuffersInverseIn() { return buffersInverseIn; }
-	public void setBuffersInverseIn(Complex[][] buffersInverseIn) { this.buffersInverseIn = buffersInverseIn; }
-	// buffersInverseOut
-	public double[][] getBuffersInverseOut() { return buffersInverseOut; }
-	public void setBuffersInverseOut(double[][] buffersInverseOut) { this.buffersInverseOut = buffersInverseOut; }
-	
-	// fftPlanFoward
 	public FourierTransform[] getFftPlanForward() { return this.fftPlanForward; }
-	public void setFftPlanForward(FourierTransform[] fftPlanForward) { this.fftPlanForward = fftPlanForward; }
-	// fftPlanInverse
 	public FourierTransform[] getFftPlanInverse() { return this.fftPlanInverse; }
-	public void setFftPlanInverse(FourierTransform[] fftPlanInverse) { this.fftPlanInverse = fftPlanInverse; }
-	
 }
