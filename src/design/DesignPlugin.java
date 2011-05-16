@@ -105,7 +105,12 @@ public class DesignPlugin implements Plugin {
 			Node measurementsNode = (Node) this.nodeMapper.xpathFor(MEASUREMENTS_KEY).evaluate(doc, XPathConstants.NODE);
 			Node refFctsNode  = (Node) this.nodeMapper.xpathFor(REFERENCE_FUNCTIONS_KEY).evaluate(doc, XPathConstants.NODE);
 			if (model.getValidationResult(paradigmNode, true).isValid()) {
-				DesignElement newDesign = new DesignElement(paradigmNode, trNode, measurementsNode, refFctsNode);
+				DesignElement newDesign = null;
+				try {
+					newDesign = new DesignElement(paradigmNode, trNode, measurementsNode, refFctsNode);
+				} catch(IllegalArgumentException e) {
+					LOGGER.warn("IllegalArgumentException while initializing DesignElement from DOM nodes.", e);
+				}
 				this.pluginModel.setDesign(newDesign);
 				this.pluginView.register(newDesign);
 			}
