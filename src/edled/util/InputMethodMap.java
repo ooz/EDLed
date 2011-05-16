@@ -17,8 +17,19 @@ import org.w3c.dom.Node;
 import edled.core.NodeConstraint;
 import edled.xml.XSDTypeName;
 
+/**
+ * Class that contains the specified the input methods for certain XML entries.
+ * E.g. if a URL should be entered via a text field or a file chooser.
+ *  
+ * @author Oliver Zscheyge
+ */
 public class InputMethodMap {
 	
+	/**
+	 * Possible input methods. 
+	 * 
+	 * @author Oliver Zscheyge
+	 */
 	public enum InputMethod {
 		NOT_SPECIFIED,
 		TEXTFIELD,
@@ -45,6 +56,7 @@ public class InputMethodMap {
 		}
 	}
 	
+	/** */
 	private static final Logger logger = Logger.getLogger(InputMethodMap.class);
 	
 	/** 
@@ -63,12 +75,22 @@ public class InputMethodMap {
 	/** Constructs an empty map. */
 	public InputMethodMap() {
 	}
-	/** */
+	
+	/**
+	 * Convenience constructor for {@link InputMethodMap#InputMethodMap(File)}.
+	 * 
+	 * @param inputMethodMapFilePath The path to the map file to load.
+	 */
 	public InputMethodMap(final String inputMethodMapFilePath) {
 		Map<String, String> map = FileUtility.readMapFile(inputMethodMapFilePath);
 		splitMap(map);
 	}
-	/** */
+	
+	/**
+	 * Constructs an InputMethodMap from a map file.
+	 * 
+	 * @param inputMethodMapFile The map file to load.
+	 */
 	public InputMethodMap(final File inputMethodMapFile) {
 		Map<String, String> map = FileUtility.readMapFile(inputMethodMapFile);
 		splitMap(map);
@@ -149,6 +171,7 @@ public class InputMethodMap {
 		
 		return InputMethod.NOT_SPECIFIED;
 	}
+	
 	public InputMethod getMethodFor(final String xsdType) {
 		InputMethod method = this.types.get(xsdType);
 		if (method != null) {
