@@ -10,7 +10,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import design.bart.DesignKernel.DesignKernelTimeUnit;
-import design.bart.DesignKernel.GloverParams;
+import design.bart.GloverKernel.GloverParams;
 
 import edled.xml.XMLUtility;
 import flanagan.complex.Complex;
@@ -247,7 +247,7 @@ public class DesignElement extends Observable {
 														   ratioTPeaks, 
 														   heightScale, 
 														   DesignKernelTimeUnit.KERNEL_TIME_MS);
-					regressor.regConvolKernel = new DesignGloverKernel(params, 
+					regressor.regConvolKernel = new GloverKernel(params, 
 																	   this.getNumberSamplesForInit(), 
 																	   DesignElement.SAMPLING_RATE_IN_MS);
 				}
