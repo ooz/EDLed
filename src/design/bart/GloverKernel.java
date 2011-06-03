@@ -11,7 +11,7 @@ public class GloverKernel extends DesignKernel {
 	 * Parameter class.
 	 */
 	public static class GloverParams {
-		public int maxLengthHrfInMs; // must be positive
+		public int maxLengthHrfInMs; // overallWidth must be positive
 		public double peak1; //fka a1 - 6
 		public double scale1; //fka b1 - 0.9
 		public double peak2; // fka a2 - 12
@@ -44,8 +44,8 @@ public class GloverKernel extends DesignKernel {
 	double scaleTimeUnit;
 	
 	public GloverKernel(final GloverParams gammaParams, 
-							  final double numberSamplesForInit, 
-							  final double samplingRate) {
+						final double numberSamplesForInit, 
+						final double samplingRate) {
 		if (gammaParams == null
 			|| numberSamplesForInit < 0.0
 			|| samplingRate < 0.0) {
@@ -167,6 +167,8 @@ public class GloverKernel extends DesignKernel {
 	    if (x < 0.0 || x > 50.0) {
 	        return 0.0;
 	    }
+	    
+	    System.out.println("GloverKernel.getGammaValue: x=" + x + " scaleTimeUnit=" + scaleTimeUnit);
 	    
 		double peak1 = params.peak1 * scaleTimeUnit;
 		double peak2 = params.peak2 * scaleTimeUnit;

@@ -11,6 +11,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
 import design.bart.DesignElement;
+import design.bart.DoubleGammaKernel;
 import edled.Application;
 import edled.core.Model;
 import edled.plugin.Plugin;
@@ -67,6 +68,15 @@ public class DesignPlugin implements Plugin {
 		Configuration config = Configuration.getInstance();
 		File mapFile = new File(config.resolveVariables("$PLUGIN_DIR") + Configuration.FILE_SEPARATOR + getQualifiedName() + ".map");
 		this.nodeMapper = ReplacementManager.createFrom(mapFile);
+		
+		// TODO: Test-Output - remove!!
+//		System.out.println("Test-Output of gamma function in design.DesignPlugin:");
+//		DoubleGammaKernel doubleGamma = new DoubleGammaKernel(new DoubleGammaKernel.GammaParams(60000, false));
+//		float[][] gammaFct = doubleGamma.plotGammaWithDerivs(2);
+//		for (int i = 0; i < gammaFct.length; i++) {
+//			System.out.println(i + "\t" + gammaFct[i][0] + "\t" + gammaFct[i][1] + "\t" + gammaFct[i][1 + 1] + "\t" + gammaFct[i][1 + 2]);
+//		}
+		// Test-Output end
 	}
 
 	@Override

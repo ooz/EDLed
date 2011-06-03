@@ -11,7 +11,7 @@ public abstract class DesignKernel {
 	}
 	
 	public static class GeneralGammaParams {
-		public int maxLengthHrfInMs; // unsigned int
+		public double maxLengthHrfInMs; // unsigned int
 		public double peak1;
 		public double scale1;
 		public double peak2;
