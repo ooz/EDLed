@@ -25,9 +25,6 @@ public class OrthogonalityView extends JPanel implements Observer, DesignElement
 	
 	/** */
 	private static final long serialVersionUID = 1L;
-
-	/** Name of the view (e.g. used as the tab label) */
-	public static final String DISPLAY_NAME = "Orthogonality";
 	
 	private static final int TOP_PADDING = DesignViewConstants.TOP_PADDING;
 	private static final int TOP_CAPTION_PADDING = DesignViewConstants.TOP_CAPTION_PADDING;

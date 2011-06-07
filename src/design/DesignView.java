@@ -27,7 +27,8 @@ public class DesignView extends JPanel implements DesignElementReceiver {
 	private final ConvolutionView convolutionView;
 	/** Orthogonality view. */
 	private final OrthogonalityView orthogonalityView;
-//	private final HRFView hrfView;
+	/** HRF view. */
+	private final HRFView hrfView;
 	
 	/**
 	 * Constructor.
@@ -42,8 +43,10 @@ public class DesignView extends JPanel implements DesignElementReceiver {
 		this.tabs = new JTabbedPane();
 		this.convolutionView = new ConvolutionView(controller.getModel().getDesign());
 		this.orthogonalityView = new OrthogonalityView(controller.getModel().getDesign());
-		this.tabs.addTab(ConvolutionView.DISPLAY_NAME, this.convolutionView);
-		this.tabs.addTab(OrthogonalityView.DISPLAY_NAME, this.orthogonalityView);
+		this.hrfView = new HRFView();
+		this.tabs.addTab(DesignViewConstants.CONVOLUTION_VIEW_NAME, this.convolutionView);
+		this.tabs.addTab(DesignViewConstants.ORTHOGONALITY_VIEW_NAME, this.orthogonalityView);
+		this.tabs.addTab(DesignViewConstants.HRF_VIEW_NAME, this.hrfView);
 		
 		add(this.tabs, BorderLayout.CENTER);
 	}

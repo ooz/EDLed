@@ -26,9 +26,6 @@ public class ConvolutionView extends JPanel implements Observer, DesignElementRe
 	/** */
 	private static final long serialVersionUID = 1L;
 	
-	/** Name of the view (e.g. used as the tab label) */
-	public static final String DISPLAY_NAME = "Convolution";
-	
 	/** Number of timesteps per pixel while rendering the convolution data. */
 	private static final double TIMESTEPS_PER_PIXEL = 0.5;
 	/** Visual column (regressor) width. */

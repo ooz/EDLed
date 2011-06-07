@@ -21,4 +21,13 @@ public class DesignViewConstants {
 	/* Fonts. */
 	/** The font to use for captions. */
 	public static final Font CAPTION_FONT = new Font("SansSerif", Font.PLAIN, 12);
+	
+	/* Tab names. */
+	/** Text of the convolution view tab label. */
+	public static final String CONVOLUTION_VIEW_NAME = "Convolution";
+	/** Text of the orthogonality view tab label. */
+	public static final String ORTHOGONALITY_VIEW_NAME = "Orthogonality";
+	/** Text of the HRF view tab label. */
+	public static final String HRF_VIEW_NAME = "HRF";
+	
 }
