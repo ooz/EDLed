@@ -132,7 +132,7 @@ public class DoubleGammaKernel extends DesignKernel {
 	        }
 	        // TODO: implement
 	        gammaFct = getGammaValue(x, t0);
-	        gammaDeriv1 = 1.0;// getGammaDeriv1Value(x, t0);
+	        gammaDeriv1 = getGammaDeriv1Value(x, t0);
 	        gammaDeriv2 = 2.0;// getGammaDeriv2Value(x, t0);
 			
 	        dest[j][0] = (float) x;
@@ -155,7 +155,7 @@ public class DoubleGammaKernel extends DesignKernel {
 			return 0.0;
 		}
 		
-		System.out.println("DoubleGammaKernel.getGammaValue: x=" + x + " scaleTimeUnit=" + scaleTimeUnit);
+//		System.out.println("DoubleGammaKernel.getGammaValue: x=" + x + " scaleTimeUnit=" + scaleTimeUnit);
 		
 		double A1 = this.params.tPeak1  * this.scaleTimeUnit;
 		double W1 = this.params.mWidth1 * this.scaleTimeUnit;
@@ -168,6 +168,33 @@ public class DoubleGammaKernel extends DesignKernel {
 	           * Math.exp((x - A1) / -(Math.pow(W1, 2.0) / A1 / C2 / C3)) 
 			   - K2 * Math.pow(x / A2, Math.pow(A2, 2.0) / Math.pow(W2, C1) * C2 * C3) 
 			   * Math.exp((x-A2) / -(Math.pow(W2, 2.0) / A2 / C2 / C3));
+	}
+	
+	private double getGammaDeriv1Value(final double val, final double t0) {
+		double x = (val - t0); // * this.scaleTimeUnit;// scale to s
+		if (x < 0.0 || x > 50.0) {
+			return 0.0;
+		}
+		
+		double A1 = this.params.tPeak1  * this.scaleTimeUnit;
+		double W1 = this.params.mWidth1 * this.scaleTimeUnit;
+		double K1 = this.params.scale1;
+		double A2 = this.params.tPeak2  * this.scaleTimeUnit;
+		double W2 = this.params.mWidth2 * this.scaleTimeUnit;
+		double K2 = this.params.scale2;
+		
+		return (A2 * C2 * C3 * K2 
+				* Math.exp((A2 * C2 * C3 * (A2 - x)) / Math.pow(W2, 2.0))
+				* Math.pow((x / A2), ((Math.pow(A2, 2.0) * C2 * C3) / Math.pow(W2, C1))))
+			   / Math.pow(W2, 2.0) 
+			   - (A1 * C2 * C3 * K1 
+			      * Math.exp((A1 * C2 * C3 * (A1 - x)) / Math.pow(W1, 2.0)) 
+			      * Math.pow((x / A1), ((Math.pow(A1, 2.0) * C2 * C3) / Math.pow(W1, C1)))) 
+			   / Math.pow(W1, 2.0) 
+			   + (A1 * C2 * C3 * K1 * Math.exp((A1 * C2 * C3 * (A1 - x)) / Math.pow(W1, 2.0)) * Math.pow((x/A1), ((Math.pow(A1, 2.0) * C2 * C3) / Math.pow(W1, C1) - 1)))
+			   / Math.pow(W1, C1) 
+			   - (A2 * C2 * C3 * K2 * Math.exp((A2 * C2 * C3 * (A2 - x)) / Math.pow(W2, 2.0)) * Math.pow((x / A2), ((Math.pow(A2, 2.0) * C2 * C3) / Math.pow(W2, C1) - 1))) 
+			   / Math.pow(W2, C1);
 	}
 
 }
