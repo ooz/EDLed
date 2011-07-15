@@ -1,7 +1,10 @@
 package design;
 
 import java.awt.BorderLayout;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 
+import javax.swing.JCheckBox;
 import javax.swing.JPanel;
 
 import org.jfree.chart.ChartFactory;
@@ -13,7 +16,7 @@ import org.jfree.data.xy.XYSeriesCollection;
 
 import design.bart.DoubleGammaKernel;
 
-public class HRFView extends JPanel {
+public class HRFView extends JPanel implements ItemListener {
 	
 	/** */
 	private static final long serialVersionUID = 224325403482033601L;
@@ -22,60 +25,25 @@ public class HRFView extends JPanel {
 	private static final int SERIES_COUNT = 3;
 	
 	float[][] gammaFunction = null;
+	XYSeriesCollection allHRFSeries = new XYSeriesCollection();
+	XYSeries hrfSeries;
+	XYSeries deriv1Series;
+	XYSeries deriv2Series;
+	
+	private JFreeChart hrfChart;
+	private JCheckBox hrfChecker;
+	private JCheckBox deriv1Checker;
+	private JCheckBox deriv2Checker;
 	
 	public HRFView() {
-		DoubleGammaKernel doubleGamma = new DoubleGammaKernel(new DoubleGammaKernel.GammaParams(60000, false));
-		this.gammaFunction = doubleGamma.plotGammaWithDerivs(2);
-		XYSeries hrfSeries = new XYSeries(new Comparable() {
-			@Override
-			public int compareTo(Object o) { return 0; }
-			@Override
-			public String toString() { return "HRF"; }
-		});
-		XYSeries deriv1Series = new XYSeries(new Comparable() {
-			@Override
-			public int compareTo(Object o) { return 0; }
-			@Override
-			public String toString() { return "1st derivative"; }
-		});
-		XYSeries deriv2Series = new XYSeries(new Comparable() {
-			@Override
-			public int compareTo(Object o) { return 0; }
-			@Override
-			public String toString() { return "2nd derivative"; }
-		});
-		
-		for (int i = 0; i < this.gammaFunction.length; i++) {
-//			System.out.println(i + "\t" + this.gammaFunction[i][0] 
-//                                 + "\t" + this.gammaFunction[i][1] 
-//                                 + "\t" + this.gammaFunction[i][1 + 1] 
-//                                 + "\t" + this.gammaFunction[i][1 + 2]);
-//			
-			hrfSeries.add(this.gammaFunction[i][0], this.gammaFunction[i][1]);
-			deriv1Series.add(this.gammaFunction[i][0], this.gammaFunction[i][2]);
-			deriv2Series.add(this.gammaFunction[i][0], this.gammaFunction[i][3]);
-		}
-		
-		XYSeriesCollection allHRFSeries = new XYSeriesCollection();
-		allHRFSeries.addSeries(hrfSeries);
-		allHRFSeries.addSeries(deriv1Series);
-		allHRFSeries.addSeries(deriv2Series);
-		
-        final JFreeChart chart = ChartFactory.createXYLineChart(
-            "HRF",
-            "Time in seconds", 
-            "Height", 
-            allHRFSeries,
-            PlotOrientation.VERTICAL,
-            true,
-            true,
-            false
-        );
-
         this.setLayout(new BorderLayout());
-        final ChartPanel chartPanel = new ChartPanel(chart);
+        createSeriesData();
+        this.allHRFSeries.addSeries(this.hrfSeries);
+    	this.hrfChart = createHRFChart();
+        final ChartPanel chartPanel = new ChartPanel(hrfChart);
 //        chartPanel.setPreferredSize(new java.awt.Dimension(500, 270));
         this.add(chartPanel, BorderLayout.CENTER);
+        this.add(createCheckBoxPanel(), BorderLayout.NORTH);
 	}
 
 //	@Override
@@ -151,8 +119,6 @@ public class HRFView extends JPanel {
 //		
 //	}
 
-}
-
 //public PieChart(String applicationTitle, String chartTitle) {
 //    super(applicationTitle);
 //    // This will create the dataset 
@@ -180,24 +146,93 @@ public class HRFView extends JPanel {
 //    
 //}
 //
-///**
-// * Creates a chart
-// */
-//private JFreeChart createChart(PieDataset dataset, String title) {
-//    
-//    JFreeChart chart = ChartFactory.createPieChart3D(
-//        title,  				// chart title
-//        dataset,                // data
-//        true,                   // include legend
-//        true,
-//        false
-//    );
-//
-//    PiePlot3D plot = (PiePlot3D) chart.getPlot();
-//    plot.setStartAngle(290);
-//    plot.setDirection(Rotation.CLOCKWISE);
-//    plot.setForegroundAlpha(0.5f);
-//    return chart;
-//    
-//}
+	
+	private JPanel createCheckBoxPanel() {
+		this.hrfChecker = new JCheckBox("HRF");
+		this.hrfChecker.setSelected(true);
+		this.deriv1Checker = new JCheckBox("1st derivative");
+		this.deriv1Checker.setSelected(false);
+		this.deriv2Checker = new JCheckBox("2nd derivative");
+		this.deriv2Checker.setSelected(false);
+		
+		addItemListenerToCheckBoxes();
+		
+		JPanel cbPanel = new JPanel();
+		cbPanel.add(this.hrfChecker);
+		cbPanel.add(this.deriv1Checker);
+		cbPanel.add(this.deriv2Checker);
+		
+		return cbPanel;
+	}
+	private void addItemListenerToCheckBoxes() {
+		this.hrfChecker.addItemListener(this);
+		this.deriv1Checker.addItemListener(this);
+		this.deriv2Checker.addItemListener(this);
+	}
+	
+	private void createSeriesData() {
+		DoubleGammaKernel doubleGamma = new DoubleGammaKernel(new DoubleGammaKernel.GammaParams(60000, false));
+		this.gammaFunction = doubleGamma.plotGammaWithDerivs(2);
+		this.hrfSeries = new XYSeries(new Comparable<Object>() {
+			@Override
+			public int compareTo(Object o) { return 0; }
+			@Override
+			public String toString()       { return "HRF"; }
+		});
+		this.deriv1Series = new XYSeries(new Comparable<Object>() {
+			@Override
+			public int compareTo(Object o) { return 0; }
+			@Override
+			public String toString()       { return "1st derivative"; }
+		});
+		this.deriv2Series = new XYSeries(new Comparable<Object>() {
+			@Override
+			public int compareTo(Object o) { return 0; }
+			@Override
+			public String toString()       { return "2nd derivative"; }
+		});
+		
+		for (int i = 0; i < this.gammaFunction.length; i++) {
+	//		System.out.println(i + "\t" + this.gammaFunction[i][0] 
+	//                             + "\t" + this.gammaFunction[i][1] 
+	//                             + "\t" + this.gammaFunction[i][1 + 1] 
+	//                             + "\t" + this.gammaFunction[i][1 + 2]);
+	//		
+			hrfSeries.add(this.gammaFunction[i][0], this.gammaFunction[i][1]);
+			deriv1Series.add(this.gammaFunction[i][0], this.gammaFunction[i][2]);
+			deriv2Series.add(this.gammaFunction[i][0], this.gammaFunction[i][3]);
+		}
+	}
+
+	private JFreeChart createHRFChart() {
+	    return ChartFactory.createXYLineChart(
+	        "HRF",
+	        "Time in seconds", 
+	        "Height", 
+	        allHRFSeries,
+	        PlotOrientation.VERTICAL,
+	        true,
+	        true,
+	        false
+	    );
+	}
+
+	@Override
+	public void itemStateChanged(ItemEvent e) {
+		this.allHRFSeries.addSeries(this.hrfSeries);
+		this.allHRFSeries.addSeries(this.deriv1Series);
+		this.allHRFSeries.addSeries(this.deriv2Series);
+		
+		this.allHRFSeries.removeAllSeries();
+		if (this.hrfChecker.isSelected()) {
+			this.allHRFSeries.addSeries(this.hrfSeries);
+		}
+		if (this.deriv1Checker.isSelected()) {
+			this.allHRFSeries.addSeries(this.deriv1Series);
+		}
+		if (this.deriv2Checker.isSelected()) {
+			this.allHRFSeries.addSeries(this.deriv2Series);
+		}
+	}
+}
 
