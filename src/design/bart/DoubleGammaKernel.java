@@ -97,7 +97,9 @@ public class DoubleGammaKernel extends DesignKernel {
 	private final GammaParams params;
 	private final double scaleTimeUnit;
 	
-	public DoubleGammaKernel(final GammaParams params) {
+	public DoubleGammaKernel(final String id,
+							 final GammaParams params) {
+		super(id);
 		this.params = params;
 		
 		if (this.params.timeUnit == DesignKernelTimeUnit.KERNEL_TIME_MS) {

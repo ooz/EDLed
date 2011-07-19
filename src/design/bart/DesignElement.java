@@ -2,6 +2,7 @@ package design.bart;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Observable;
 
 import org.apache.log4j.Logger;
@@ -9,9 +10,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import design.bart.DesignKernel.DesignKernelTimeUnit;
-import design.bart.GloverKernel.GloverParams;
-
+import design.KernelFormatter;
 import edled.xml.XMLUtility;
 import flanagan.complex.Complex;
 import flanagan.math.FourierTransform;
@@ -101,6 +100,10 @@ public class DesignElement extends Observable {
 	private long numberSamplesForInit = 0; 		// unsigned long
 //	private long numberSamplesNeededForExp = 0; // unsigned long
 	private double[] timeOfRepetitionStartInMs;
+	
+	/** Reference functions mapping from function ID to kernel object. */
+	Map<String, DoubleGammaKernel> gammaKernels;
+	Map<String, GloverKernel> gloverKernels;
 
 	/** Generated/resulting design */
 	private float[][] regressorValues = new float[0][0];
@@ -173,8 +176,11 @@ public class DesignElement extends Observable {
 		this.numberSamplesForInit = numberSamplesForInit;
 		
 		// Fetch reference functions (gGamma/gloverKernel)
-		NodeList gloverKernelNodes = ((Element) refFctsNode).getElementsByTagName("gloverKernel");
-		NodeList gammaKernelNodes = ((Element) refFctsNode).getElementsByTagName("dGamma");
+		KernelFormatter kernelFormatter = new KernelFormatter();
+		this.gammaKernels = kernelFormatter.createGammaKernels(refFctsNode);
+		this.gloverKernels = kernelFormatter.createGloverKernels(refFctsNode, 
+															     this.getNumberSamplesForInit());
+		
 //		int nrRefFcts = gloverKernelNodes.getLength() + gammaKernelNodes.getLength();
 		
 		List<Regressor> regressorList = new LinkedList<Regressor>();
@@ -225,40 +231,10 @@ public class DesignElement extends Observable {
 			// TODO skipped timeUnit check!
 			LOGGER.debug("DesignElement creation: Skipped timeUnit check.");
 			
-			for (int refNr = 0; refNr < gloverKernelNodes.getLength(); refNr++) {
-				Element gloverKernelElem = (Element) gloverKernelNodes.item(refNr);
-				String refFctID = gloverKernelElem.getAttribute("refFctID");
-				if (!refFctID.equals("") && hrfKernelName.equals(refFctID)) {
-					int overallWidth = Integer.parseInt(XMLUtility.getNodeValue(gloverKernelElem.getElementsByTagName("overallWidth").item(0)));
-					double peak1 = Double.parseDouble(XMLUtility.getNodeValue(gloverKernelElem.getElementsByTagName("tPeak1").item(0)));
-					double scale1 = Double.parseDouble(XMLUtility.getNodeValue(gloverKernelElem.getElementsByTagName("tPeak1Scale").item(0)));
-					double peak2 = Double.parseDouble(XMLUtility.getNodeValue(gloverKernelElem.getElementsByTagName("tPeak2").item(0)));
-					double scale2 = Double.parseDouble(XMLUtility.getNodeValue(gloverKernelElem.getElementsByTagName("tPeak2Scale").item(0)));
-					double offset = Double.parseDouble(XMLUtility.getNodeValue(gloverKernelElem.getElementsByTagName("offset").item(0)));
-					double ratioTPeaks = Double.parseDouble(XMLUtility.getNodeValue(gloverKernelElem.getElementsByTagName("ratioTPeaks").item(0)));
-					double heightScale = Double.parseDouble(XMLUtility.getNodeValue(gloverKernelElem.getElementsByTagName("heightScale").item(0)));
-					
-					GloverParams params = new GloverParams(overallWidth, 
-														   peak1, 
-														   scale1, 
-														   peak2, 
-														   scale2, 
-														   offset, 
-														   ratioTPeaks, 
-														   heightScale, 
-														   DesignKernelTimeUnit.KERNEL_TIME_MS);
-					regressor.regConvolKernel = new GloverKernel(params, 
-																	   this.getNumberSamplesForInit(), 
-																	   DesignElement.SAMPLING_RATE_IN_MS);
-				}
-			} 
-			for (int refNr = 0; refNr < gammaKernelNodes.getLength(); refNr++) {
-				Element gammaKernelElem = (Element) gammaKernelNodes.item(refNr);
-				String refFctID = gammaKernelElem.getAttribute("refFctID");
-				if (!refFctID.equals("") && hrfKernelName.equals(refFctID)) {
-					// TODO implement!
-					LOGGER.warn("Tried to use a gamma kernel. Feature is not yet implemented!");
-				}
+			if (gammaKernels.get(hrfKernelName) != null) {
+				regressor.regConvolKernel = this.gammaKernels.get(hrfKernelName);
+			} else {
+				regressor.regConvolKernel = this.gloverKernels.get(hrfKernelName);
 			}
 			
 			regressorList.add(regressor);
@@ -630,4 +606,19 @@ public class DesignElement extends Observable {
 	
 	public FourierTransform[] getFftPlanForward() { return this.fftPlanForward; }
 	public FourierTransform[] getFftPlanInverse() { return this.fftPlanInverse; }
+	
+	public List<DesignKernel> getGammaKernels() {
+		List<DesignKernel> kernels = new LinkedList<DesignKernel>();
+		for (String kernelName : this.gammaKernels.keySet()) {
+			kernels.add(this.gammaKernels.get(kernelName));
+		}
+		return kernels; 
+	}
+	public List<DesignKernel> getGloverKernels() {
+		List<DesignKernel> kernels = new LinkedList<DesignKernel>();
+		for (String kernelName : this.gloverKernels.keySet()) {
+			kernels.add(this.gloverKernels.get(kernelName));
+		}
+		return kernels; 
+	}
 }

@@ -43,9 +43,11 @@ public class GloverKernel extends DesignKernel {
 	double samplingRateInMs; // unsigned long
 	double scaleTimeUnit;
 	
-	public GloverKernel(final GloverParams gammaParams, 
+	public GloverKernel(final String id,
+						final GloverParams gammaParams, 
 						final double numberSamplesForInit, 
 						final double samplingRate) {
+		super(id);
 		if (gammaParams == null
 			|| numberSamplesForInit < 0.0
 			|| samplingRate < 0.0) {
@@ -64,10 +66,6 @@ public class GloverKernel extends DesignKernel {
 		
 		generateGammaKernel();
 	}
-	
-//	public DesignGloverKernel(final GeneralGammaParams gammaParams) {
-//
-//	}
 	
 	private void generateGammaKernel() {
 		// unsigned long
@@ -163,7 +161,8 @@ public class GloverKernel extends DesignKernel {
 	 */
 	private double getGammaValue(final double val, 
 								 final double t0) {
-		double x = (val - t0) * this.scaleTimeUnit;// scale to s
+		// TODO fix scaling
+		double x = (val - t0); // * this.scaleTimeUnit;// scale to s
 	    if (x < 0.0 || x > 50.0) {
 	        return 0.0;
 	    }
@@ -192,7 +191,8 @@ public class GloverKernel extends DesignKernel {
 	 */
 	private double getGammaDeriv1Value(final double val,
 									   final double t0) {
-		double x = (val - t0) * scaleTimeUnit;
+		// TODO fix scaling
+		double x = (val - t0); // * scaleTimeUnit;
 	    if (x < 0.0 || x > 50.0) {
 	        return 0.0;
 	    }
@@ -224,7 +224,8 @@ public class GloverKernel extends DesignKernel {
 	 */
 	private double getGammaDeriv2Value(final double val, 
 									   final double t0) {
-		double x = (val - t0) * scaleTimeUnit;
+		// TODO fix scaling
+		double x = (val - t0); // * scaleTimeUnit;
 	    if (x < 0.0 || x > 50.0) {
 	        return 0.0;
 	    }
