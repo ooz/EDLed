@@ -44,7 +44,7 @@ public class DesignPlugin implements Plugin {
 	/** Short description of the plugin. */
 	private static final String DESCRIPTION = "Plugin for graphical display of fMRI design data like regressors, HRF, etc.";
 	/** Version of the plugin. */
-	private static final String VERSION = "0.1.0";
+	private static final String VERSION = "0.2.0";
 	
 	/** Root controller of the main application. */
 	private Application appController = null;

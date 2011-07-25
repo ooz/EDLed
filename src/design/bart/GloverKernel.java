@@ -162,7 +162,7 @@ public class GloverKernel extends DesignKernel {
 	private double getGammaValue(final double val, 
 								 final double t0) {
 		// TODO fix scaling
-		double x = (val - t0); // * this.scaleTimeUnit;// scale to s
+		double x = (val - t0) * this.scaleTimeUnit;// scale to s
 	    if (x < 0.0 || x > 50.0) {
 	        return 0.0;
 	    }
@@ -192,7 +192,7 @@ public class GloverKernel extends DesignKernel {
 	private double getGammaDeriv1Value(final double val,
 									   final double t0) {
 		// TODO fix scaling
-		double x = (val - t0); // * scaleTimeUnit;
+		double x = (val - t0) * scaleTimeUnit;
 	    if (x < 0.0 || x > 50.0) {
 	        return 0.0;
 	    }
@@ -225,7 +225,7 @@ public class GloverKernel extends DesignKernel {
 	private double getGammaDeriv2Value(final double val, 
 									   final double t0) {
 		// TODO fix scaling
-		double x = (val - t0); // * scaleTimeUnit;
+		double x = (val - t0) * scaleTimeUnit;
 	    if (x < 0.0 || x > 50.0) {
 	        return 0.0;
 	    }
@@ -252,4 +252,157 @@ public class GloverKernel extends DesignKernel {
 	    
 	    return gammaFct;
 	}
+	
+	// TODO: remove once scaling issues with glover kernel are resolved
+	private static final double HEIGHT_SCALE_HACK = 20.0;
+	public float[][] plotGammaWithDerivsHack(final int derivs) {
+		double gammaFct;
+	    double gammaDeriv1;
+	    double gammaDeriv2;
+	    double t0 = 0.0;
+	    double step = 0.2;
+	    
+	    int ncols = (int) (28.0 / step);
+	    int nrows = derivs + 2;
+	    
+	    float[][] dest = new float[ncols][nrows];
+	    for (int col = 0; col < ncols; col++) {
+	        for (int row = 0; row < nrows; row++) {
+	            dest[col][row] = 0.0f;
+	        }
+	    }
+	    
+	    int j = 0;
+	    for (double x = 0.0; x < 28.0; x += step) {
+	        if (j >= ncols) {
+	            break;
+	        }
+	        gammaFct = getGammaValueHack(x, t0);
+	        gammaDeriv1 = getGammaDeriv1ValueHack(x, t0);
+	        gammaDeriv2 = getGammaDeriv2ValueHack(x, t0);
+			
+	        dest[j][0] = (float) x;
+	        dest[j][1] = (float) gammaFct;
+	        if (derivs > 0) {
+	            dest[j][2] = (float) gammaDeriv1;
+	        }
+	        if (derivs > 1) {	
+	            dest[j][3] = (float) gammaDeriv2;
+	        }
+	        j++;
+	    }
+	    
+	    return dest;
+	}
+	
+	private double getGammaValueHack(final double val, final double t0) {
+		double x = val - t0;
+		if (x < 0.0 || x > 50.0) {
+			return 0.0;
+		}
+
+		System.out.println("GloverKernel.getGammaValue: x=" + x
+				+ " scaleTimeUnit=" + scaleTimeUnit);
+
+		double peak1 = params.peak1 * scaleTimeUnit;
+		double peak2 = params.peak2 * scaleTimeUnit;
+		double d1 = peak1 * params.scale1;
+		double d2 = peak2 * params.scale2;
+
+		double overshootFct = Math.pow(x / d1, peak1)
+				* Math.exp(-(x - d1) / params.scale1);
+		double undershootFct = Math.pow(x / d2, peak2)
+				* Math.exp(-(x - d2) / params.scale2);
+		double gammaFct = overshootFct - params.relationP1P2 * undershootFct;
+		gammaFct /= params.heightScale;
+
+		return gammaFct * HEIGHT_SCALE_HACK;
+	}
+
+	/**
+	 * First derivative.
+	 * 
+	 * @param val
+	 * @param t0
+	 *            Offset.
+	 * @return
+	 */
+	private double getGammaDeriv1ValueHack(final double val, final double t0) {
+		double x = val - t0;
+		if (x < 0.0 || x > 50.0) {
+			return 0.0;
+		}
+
+		double peak1 = params.peak1 * scaleTimeUnit;
+		double peak2 = params.peak2 * scaleTimeUnit;
+		double d1 = peak1 * params.scale1;
+		double d2 = peak2 * params.scale2;
+
+		double overshootFct = Math.pow(d1, -peak1)
+				* peak1
+				* Math.pow(x, (peak1 - 1.0))
+				* Math.exp(-(x - d1) / params.scale1)
+				- (Math.pow((x / d1), peak1) * Math.exp(-(x - d1)
+						/ params.scale1)) / params.scale1;
+
+		double undershootFct = Math.pow(d2, -peak2)
+				* peak2
+				* Math.pow(x, (peak2 - 1.0))
+				* Math.exp(-(x - d2) / params.scale2)
+				- (Math.pow((x / d2), peak2) * Math.exp(-(x - d2)
+						/ params.scale2)) / params.scale2;
+
+		double gammFct = overshootFct - params.relationP1P2 * undershootFct;
+		gammFct /= params.heightScale;
+
+		return gammFct * HEIGHT_SCALE_HACK;
+	}
+
+	/**
+	 * Second derivative.
+	 * 
+	 * @param val
+	 * @param t0
+	 * @return
+	 */
+	private double getGammaDeriv2ValueHack(final double val, final double t0) {
+		double x = val - t0;
+		if (x < 0.0 || x > 50.0) {
+			return 0.0;
+		}
+
+		double peak1 = params.peak1 * scaleTimeUnit;
+		double peak2 = params.peak2 * scaleTimeUnit;
+		double d1 = peak1 * params.scale1;
+		double d2 = peak2 * params.scale2;
+
+		double overshootFct1 = Math.pow(d1, -peak1) * peak1 * (peak1 - 1)
+				* Math.pow(x, peak1 - 2) * Math.exp(-(x - d1) / params.scale1)
+				- Math.pow(d1, -peak1) * peak1 * Math.pow(x, (peak1 - 1))
+				* Math.exp(-(x - d1) / params.scale1) / params.scale1;
+
+		double overshootFct2 = Math.pow(d1, -peak1) * peak1
+				* Math.pow(x, peak1 - 1) * Math.exp(-(x - d1) / params.scale1)
+				/ params.scale1 - Math.pow((x / d1), peak1)
+				* Math.exp(-(x - d1) / params.scale1)
+				/ (params.scale1 * params.scale1);
+
+		double undershootFct1 = Math.pow(d2, -peak2) * peak2 * (peak2 - 1)
+				* Math.pow(x, peak2 - 2) * Math.exp(-(x - d2) / params.scale2)
+				- Math.pow(d2, -peak2) * peak2 * Math.pow(x, (peak2 - 1))
+				* Math.exp(-(x - d2) / params.scale2) / params.scale2;
+
+		double undershootFct2 = Math.pow(d2, -peak2) * peak2
+				* Math.pow(x, peak2 - 1) * Math.exp(-(x - d2) / params.scale2)
+				/ params.scale2 - Math.pow((x / d2), peak2)
+				* Math.exp(-(x - d2) / params.scale2)
+				/ (params.scale2 * params.scale2);
+
+		double gammaFct = (overshootFct1 - overshootFct2) - params.relationP1P2
+				* (undershootFct1 - undershootFct2);
+		gammaFct /= params.heightScale;
+
+		return gammaFct * HEIGHT_SCALE_HACK;
+	}
+	// TODO: hack end, remove every
 }
