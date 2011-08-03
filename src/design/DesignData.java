@@ -1,5 +1,7 @@
 package design;
 
+import java.util.Observable;
+
 import design.bart.DesignElement;
 
 /**
@@ -7,7 +9,7 @@ import design.bart.DesignElement;
  * 
  * @author Oliver Zscheyge
  */
-public class DesignData {
+public class DesignData extends Observable {
 	
 	/** The current DesignElement containing most/all of the design data. */
 	private DesignElement design;

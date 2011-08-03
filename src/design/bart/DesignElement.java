@@ -117,8 +117,6 @@ public class DesignElement extends Observable {
 	private FourierTransform[] fftPlanForward;
 	private FourierTransform[] fftPlanInverse;
 	
-	
-	
 	/* ===== Constructors ===== */
 	public DesignElement(final Node paradigmNode,
 						 final Node trNode,

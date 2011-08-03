@@ -55,10 +55,11 @@ public class HRFView extends JPanel implements ItemListener, DesignElementReceiv
 	 */
 	public HRFView(final DesignElement design) {
         this.setLayout(new BorderLayout());
-    	this.hrfChart = createHRFChart();
-        final ChartPanel chartPanel = new ChartPanel(hrfChart);
-//        chartPanel.setPreferredSize(new java.awt.Dimension(500, 270));
+
+        this.hrfChart = createHRFChart();
+    	final ChartPanel chartPanel = new ChartPanel(hrfChart);
         this.add(chartPanel, BorderLayout.CENTER);
+        
         register(design);
 	}
 	
@@ -82,8 +83,14 @@ public class HRFView extends JPanel implements ItemListener, DesignElementReceiv
 //		DoubleGammaKernel doubleGamma = new DoubleGammaKernel("TestKernel",
 //															  new DoubleGammaKernel.GammaParams(60000, false));
 		this.allSeries = new LinkedHashMap<String, XYSeries>();
-		fillSeriesDataWithKernels(this.design.getGammaKernels());
-		fillSeriesDataWithKernels(this.design.getGloverKernels());
+		List<DesignKernel> gammaKernels = new LinkedList<DesignKernel>();
+		List<DesignKernel> gloverKernels = new LinkedList<DesignKernel>();
+		if (this.design != null) {
+			gammaKernels = this.design.getGammaKernels();
+			gloverKernels = this.design.getGloverKernels();
+		}
+		fillSeriesDataWithKernels(gammaKernels);
+		fillSeriesDataWithKernels(gloverKernels);
 	}
 	
 	private void fillSeriesDataWithKernels(final List<DesignKernel> kernels) {
@@ -159,11 +166,10 @@ public class HRFView extends JPanel implements ItemListener, DesignElementReceiv
 	@Override
 	public void register(DesignElement design) {
 		this.design = design;
-		if (this.design != null) {
-	        createSeriesData();
-	        addCheckBoxPanel();
-	        itemStateChanged(null);
-		}
+		
+        createSeriesData();
+        addCheckBoxPanel();
+        itemStateChanged(null);
 	}
 }
 

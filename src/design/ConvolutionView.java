@@ -65,7 +65,9 @@ public class ConvolutionView extends JPanel implements Observer, DesignElementRe
 		}
 		
 		this.design = design;
-		this.design.addObserver(this);
+		if (this.design != null) {
+			this.design.addObserver(this);
+		}
 		this.update(design, design);
 	}
 	
@@ -81,24 +83,8 @@ public class ConvolutionView extends JPanel implements Observer, DesignElementRe
 		
 //		FontMetrics fontMetrics = g2D.getFontMetrics();
 		
-		g2D.setBackground(Color.BLACK);
-		g2D.setColor(Color.BLACK);
+		g2D.setPaint(Color.BLACK);
 		g2D.fillRect(0, 0, getWidth(), getHeight());
-		
-//		g2D.setColor(Color.WHITE);
-//		g2D.setBackground(Color.WHITE);
-//		
-//		int regNr = 0;
-//		for (Regressor reg : this.design.getRegressorList()) {
-//			for (Trial trial : reg.regTrialList) {
-//				g2D.fillRect(regNr * widthPerReg, 
-//							 (int) ((trial.onset / 1000.0f) * heightPerSec), 
-//							 widthPerReg, 
-//							 (int) ((trial.duration / 1000.0f) * heightPerSec));
-////				System.out.println(trial);
-//			}
-//			regNr++;
-//		}
 		
 		g2D.setPaint(Color.WHITE);
 		FontMetrics fontMetrics = g2D.getFontMetrics();

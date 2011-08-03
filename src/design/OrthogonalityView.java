@@ -64,7 +64,9 @@ public class OrthogonalityView extends JPanel implements Observer, DesignElement
 		}
 		
 		this.design = design;
-		this.design.addObserver(this);
+		if (this.design != null) {
+			this.design.addObserver(this);
+		}
 		this.update(design, design);
 	}
 	
@@ -75,6 +77,10 @@ public class OrthogonalityView extends JPanel implements Observer, DesignElement
 		// Setting up graphics.
 		Graphics2D g2D = (Graphics2D) g;
 		g2D.setFont(DesignViewConstants.CAPTION_FONT);
+		
+		g2D.setPaint(Color.BLACK);
+		g2D.fillRect(0, 0, getWidth(), getHeight());
+		
 		g2D.setStroke(new BasicStroke(1.0f));
 		g2D.setPaint(Color.WHITE);
 		
@@ -154,7 +160,11 @@ public class OrthogonalityView extends JPanel implements Observer, DesignElement
 	@Override
 	public void update(Observable o, Object arg) {
 		if (o == this.design) {
-			this.orthogonalityMatrix = this.design.computeOrthogonalityMatrix();
+			if (this.design != null) {
+				this.orthogonalityMatrix = this.design.computeOrthogonalityMatrix();
+			} else {
+				this.orthogonalityMatrix = null;
+			}
 			
 			removeAll();
 			paintComponent(getGraphics());
