@@ -110,6 +110,8 @@ public class DesignPlugin implements Plugin {
 					newDesign = new DesignElement(paradigmNode, trNode, measurementsNode, refFctsNode);
 				} catch(IllegalArgumentException e) {
 					LOGGER.warn("IllegalArgumentException while initializing DesignElement from DOM nodes.", e);
+				} catch(IndexOutOfBoundsException e) {
+					LOGGER.warn("Index out of bounds while creating design element.", e);
 				}
 				this.pluginModel.setDesign(newDesign);
 				this.pluginView.register(newDesign);
