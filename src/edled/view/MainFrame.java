@@ -303,7 +303,7 @@ public class MainFrame extends JFrame implements TreeReceiver {
 	/**
 	 * Updates the underlying models based on tab switching.
 	 */
-	private void updateAppAndPlugins() {
+	synchronized private void updateAppAndPlugins() {
 		Component selectedComp = tabbedPane.getSelectedComponent();
 		
 		if (this.previousSeletion != this.generalPanel) {
