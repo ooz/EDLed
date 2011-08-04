@@ -21,7 +21,9 @@ import design.bart.DesignElement.Regressor;
  * 
  * @author Oliver Zscheyge
  */
-public class ConvolutionView extends JPanel implements Observer, DesignElementReceiver {
+public class ConvolutionView extends JPanel 
+							 implements Observer, 
+							 			DesignElementReceiver {
 	
 	/** */
 	private static final long serialVersionUID = 1L;
@@ -77,11 +79,8 @@ public class ConvolutionView extends JPanel implements Observer, DesignElementRe
 		
 		// Setting up graphics.
 		Graphics2D g2D = (Graphics2D) g;
-//		g2D.setFont(this.captionFont);
 		g2D.setStroke(new BasicStroke(1.0f));
 		g2D.setFont(DesignViewConstants.CAPTION_FONT);
-		
-//		FontMetrics fontMetrics = g2D.getFontMetrics();
 		
 		g2D.setPaint(Color.BLACK);
 		g2D.fillRect(0, 0, getWidth(), getHeight());
@@ -196,11 +195,6 @@ public class ConvolutionView extends JPanel implements Observer, DesignElementRe
 //						  	     (int) (1 / TIMESTEPS_PER_PIXEL));
 				}
 			}
-			
-			// TODO: remove (drawing orientation test)
-	//		g2D.setBackground(Color.YELLOW);
-	//		g2D.setColor(Color.YELLOW);
-	//		g2D.fillRect(0, 0, 5, 5);
 		}
 	}
 

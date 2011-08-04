@@ -67,7 +67,6 @@ public class DesignPlugin implements Plugin {
 		Configuration config = Configuration.getInstance();
 		File mapFile = new File(config.resolveVariables("$PLUGIN_DIR") + Configuration.FILE_SEPARATOR + getQualifiedName() + ".map");
 		this.nodeMapper = ReplacementManager.createFrom(mapFile);
-		
 	}
 
 	@Override

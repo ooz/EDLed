@@ -29,5 +29,4 @@ public class DesignViewConstants {
 	public static final String ORTHOGONALITY_VIEW_NAME = "Orthogonality";
 	/** Text of the HRF view tab label. */
 	public static final String HRF_VIEW_NAME = "HRF";
-	
 }

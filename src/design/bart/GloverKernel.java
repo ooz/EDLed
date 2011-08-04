@@ -1,11 +1,15 @@
 package design.bart;
 
+import org.apache.log4j.Logger;
+
 import flanagan.complex.Complex;
 import flanagan.math.FourierTransform;
 
 
 /** From NEDesignGloverKernel.h/m */
 public class GloverKernel extends DesignKernel {
+	
+	private static final Logger LOGGER = Logger.getLogger(GloverKernel.class);
 	
 	/**
 	 * Parameter class.
@@ -167,7 +171,7 @@ public class GloverKernel extends DesignKernel {
 	        return 0.0;
 	    }
 	    
-	    System.out.println("GloverKernel.getGammaValue: x=" + x + " scaleTimeUnit=" + scaleTimeUnit);
+	    LOGGER.trace("GloverKernel.getGammaValue: x=" + x + " scaleTimeUnit=" + scaleTimeUnit);
 	    
 		double peak1 = params.peak1 * scaleTimeUnit;
 		double peak2 = params.peak2 * scaleTimeUnit;
