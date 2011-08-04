@@ -17,7 +17,7 @@ import java.util.Properties;
 import java.util.Set;
 
 import org.apache.log4j.Appender;
-import org.apache.log4j.BasicConfigurator;
+import org.apache.log4j.ConsoleAppender;
 import org.apache.log4j.FileAppender;
 import org.apache.log4j.Layout;
 import org.apache.log4j.Level;
@@ -327,6 +327,8 @@ public class Configuration {
 		Logger.getRootLogger().setLevel(Level.DEBUG);
 //		Layout layout = new SimpleLayout();
 		Layout layout = new PatternLayout("[%d{HH:mm:ss,SSS} %-5p]: %m%n");
+		Logger.getRootLogger().addAppender(new ConsoleAppender(layout, 
+															   ConsoleAppender.SYSTEM_ERR));
 		Appender fileAppender = null;
 		try {
 			// Delete oldest log if more than 20 logs are available
@@ -350,10 +352,9 @@ public class Configuration {
 			if (this.logFile != null) {
 				fileAppender = new FileAppender(layout, this.logFile.getPath());
 				Logger.getRootLogger().addAppender(fileAppender);
-			} else {
+			} /* else {
 				BasicConfigurator.configure();
-				Logger.getRootLogger().setLevel(Level.DEBUG);
-			}
+			} */
 		} catch (IOException e) {
 		}
 	}
