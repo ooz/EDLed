@@ -8,6 +8,7 @@ import java.util.List;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
 
+import org.apache.log4j.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
@@ -23,6 +24,8 @@ import edled.util.Configuration;
  * @author Oliver Zscheyge
  */
 public class StimulusPlugin implements Plugin {
+	
+	private static final Logger LOGGER = Logger.getLogger(StimulusPlugin.class);
 	
 	private static final String SCREEN_KEY = "SCREEN";
 	private static final String MEDIAOBJECTLIST_KEY = "MEDIAOBJECTLIST";
@@ -200,12 +203,11 @@ public class StimulusPlugin implements Plugin {
 				this.presentationThread.join();
 				this.presentationThread = null;
 			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				LOGGER.warn("InterruptedException while stopping the presentation.");
 			}	
 		}
 		
-		this.time = 5000;
+		this.time = 0;
 		this.pluginModel.getTimetable().resetTimetable();
 		this.pluginView.stopPresentation();
 	}
