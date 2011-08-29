@@ -301,7 +301,12 @@ public class DOMFormatter {
 		Element mediaObjListElem = (Element) mediaObjListNode;
 		NodeList mediaObjects = mediaObjListElem.getElementsByTagName("mediaObject");
 		for (int i = 0; i < mediaObjects.getLength(); i++) {
-			MediaObject mediaObj = buildMediaObjFrom(mediaObjects.item(i), relatePathsTo);
+			MediaObject mediaObj = null;
+			try {
+				mediaObj = buildMediaObjFrom(mediaObjects.item(i), relatePathsTo);
+			} catch (final NullPointerException e) {
+				mediaObj = null;
+			}
 			if (mediaObj != null) {
 				mediaObjList.addMediaObject(mediaObj);
 			}
@@ -448,15 +453,15 @@ public class DOMFormatter {
 		timetable.setTolerance(timeTolerance);
 		
 		int repeats;
-		Element designElem = (Element) timetableElem.getElementsByTagName("*").item(0);
-		if (designElem != null 
-			&& designElem.getNodeName().equals("blockStimulusDesign")) {
+		Element designElem  = (Element) timetableElem.getElementsByTagName("blockStimulusDesign").item(0);
+		if (designElem != null) {
 			try {
 				repeats = Integer.parseInt(designElem.getAttribute("repeats").trim());
 			} catch (NumberFormatException e) {
 				repeats = 1;
 			}
 		} else {
+			designElem = (Element) timetableElem.getElementsByTagName("freeStimulusDesign").item(0);
 			repeats = 1;
 		}
 		
@@ -478,26 +483,17 @@ public class DOMFormatter {
 		while (repeatCounter <= repeats
 			   && event != null) {
 			
-			Element eventElem = (Element) event;
-			long eventTime;
-			long eventDuration;
-			try {
-				eventTime = Long.parseLong(eventElem.getAttribute("time").trim());
-				eventDuration = Long.parseLong(eventElem.getAttribute("duration").trim());
-			} catch (NumberFormatException e) {
-				eventTime = 0;
-				eventDuration = 0;
-			}
-			String mediaObjID = XMLUtility.getNodeValue(eventElem.getElementsByTagName("mObjectID").item(0)).trim();
+			StimEvent parsedEvent = buildStimEventFrom(event, mediaObjList);
 			
 	        if (repeatCounter == 1
-		        && (eventTime + eventDuration) > blockDuration) {
-	        	blockDuration = eventTime + eventDuration;
+		        && (parsedEvent.time + parsedEvent.duration) > blockDuration) {
+	        	blockDuration = parsedEvent.time + parsedEvent.duration;
 	        }
 	        
-	        MediaObject mediaObj = mediaObjList.getMediaObject(mediaObjID);
-	        if (mediaObj != null) {
-	        	eventsToAdd.add(new StimEvent((((repeatCounter - 1) * timeOffset) + eventTime), eventDuration, mediaObj));
+	        if (parsedEvent.mediaObject != null) {
+	        	eventsToAdd.add(new StimEvent(((repeatCounter - 1) * timeOffset + parsedEvent.time), 
+	        								  parsedEvent.duration, 
+	        								  parsedEvent.mediaObject));
 	        }
 	        
 	        eventCounter++;
@@ -524,6 +520,25 @@ public class DOMFormatter {
 		timetable.add(eventsToAdd);
 		
 		return true;
+	}
+	
+	private StimEvent buildStimEventFrom(final Node eventNode, 
+										 final MediaObjectList mediaObjects) {
+		Element eventElem = (Element) eventNode;
+		long eventTime;
+		long eventDuration;
+		try {
+			eventTime = Long.parseLong(eventElem.getAttribute("time").trim());
+			eventDuration = Long.parseLong(eventElem.getAttribute("duration").trim());
+		} catch (NumberFormatException e) {
+			eventTime = 0;
+			eventDuration = 0;
+		}
+		
+		String mediaObjID = XMLUtility.getNodeValue(eventElem.getElementsByTagName("mObjectID").item(0)).trim();
+        MediaObject mediaObj = mediaObjects.getMediaObject(mediaObjID);
+        
+        return new StimEvent(eventTime, eventDuration, mediaObj);
 	}
 	
 }

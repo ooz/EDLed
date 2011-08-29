@@ -4,6 +4,9 @@
 ## Bug fixes ##
  * Fixed a bug that caused the presentation to stop/reset at 5 seconds instead 
    of 0 seconds.
+ * Made the plugin more robust against incomplete media object definitions.
+ * The existence of an intro element does not hide the timetable anymore.
+   (intro is no yet supported)
 
 
 
