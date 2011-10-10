@@ -344,7 +344,7 @@ public class MainFrame extends JFrame implements TreeReceiver {
 		if (fileChooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
 			File fileToLoad = fileChooser.getSelectedFile();
 			if (this.view.loadXMLFile(fileToLoad)) {
-				this.setTitle(fileToLoad.getName() + " - " + this.view.getAppName());
+				this.setTitle(fileToLoad.getPath() + " - " + this.view.getAppName());
 				this.previousSeletion = null;
 				updateAppAndPlugins();
 			} else {
