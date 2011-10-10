@@ -342,8 +342,8 @@ public class InspectorPanel extends JPanel implements TreeReceiver {
 	 * @return
 	 */
 	private Component buildCompForNode(final Node node,
-			final MetaNode metaNode,
-			final JLabel nodeLabel) {
+									   final MetaNode metaNode,
+									   final JLabel nodeLabel) {
 		InputMethodMap imp = Configuration.getInstance().getInputMethodMap();
 		NodeConstraint constraint = metaNode.getConstraint();
 		String nodeText = XMLUtility.getNodeValue(node);
@@ -357,17 +357,21 @@ public class InspectorPanel extends JPanel implements TreeReceiver {
 			directoriesOnly = true;
 			// Fall through because a directory chooser is basically a file chooser
 		case FILECHOOSER:
-			String buttonText;
-			if (nodeText.trim().equals("")) {
-				buttonText = DEFAULT_FILE_NAME;
-			} else {
-				buttonText = nodeText;
-			}
-			JButton fileChooserCaller = new JButton(buttonText);
+			JPanel filePanel = new JPanel();
+			JTextField filePathField = new JTextField(nodeText, 
+													  InspectorPanel.TEXTFIELD_WIDTH);
+			filePathField.setForeground(nodeLabel.getForeground());
+			filePathField.addKeyListener(buildTextFieldKeyListener(node, nodeLabel, filePathField));
+			JButton fileChooserCaller = new JButton(DEFAULT_FILE_NAME);
 			fileChooserCaller.addActionListener(buildFileChooserActionListener(
-					node, fileChooserCaller, directoriesOnly));
+													node, 
+													filePathField, 
+													fileChooserCaller, 
+													directoriesOnly));
 			
-			comp = fileChooserCaller;
+			filePanel.add(filePathField);
+			filePanel.add(fileChooserCaller);
+			comp = filePanel;//fileChooserCaller;
 			break;
 		case COLORCHOOSER:
 			// TODO: implement and insert break when finished! ;)
@@ -524,6 +528,7 @@ public class InspectorPanel extends JPanel implements TreeReceiver {
 	 * 
 	 * @param node	          The DOM node whose value will be changed according 
 	 * 						  to the selected file (path).
+	 * @param pathField       JTextField that displays the (editable) file path.
 	 * @param button 		  JButton that pops up the file chooser dialog when
 	 * 						  pressed (the returned action listener should be 
 	 * 						  assigned to this button). The button also shows
@@ -537,6 +542,7 @@ public class InspectorPanel extends JPanel implements TreeReceiver {
 	 * 						  selected file.
 	 */
 	private ActionListener buildFileChooserActionListener(final Node node,
+														  final JTextField pathField,
 														  final JButton button,
 														  final boolean directoriesOnly) {
 		return new ActionListener() {
@@ -574,7 +580,7 @@ public class InspectorPanel extends JPanel implements TreeReceiver {
 						relativizedPath += Configuration.FILE_SEPARATOR;
 					}
 					
-					button.setText(relativizedPath);
+					pathField.setText(relativizedPath);
 					view.setNodeValue(node, relativizedPath);
 				}
 			}
