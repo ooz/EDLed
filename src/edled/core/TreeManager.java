@@ -30,7 +30,7 @@ import edled.xml.XMLUtility;
  */
 public class TreeManager {
 	
-	private static final Logger logger = Logger.getLogger(TreeManager.class);
+	private static final Logger LOG = Logger.getLogger(TreeManager.class);
 	
 	/** Document used for node creation. */
 	private Document xmlDocument = null;
@@ -213,16 +213,16 @@ public class TreeManager {
 		if (TreeManager.nodeIDs.containsKey(id)) {
 			List<Node> idApplicants = TreeManager.nodeIDs.get(id);
 			if (!idApplicants.contains(node)) {
-//				System.out.println("Put ID applicant: " + id + " node: " + node.hashCode());
+				LOG.trace("Put ID applicant: " + id + " node: " + node.hashCode());
 				idApplicants.add(node);
-//				System.out.println(TreeManager.nodeIDs);
+				LOG.trace(TreeManager.nodeIDs);
 			}
 		} else {
-//			System.out.println("Put ID: " + id + " node: " + node.hashCode());
+			LOG.trace("Put ID: " + id + " node: " + node.hashCode());
 			List<Node> idQueue = new LinkedList<Node>();
 			idQueue.add(node);
 			TreeManager.nodeIDs.put(id, idQueue);
-//			System.out.println(TreeManager.nodeIDs);
+			LOG.trace(TreeManager.nodeIDs);
 		}
 	}
 	public static void removeID(final Node node) {
@@ -262,12 +262,12 @@ public class TreeManager {
 	public boolean mapExisting(final Node xmlNode, final MetaNode metaNode) {
 		if (xmlNode == null
 			|| metaNode == null) {
-			logger.trace("couldn't map, because at least one parameter null");
+			LOG.trace("couldn't map, because at least one parameter null");
 			return false;
 		}
 		
 		if (metaNode.getName().compareTo(xmlNode.getNodeName()) != 0) {
-			logger.trace("couldn't map, because names dont match (xml!=meta): " + xmlNode.getNodeName() + "!=" + metaNode.getName());
+			LOG.trace("couldn't map, because names dont match (xml!=meta): " + xmlNode.getNodeName() + "!=" + metaNode.getName());
 			return false;
 		}
 		
@@ -280,7 +280,7 @@ public class TreeManager {
 				int maxOccurs = constraint.getMaxOccurs();
 				if (occurs < minOccurs
 					|| (occurs > maxOccurs && maxOccurs != NodeConstraint.UNBOUNDED)) {
-					logger.trace("couldn't, because occurrences are unvalid");
+					LOG.trace("couldn't, because occurrences are unvalid");
 					return false;
 				}
 				
@@ -304,7 +304,7 @@ public class TreeManager {
 					} else if (!this.attributeWhitelist.contains(attr.getNodeName())) {
 //						xmlElem.removeAttributeNode(attr);
 						destroy(xmlNode);
-						logger.trace("Couldn't map, because unexspected attr " + attr.getNodeName() + " found");
+						LOG.trace("Couldn't map, because unexspected attr " + attr.getNodeName() + " found");
 						return false;
 					}
 					attrNr++;
@@ -355,7 +355,7 @@ public class TreeManager {
 							if (descConstraint.getMinOccurs() != 0
 								&& descendant.getParent().getKind() != MetaXMLNodeKind.CHOICE_COMPOSITOR) {
 								destroy(xmlElem);
-								logger.trace("couldn't map, because desc is not optional");
+								LOG.trace("couldn't map, because desc is not optional");
 								return false;
 							}
 							descendantNr++;
@@ -375,7 +375,7 @@ public class TreeManager {
 						NodeConstraint descConstraint = descendant.getConstraint();
 						if (descConstraint.getMinOccurs() != 0) {
 							destroy(xmlElem);
-							logger.trace("couldn't map, because remaining descs are not optional");
+							LOG.trace("couldn't map, because remaining descs are not optional");
 							return false;
 						}
 						descendantNr++;
@@ -388,7 +388,7 @@ public class TreeManager {
 					while (child != null) {
 						if (child.getNodeType() == Node.ELEMENT_NODE) {
 							destroy(xmlElem);
-							logger.trace("couldn't map, because unmapped children is left: " + child.getNodeName());
+							LOG.trace("couldn't map, because unmapped children is left: " + child.getNodeName());
 							return false;
 						}
 						
@@ -405,11 +405,11 @@ public class TreeManager {
 				TreeManager.putID(xmlElem);
 			}
 			
-			logger.trace("mapped " + xmlElem.getNodeName() + " to " + metaNode.getName());
+			LOG.trace("mapped " + xmlElem.getNodeName() + " to " + metaNode.getName());
 			return true;
 		} else {
 			destroy(xmlNode);
-			logger.trace("couldn't map, because tried to map something other than a element: " + xmlNode.getNodeName());
+			LOG.trace("couldn't map, because tried to map something other than a element: " + xmlNode.getNodeName());
 			return false;
 		}
 	}
