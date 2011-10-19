@@ -7,8 +7,10 @@
 
 ## Bug fixes ##
 
- * Removed a bug that caused an ArrayOutOfBoundsException while switching tabs 
+ * Fixed a bug that caused an ArrayOutOfBoundsException while switching tabs 
    in the view.
+ * Fixed a bug that caused the display of an ID violation when switching from
+   a plugin view to the tree view.
 
 # EDLed v1.2.0 #
 2011-04-26

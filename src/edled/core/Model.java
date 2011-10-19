@@ -661,9 +661,6 @@ public class Model {
 			DefaultMutableTreeNode treeToReplace = this.treeManager.getTreeNode(xmlToReplace);
 			int insertionIndex = treeParent.getIndex(treeToReplace);
 			this.treeModel.removeNodeFromParent(treeToReplace);
-			this.treeModel.insertNodeInto(treeReplacement, 
-		  			  					  treeParent, 
-		  			  					  insertionIndex);
 			
 			List<EDLRule> relevantRules = this.treeManager.getRelevantRules(xmlToReplace);
 			if (relevantRules != null) {
@@ -675,6 +672,10 @@ public class Model {
 			
 			checkRules(this.edlValidator.getRulesMissingParameters(this.treeManager.getRulesUsingNodes()));
 			validate(importedReplacement);
+			
+			this.treeModel.insertNodeInto(treeReplacement, 
+  					  					  treeParent, 
+  					  					  insertionIndex);
 			
 		} else {
 			// Revert replacing process.
