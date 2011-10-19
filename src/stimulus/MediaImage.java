@@ -103,7 +103,7 @@ public class MediaImage implements MediaObject {
 		try {
 			this.image = ImageIO.read(imageFile);
 		} catch (IOException e) {
-			logger.warn("Could not find/read file " + imageFile.getPath(), e);
+			logger.warn("Could not find/read file " + imageFile.getPath());
 		}
 	}
 	

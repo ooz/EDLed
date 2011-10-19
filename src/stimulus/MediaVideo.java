@@ -124,9 +124,9 @@ public class MediaVideo implements MediaObject {
 		} catch (CannotRealizeException e) {
 			logger.warn("CannotRealizeException", e);
 		} catch (MalformedURLException e) {
-			logger.warn("Could not find/read file " + videoFile.getPath(), e);
+			logger.warn("Could not find/read file " + videoFile.getPath());
 		} catch (IOException e) {
-			logger.warn("Could not find/read file " + videoFile.getPath(), e);
+			logger.warn("Could not find/read file " + videoFile.getPath());
 		}
 	}
 	
