@@ -3,6 +3,8 @@ package edled;
 import java.io.File;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 import javax.xml.validation.Schema;
@@ -61,6 +63,9 @@ public class Application implements Runnable {
 	
 	/** The XML (EDL) file that currently used by the app. */
 	private File currentXML = null;
+	
+	/** History of recently opened files. */
+	private List<File> recentFiles = new LinkedList<File>();
 	
 	public Application(final String[] args) {
 		init();
@@ -248,6 +253,13 @@ public class Application implements Runnable {
 	 */
 	public File getCurrentXMLFile() {
 		return this.currentXML;
+	}
+	
+	/**
+	 * @return List of recently opened files.
+	 */
+	public List<File> getRecentFiles() {
+		return this.recentFiles;
 	}
 	
 	/**
