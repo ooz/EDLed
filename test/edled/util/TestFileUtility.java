@@ -1,4 +1,4 @@
-package edled.core;
+package edled.util;
 
 
 import static org.junit.Assert.assertEquals;
