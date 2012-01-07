@@ -286,7 +286,7 @@ public class Configuration {
 		defaultProps.setProperty(Configuration.LOGGER_CONFIGURATION, "$CONFIG_DIR$/" + Configuration.LOGGER_CONFIG_FILE);
 		defaultProps.setProperty(Configuration.RECENT_FILES, "$CONFIG_DIR$/" + Configuration.RECENTS_FILE);
 		defaultProps.setProperty(Configuration.DOCUMENTELEMENT, "rtExperiment");
-		defaultProps.setProperty(Configuration.XSD, "$XSD_DIR$/rtExperiment_v14.xsd");
+		defaultProps.setProperty(Configuration.XSD, "$XSD_DIR$/rtExperiment_v15.xsd");
 		defaultProps.setProperty(Configuration.EDLRULES, "$EDLRULES_DIR$/edlValidation_rules.xml");
 		defaultProps.setProperty(Configuration.USE_PLUGINS, "");
 		
