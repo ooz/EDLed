@@ -45,6 +45,8 @@ public class Configuration {
 	public static final String XSD = "XSD";
 	/** Configuration key for the EDL rules file path. */
 	public static final String EDLRULES = "EDLRULES";
+	/** Configuration key for the recent files list (file path). */
+	public static final String RECENT_FILES = "RECENT_FILES";
 	/** Configuration key for the list of plugins to use (qualified names seperated by commas). */
 	private static final String USE_PLUGINS = "USE_PLUGINS";
 	
@@ -54,6 +56,9 @@ public class Configuration {
 	private static final String DEFAULTS_CONFIG_FILE = "defaults.conf";
 	/** File name for the user manipulated configuration. */
 	private static final String APPLICATION_CONFIG_FILE = "application.conf";
+	/** File name for the file containing the recently opened file paths. */
+	private static final String RECENTS_FILE = "recents.txt";
+	
 	/** File name of the file specifying alternative input methods for 
 	 *  some EDL configuration entries. */
 	private static final String INPUT_METHODS_MAP_FILE = "inputmethods.map";
@@ -279,6 +284,7 @@ public class Configuration {
 	private void writeDefaultProperties() {
 		Properties defaultProps = new Properties();
 		defaultProps.setProperty(Configuration.LOGGER_CONFIGURATION, "$CONFIG_DIR$/" + Configuration.LOGGER_CONFIG_FILE);
+		defaultProps.setProperty(Configuration.RECENT_FILES, "$CONFIG_DIR$/" + Configuration.RECENTS_FILE);
 		defaultProps.setProperty(Configuration.DOCUMENTELEMENT, "rtExperiment");
 		defaultProps.setProperty(Configuration.XSD, "$XSD_DIR$/rtExperiment_v14.xsd");
 		defaultProps.setProperty(Configuration.EDLRULES, "$EDLRULES_DIR$/edlValidation_rules.xml");

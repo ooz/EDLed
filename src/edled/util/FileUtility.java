@@ -1,9 +1,6 @@
 package edled.util;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
@@ -134,7 +131,7 @@ public class FileUtility {
 				lines.add(it.nextLine());
 			}
 		} catch (IOException e) {
-			logger.warn("I/O error related to " + file.getPath(), e);
+			logger.warn("I/O error with file " + file.getPath(), e);
 		} finally {
 			LineIterator.closeQuietly(it);
 		}
@@ -142,45 +139,50 @@ public class FileUtility {
 		return lines;
 	}
 	
+	public static void writeLines(final File file, final List<String> lines) {
+		try {
+			if (!file.exists()) { 
+				file.createNewFile();
+			}
+			FileUtils.writeLines(file, lines);
+		} catch (IOException e) {
+			logger.warn("I/O error while writing lines to file " + file.getPath(), e);
+		}
+	}
+	
 	public static Map<String, String> readMapFile(final String path) {
 		return FileUtility.readMapFile(new File(path));
 	}
+	
+	/**
+	 * Reads a map file. Ignoring empty lines or lines starting with '#'.
+	 * 
+	 * @param file File to read.
+	 * @return	   Key-value pairs of subsequent lines.
+	 */
 	public static Map<String, String> readMapFile(final File file) {
 		List<String> lines = FileUtility.lines(file);
 		Map<String, String> map = new LinkedHashMap<String, String>();
 		
-		for ( int i = 0; 
-		     (i + 1) < lines.size(); 
-		     i += 2) {
-			map.put(lines.get(i), lines.get(i + 1));
+		String key = null;
+		String val = null; 
+		
+		for (String line : lines) {
+			if (!line.startsWith("#") 
+					&& !line.trim().equals("")) {
+				if (key == null) {
+					key = line;
+				} else if (val == null) {
+					val = line;
+				} else {
+					map.put(key, val);
+					key = null;
+					val = null;
+				}
+			}
 		}
 		
 		return map;
-	}
-	/**
-	 * Reads a line from a buffered reader. Ignoring empty lines or
-	 * lines starting with '#'.
-	 * 
-	 * @param reader A BufferedReader to read from.
-	 * @return		 A String representing the read line. 
-	 * 				 Null if no line could be read.
-	 */
-	private static String read(final BufferedReader reader) {
-		String line = null;
-		try {
-			line = reader.readLine();
-			while (line != null) {
-				if (line.startsWith("#") || line.trim().equals("")) {
-					line = reader.readLine();
-				} else {
-					return line;
-				}
-			}
-		} catch (IOException e) {
-			logger.warn("I/O error!", e);
-		}
-		
-		return line;
 	}
 
 }
