@@ -1,6 +1,7 @@
 package edled;
 
 import java.io.File;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
@@ -81,6 +82,48 @@ public class Application implements Runnable {
 	}
 
 	/**
+	 * Initializes the app:
+	 * - config setup
+	 * - reading the XSD and EDLRules file
+	 */
+	private void init() {
+		this.config = Configuration.getInstance();
+		logger.info("Application initialized.");
+		
+		this.view = new View(this);
+		
+		// TODO: exception in case the document element was not found!
+		this.xsdFile = new File(this.config.getProp(Configuration.XSD));
+		if (this.xsdFile.exists()) {
+			logger.info("XSD file found.");
+		} else {
+			logger.warn("Could not find XSD file!");
+			this.view.showWarnDialog("No XSD file was found!\n" +
+					"Please correct the XSD setting in Edit > Preferences and restart the application.");
+		}
+		
+		this.edlRulesFile = new File(this.config.getProp(Configuration.EDLRULES));
+		this.edlValidator = new EDLRuleValidator(edlRulesFile);
+	}
+
+	/**
+	 * Adds all the plugins that should be loaded according the configuration.
+	 */
+	private void setupPlugins() {
+		this.plugins = new LinkedHashMap<String, Plugin>();
+		
+		PluginLoader factory = PluginLoader.newInstance();
+		for (String qualifiedPluginName : this.config.getUsedPlugins()) {
+			Plugin plugin = factory.createPlugin(this, qualifiedPluginName);
+			if (plugin != null) {
+				logger.info("Using plugin " + plugin.getQualifiedName() + " (" + plugin.getName() + ").");
+				this.plugins.put(qualifiedPluginName, plugin);
+				this.view.addPlugin(plugin);
+			}
+		}
+	}
+
+	/**
 	 * Application entry point.
 	 * 
 	 * @param args Command line arguments passed to the application.
@@ -106,46 +149,21 @@ public class Application implements Runnable {
 	}
 	
 	/**
-	 * Initializes the app:
-	 * - config setup
-	 * - reading the XSD and EDLRules file
+	 * View getter.
+	 * @return The application view.
 	 */
-	private void init() {
-		this.config = Configuration.getInstance();
-		logger.info("Application initialized.");
-		
-		this.view = new View(this);
-		
-		// TODO: exception in case the document element was not found!
-		this.xsdFile = new File(this.config.getProp(Configuration.XSD));
-		if (this.xsdFile.exists()) {
-			logger.info("XSD file found.");
-		} else {
-			logger.warn("Could not find XSD file!");
-			this.view.showWarnDialog("No XSD file was found!\n" +
-					"Please correct the XSD setting in Edit > Preferences and restart the application.");
-		}
-		
-		this.edlRulesFile = new File(this.config.getProp(Configuration.EDLRULES));
-		this.edlValidator = new EDLRuleValidator(edlRulesFile);
+	public View getView() {
+		return this.view;
 	}
-	/**
-	 * Adds all the plugins that should be loaded according the configuration.
+
+	/** 
+	 * Model getter.
+	 * @return The application model.
 	 */
-	private void setupPlugins() {
-		this.plugins = new LinkedHashMap<String, Plugin>();
-		
-		PluginLoader factory = PluginLoader.newInstance();
-		for (String qualifiedPluginName : this.config.getUsedPlugins()) {
-			Plugin plugin = factory.createPlugin(this, qualifiedPluginName);
-			if (plugin != null) {
-				logger.info("Using plugin " + plugin.getQualifiedName() + " (" + plugin.getName() + ").");
-				this.plugins.put(qualifiedPluginName, plugin);
-				this.view.addPlugin(plugin);
-			}
-		}
+	public Model getModel() {
+		return this.model;
 	}
-	
+
 	/**
 	 * Creates a new XML (EDL) document to work on.
 	 */
@@ -223,28 +241,6 @@ public class Application implements Runnable {
 		}
 	}
 	
-	//choose XSD
-	//load template
-	
-	/** 
-	 * Model getter.
-	 * @return The application model.
-	 */
-	public Model getModel() {
-		return this.model;
-	}
-	/**
-	 * View getter.
-	 * @return The application view.
-	 */
-	public View getView() {
-		return this.view;
-	}
-	
-//	public Plugin getPlugin(final String qualifiedName) {
-//		return null;
-//	}
-	
 	/**
 	 * Returns the file which is currently edited.
 	 * 
@@ -259,7 +255,7 @@ public class Application implements Runnable {
 	 * @return List of recently opened files.
 	 */
 	public List<File> getRecentFiles() {
-		return this.recentFiles;
+		return Collections.unmodifiableList(this.recentFiles);
 	}
 	
 	/**

@@ -6,10 +6,14 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.io.LineIterator;
 import org.apache.log4j.Logger;
 
 public class FileUtility {
@@ -117,28 +121,38 @@ public class FileUtility {
         }
     }
 	
+	public static List<String> lines(final String path) {
+		return FileUtility.lines(new File(path));
+	}
+	public static List<String> lines(final File file) {
+		List<String> lines = new LinkedList<String>();
+		
+		LineIterator it = null;
+		try {
+			it = FileUtils.lineIterator(file, "UTF-8");
+			while (it.hasNext()) {
+				lines.add(it.nextLine());
+			}
+		} catch (IOException e) {
+			logger.warn("I/O error related to " + file.getPath(), e);
+		} finally {
+			LineIterator.closeQuietly(it);
+		}
+		
+		return lines;
+	}
+	
 	public static Map<String, String> readMapFile(final String path) {
 		return FileUtility.readMapFile(new File(path));
 	}
 	public static Map<String, String> readMapFile(final File file) {
+		List<String> lines = FileUtility.lines(file);
 		Map<String, String> map = new LinkedHashMap<String, String>();
 		
-		try {
-			BufferedReader reader = new BufferedReader(new FileReader(file));
-			String line = read(reader);
-			while (line != null) {
-				String key = line.trim();
-				String value = read(reader).trim();
-				if (value != null) {
-					map.put(key, value);
-				}
-				line = read(reader);
-			}
-			reader.close();
-		} catch (FileNotFoundException e) {
-			logger.warn("Could not find map file at " + file.getPath(), e);
-		} catch (IOException e) {
-			logger.warn("I/O error related to " + file.getPath(), e);
+		for ( int i = 0; 
+		     (i + 1) < lines.size(); 
+		     i += 2) {
+			map.put(lines.get(i), lines.get(i + 1));
 		}
 		
 		return map;
