@@ -1,5 +1,5 @@
 # EDLed v1.3.0 #
-????-??-??
+2012-01-08
 
  * Fields that are specified to a have a File-/DirChooser now also offer a text 
    field for manual path editing
