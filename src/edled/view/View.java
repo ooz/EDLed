@@ -143,6 +143,15 @@ public class View {
 		return this.controller.getCurrentXMLFile();
 	}
 	
+	/** 
+	 * Querys the controller for the history of recently opened files.
+	 * 
+	 * @return Recently opened files as a list of paths.
+	 */
+	List<String> getRecentFiles() {
+		return this.controller.getRecentFiles();
+	}
+	
 	/**
 	 * Sets the value of a node.
 	 * 

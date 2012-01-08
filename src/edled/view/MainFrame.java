@@ -15,6 +15,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -67,6 +68,10 @@ public class MainFrame extends JFrame implements TreeReceiver {
 	
 	/** Reference to the view fascade. */
 	private View view = null;
+	
+	/** Menu list of recently opened files. */
+	private JMenu recents = new JMenu("Open Recent");
+	
 	/** Tab panel containing the generalPanel and all plugin views. */
 	private JTabbedPane tabbedPane = null;
 	/** The general/default view on the EDL/XML document. */
@@ -154,6 +159,10 @@ public class MainFrame extends JFrame implements TreeReceiver {
 		});
 		item.setAccelerator(KeyStroke.getKeyStroke('O', InputEvent.CTRL_DOWN_MASK));
 		fileMenu.add(item);
+		
+		// Open Recent
+		updateRecentsMenu();
+		fileMenu.add(this.recents);
 		
 		fileMenu.addSeparator();
 		
@@ -263,6 +272,27 @@ public class MainFrame extends JFrame implements TreeReceiver {
 		this.setJMenuBar(menubar);
 	}
 	
+	private void updateRecentsMenu() {
+		List<String> recentFiles = this.view.getRecentFiles();
+		
+		this.recents.removeAll();
+		JMenuItem item;
+		for (String path : recentFiles) {
+			item = new JMenuItem(path);
+			item.addActionListener(new ActionListener() {
+
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					JMenuItem src = (JMenuItem) e.getSource();
+					String path = src.getText();
+					loadFile(new File(path));
+				}
+				
+			});
+			this.recents.add(item);
+		}
+	}
+	
 	/**
 	 * Divides the window's visible space into the upper tabbed view containing
 	 * the general panel + all plugin views and the lower message output area.
@@ -342,16 +372,19 @@ public class MainFrame extends JFrame implements TreeReceiver {
 		}
 		
 		if (fileChooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
-			File fileToLoad = fileChooser.getSelectedFile();
-			if (this.view.loadXMLFile(fileToLoad)) {
-				this.setTitle(fileToLoad.getPath() + " - " + this.view.getAppName());
-				this.previousSeletion = null;
-				updateAppAndPlugins();
-			} else {
-				this.view.showErrorDialog("The file " 
-						                  + fileToLoad.getName() 
-						                  + " is not a valid according to the given XSD (see Menu>Edit>Preferences)!");
-			}
+			loadFile(fileChooser.getSelectedFile());
+		}
+	}
+	private void loadFile(final File fileToLoad) {
+		if (this.view.loadXMLFile(fileToLoad)) {
+			this.setTitle(fileToLoad.getPath() + " - " + this.view.getAppName());
+			this.previousSeletion = null;
+			updateRecentsMenu();
+			updateAppAndPlugins();
+		} else {
+			this.view.showErrorDialog("The file " 
+					                  + fileToLoad.getName() 
+					                  + " is not a valid according to the given XSD (see Menu>Edit>Preferences)!");
 		}
 	}
 	

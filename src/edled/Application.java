@@ -25,6 +25,7 @@ import edled.plugin.Plugin;
 import edled.plugin.PluginLoader;
 import edled.plugin.ReplacementManager;
 import edled.util.Configuration;
+import edled.util.FileUtility;
 import edled.view.View;
 import edled.xml.XMLUtility;
 
@@ -36,10 +37,13 @@ import edled.xml.XMLUtility;
 public class Application implements Runnable {
 	
 	private static final String APPLICATION_NAME = "EDLed";
-	private static final String VERSION = "1.2.0";
+	private static final String VERSION = "1.3.0-alpha";
 	private static final String AUTHOR = "Oliver Zscheyge";
 	
 	private static final Logger logger = Logger.getLogger(Application.class);
+	
+	/** Maximum number of recent files that are tracked in the history. */
+	private static final int MAX_RECENTS = 10;
 	
 	/** The application configuration. */
 	private Configuration config = null;
@@ -65,8 +69,10 @@ public class Application implements Runnable {
 	/** The XML (EDL) file that currently used by the app. */
 	private File currentXML = null;
 	
-	/** History of recently opened files. */
-	private List<File> recentFiles = new LinkedList<File>();
+	/** History of recently opened files (as file paths). */
+	private List<String> recentFiles = new LinkedList<String>();
+	/** File where the history of recent files is saved. */
+	private File historyFile = null;
 	
 	public Application(final String[] args) {
 		init();
@@ -88,6 +94,7 @@ public class Application implements Runnable {
 	 */
 	private void init() {
 		this.config = Configuration.getInstance();
+		loadRecents(); // TODO: recents can be loaded in parallel
 		logger.info("Application initialized.");
 		
 		this.view = new View(this);
@@ -120,6 +127,31 @@ public class Application implements Runnable {
 				this.plugins.put(qualifiedPluginName, plugin);
 				this.view.addPlugin(plugin);
 			}
+		}
+	}
+	
+	/**
+	 * Loads paths of recently opened files.
+	 */
+	private void loadRecents() {
+		this.historyFile = new File(this.config.getProp(Configuration.RECENT_FILES));
+		this.recentFiles = FileUtility.lines(this.historyFile); 
+	}
+	private void updateRecents(final File newFile) {
+		String path = newFile.getPath();
+		
+		if (this.recentFiles.contains(path)) {
+			this.recentFiles.remove(path);
+		}
+		this.recentFiles.add(0, path);
+		
+		while (this.recentFiles.size() > MAX_RECENTS) {
+			this.recentFiles.remove(this.recentFiles.size() - 1);
+		}
+	}
+	private void saveRecents() {
+		if (this.historyFile != null) {
+			FileUtility.writeLines(historyFile, this.recentFiles);
 		}
 	}
 
@@ -198,7 +230,8 @@ public class Application implements Runnable {
 	public void save(final File to, final boolean overwrite) {
 		XMLUtility.saveDocument(this.model.getDocument(), to);
 		XMLUtility.loadDocument(to, XMLUtility.loadSchema(this.xsdFile));
-		this.currentXML = to;
+		
+		setCurrentXMLFile(to);
 		logger.info("Saved document to " + to.getPath());
 	}
 	
@@ -229,7 +262,7 @@ public class Application implements Runnable {
 		}
 		
 		if (newModel != null) {
-			this.currentXML = from;
+			setCurrentXMLFile(from);
 			this.model = newModel;
 			this.view.setModel(this.model);
 			
@@ -251,10 +284,18 @@ public class Application implements Runnable {
 		return this.currentXML;
 	}
 	
+	private void setCurrentXMLFile(final File file) {
+		this.currentXML = file;
+		updateRecents(file);
+		saveRecents();
+	}
+	
 	/**
-	 * @return List of recently opened files.
+	 * The most recently opened file path is the first one in the list.
+	 * 
+	 * @return List of recently opened files (as paths).
 	 */
-	public List<File> getRecentFiles() {
+	public List<String> getRecentFiles() {
 		return Collections.unmodifiableList(this.recentFiles);
 	}
 	

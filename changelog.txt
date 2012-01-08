@@ -4,6 +4,7 @@
  * Fields that are specified to a have a File-/DirChooser now also offer a text 
    field for manual path editing
  * The window title now shows the full path of the active EDL file.  
+ * Recently opened files are now tracked.
 
 ## Bug fixes ##
 
