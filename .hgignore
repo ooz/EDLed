@@ -1,0 +1,8 @@
+syntax: glob
+
+#.hgignore
+bin
+build
+log
+tags
+
