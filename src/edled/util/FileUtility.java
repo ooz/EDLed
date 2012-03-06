@@ -124,16 +124,18 @@ public class FileUtility {
 	public static List<String> lines(final File file) {
 		List<String> lines = new LinkedList<String>();
 		
-		LineIterator it = null;
-		try {
-			it = FileUtils.lineIterator(file, "UTF-8");
-			while (it.hasNext()) {
-				lines.add(it.nextLine());
+		if (file.exists()) {
+			LineIterator it = null;
+			try {
+				it = FileUtils.lineIterator(file, "UTF-8");
+				while (it.hasNext()) {
+					lines.add(it.nextLine());
+				}
+			} catch (IOException e) {
+				logger.warn("I/O error with file " + file.getPath(), e);
+			} finally {
+				LineIterator.closeQuietly(it);
 			}
-		} catch (IOException e) {
-			logger.warn("I/O error with file " + file.getPath(), e);
-		} finally {
-			LineIterator.closeQuietly(it);
 		}
 		
 		return lines;
