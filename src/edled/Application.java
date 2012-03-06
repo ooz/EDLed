@@ -40,6 +40,10 @@ public class Application implements Runnable {
 	private static final String VERSION = "1.3.0";
 	private static final String AUTHOR = "Oliver Zscheyge";
 	
+	private static final String MSG_HOWTO_CORRECT_XSD = 
+			"Please correct the \"XSD\" setting in Edit > Preferences and restart the application.";
+	private static final String XSD_XSD_PATH = "$XSD_DIR$/XMLSchema.xsd";
+	
 	private static final Logger logger = Logger.getLogger(Application.class);
 	
 	/** Maximum number of recent files that are tracked in the history. */
@@ -101,16 +105,59 @@ public class Application implements Runnable {
 		
 		// TODO: exception in case the document element was not found!
 		this.xsdFile = new File(this.config.getProp(Configuration.XSD));
-		if (this.xsdFile.exists()) {
-			logger.info("XSD file found.");
-		} else {
-			logger.warn("Could not find XSD file!");
-			this.view.showWarnDialog("No XSD file was found!\n" +
-					"Please correct the XSD setting in Edit > Preferences and restart the application.");
-		}
+		validateXSD();
 		
 		this.edlRulesFile = new File(this.config.getProp(Configuration.EDLRULES));
 		this.edlValidator = new EDLRuleValidator(edlRulesFile);
+	}
+	
+	/**
+	 * Loads paths of recently opened files.
+	 */
+	private void loadRecents() {
+		this.historyFile = new File(this.config.getProp(Configuration.RECENT_FILES));
+		this.recentFiles = FileUtility.lines(this.historyFile); 
+	}
+
+	/**
+	 * Checks whether the given XSD file is existing and a valid
+	 * instance of the XML schema specification (XSD of XSDs).
+	 * 
+	 * The validation is performed in a different thread since it usually
+	 * takes 40-50 seconds.
+	 */
+	private void validateXSD() {
+		final Application self = this;
+		
+		Thread t = new Thread(new Runnable() {
+			@Override
+			public void run() {
+				if (self.xsdFile.exists()) {
+					logger.info("XSD file found.");
+					Schema xsdSchema = XMLUtility.loadSchema(new File(
+							self.config.resolveVariables(Application.XSD_XSD_PATH)));
+					if (xsdSchema == null) {
+						logger.warn("Could not find the XML schema for XSDs!");
+						self.view.showWarnDialog("Could not find the XML schema for XSDs!\n" 
+								+ "Please check your EDLed installation/reinstall EDLed!");
+					}
+					
+					Document xsdDoc = XMLUtility.loadDocument(self.xsdFile, xsdSchema);
+					if (xsdDoc == null) {
+						logger.warn("EDL XSD is not a valid XSD!");
+						self.view.showErrorDialog("The current XSD file is not valid!\n" 
+								+ Application.MSG_HOWTO_CORRECT_XSD);
+					} 
+					
+				} else {
+					logger.warn("Could not find XSD file!");
+					self.view.showWarnDialog("No XSD file was found!\n"
+							+ Application.MSG_HOWTO_CORRECT_XSD);
+				}
+			}
+		});
+		
+		t.start();
 	}
 
 	/**
@@ -130,13 +177,6 @@ public class Application implements Runnable {
 		}
 	}
 	
-	/**
-	 * Loads paths of recently opened files.
-	 */
-	private void loadRecents() {
-		this.historyFile = new File(this.config.getProp(Configuration.RECENT_FILES));
-		this.recentFiles = FileUtility.lines(this.historyFile); 
-	}
 	private void updateRecents(final File newFile) {
 		String path = newFile.getPath();
 		
