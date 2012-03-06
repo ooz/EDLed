@@ -47,8 +47,12 @@ public class Configuration {
 	public static final String EDLRULES = "EDLRULES";
 	/** Configuration key for the recent files list (file path). */
 	public static final String RECENT_FILES = "RECENT_FILES";
+	
 	/** Configuration key for the list of plugins to use (qualified names seperated by commas). */
 	private static final String USE_PLUGINS = "USE_PLUGINS";
+	
+	/** Name of the XML schema specification (XML schema XSD). */
+	public static final String XSD_XSD_FILE = "XMLSchema.xsd"; 
 	
 	/** Name of the logger configuration file. */ 
 	private static final String LOGGER_CONFIG_FILE = "logger.conf";
