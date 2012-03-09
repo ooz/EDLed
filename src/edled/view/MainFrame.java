@@ -29,10 +29,8 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
-import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.JTree;
 import javax.swing.KeyStroke;
@@ -93,7 +91,7 @@ public class MainFrame extends JFrame implements TreeReceiver {
 	/** Constructor */
 	public MainFrame(final View view, 
 					 final InspectorPanel edlInspectorPanel, 
-					 final JTextArea messageArea) {
+					 final NotificationPanel notificationPanel) {
 		
 		this.addWindowListener(new WindowAdapter() {
 			public void windowClosing(WindowEvent e) {
@@ -107,7 +105,8 @@ public class MainFrame extends JFrame implements TreeReceiver {
 		
 		setupWindow();
 		setupMenuBar();
-		setupSplitsAndTabs(edlInspectorPanel, messageArea);
+		setupSplitsAndTabs(edlInspectorPanel, 
+						   notificationPanel);
 	}
 	
 	private void closeMainWindow() {
@@ -303,7 +302,8 @@ public class MainFrame extends JFrame implements TreeReceiver {
 	 * @param messageArea		Text message output area in the lower part of
 	 * 							the window.
 	 */
-	private void setupSplitsAndTabs(final InspectorPanel edlInspectorPanel, final JTextArea messageArea) {
+	private void setupSplitsAndTabs(final InspectorPanel edlInspectorPanel,
+									final NotificationPanel notificationPanel) {
 		
 		this.tabbedPane = new JTabbedPane();
 		this.generalPanel = new GeneralPanel(edlInspectorPanel);
@@ -324,7 +324,7 @@ public class MainFrame extends JFrame implements TreeReceiver {
 //		tabbedPane.addTab("Log", logPanel);
 		JSplitPane verticalSplit = new JSplitPane(JSplitPane.VERTICAL_SPLIT,
 												  tabbedPane, 
-												  new JScrollPane(messageArea));
+												  notificationPanel);
 		verticalSplit.setResizeWeight(0.75);
 		
 		this.getContentPane().add(verticalSplit);

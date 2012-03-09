@@ -43,6 +43,8 @@ public class View {
 	private JTextArea messageArea;
 	/** The panel showing detailed information about a XML (EDL) element. */
 	private InspectorPanel edlInspectorPanel;
+	/** The area listing user notifications. */
+	private NotificationPanel notificationPanel;
 	
 	/** DateFormatter for the message time stamps. */
 	private final DateFormat dateFormatter;
@@ -68,7 +70,11 @@ public class View {
 		this.edlInspectorPanel = new InspectorPanel(this);
 		this.messageArea = new JTextArea();
 		this.messageArea.setEditable(false);
-		this.mainWindow = new MainFrame(this, this.edlInspectorPanel, this.messageArea);
+		this.notificationPanel = new NotificationPanel();
+		
+		this.mainWindow = new MainFrame(this, 
+										this.edlInspectorPanel, 
+										this.notificationPanel);
 		
 		this.mainWindow.setVisible(true);
 	}
@@ -216,8 +222,8 @@ public class View {
 	 */
 	public void showMessage(final String msg, 
 							final int msgType) {
-		synchronized (this.messageArea) {
-			this.messageArea.append(this.dateFormatter.format(new Date()) + " " + msg);
+		synchronized (this.notificationPanel) {
+			this.notificationPanel.add(this.dateFormatter.format(new Date()) + " " + msg);
 		}
 		logger.info(msg);
 	}
