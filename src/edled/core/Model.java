@@ -25,6 +25,7 @@ import org.w3c.dom.NodeList;
 import edled.core.metatree.MetaAttr;
 import edled.core.metatree.MetaNode;
 import edled.core.metatree.MetaTreeBuilder;
+import edled.core.metatree.NodeConstraint;
 import edled.core.metatree.MetaNode.MetaXMLNodeKind;
 import edled.core.validation.EDLRule;
 import edled.core.validation.EDLRuleValidator;

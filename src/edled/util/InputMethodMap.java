@@ -14,7 +14,7 @@ import org.apache.log4j.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
-import edled.core.NodeConstraint;
+import edled.core.metatree.NodeConstraint;
 import edled.xml.XSDTypeName;
 
 /**

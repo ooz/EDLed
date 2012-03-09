@@ -3,7 +3,6 @@ package edled.core.metatree;
 import java.util.List;
 import java.util.Map;
 
-import edled.core.NodeConstraint;
 
 /**
  * Interface for all nodes in the meta tree.

@@ -10,9 +10,9 @@ import java.util.regex.Pattern;
 import org.w3c.dom.Node;
 
 
-import edled.core.NodeConstraint;
 import edled.core.TreeManager;
-import edled.core.TypeRestriction;
+import edled.core.metatree.NodeConstraint;
+import edled.core.metatree.TypeRestriction;
 import edled.xml.XMLUtility;
 import edled.xml.XSDTypeName;
 

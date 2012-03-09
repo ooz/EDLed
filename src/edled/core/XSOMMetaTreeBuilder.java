@@ -38,6 +38,8 @@ import edled.core.metatree.MetaElem;
 import edled.core.metatree.MetaNode;
 import edled.core.metatree.MetaSequence;
 import edled.core.metatree.MetaTreeBuilder;
+import edled.core.metatree.NodeConstraint;
+import edled.core.metatree.TypeRestriction;
 
 /**
  * MetaTreeBuilder using the XSOM framework.

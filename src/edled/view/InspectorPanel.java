@@ -30,9 +30,9 @@ import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 
 import edled.core.ManipulationOption;
-import edled.core.NodeConstraint;
 import edled.core.ManipulationOption.ManipulationOptionKind;
 import edled.core.metatree.MetaNode;
+import edled.core.metatree.NodeConstraint;
 import edled.core.validation.EDLRule;
 import edled.core.validation.ValidationResult;
 import edled.util.Configuration;

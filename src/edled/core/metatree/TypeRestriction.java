@@ -1,4 +1,4 @@
-package edled.core;
+package edled.core.metatree;
 
 import java.util.LinkedList;
 import java.util.List;

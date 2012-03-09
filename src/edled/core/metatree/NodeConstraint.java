@@ -1,4 +1,4 @@
-package edled.core;
+package edled.core.metatree;
 
 import com.sun.xml.xsom.XSParticle;
 
@@ -27,7 +27,7 @@ public class NodeConstraint {
 	private AttributeUse use = null;
     private String appInfo = null;
 	
-	NodeConstraint() {
+	public NodeConstraint() {
 //		NodeConstraint.occurences.put(this, new MutableInteger(this.minOccurs));
 	}
 	
@@ -51,7 +51,7 @@ public class NodeConstraint {
 //		return this.node;
 //	}
 	
-	NodeConstraint initCanHaveTextContent(final boolean flag) {
+	public NodeConstraint initCanHaveTextContent(final boolean flag) {
 		if (this.canHaveTextContent == -1) {
 			if (flag) {
 				this.canHaveTextContent = 1;
@@ -78,7 +78,7 @@ public class NodeConstraint {
 //		return false;
 //	}
 	
-	NodeConstraint initTypeName(final String typeName) {
+	public NodeConstraint initTypeName(final String typeName) {
 		if (this.typeName == null) {
 			this.typeName = typeName;
 		}
@@ -96,7 +96,7 @@ public class NodeConstraint {
 		return this.typeName;
 	}
 	
-	NodeConstraint initTypeRestriction(final TypeRestriction typeRestriction) {
+	public NodeConstraint initTypeRestriction(final TypeRestriction typeRestriction) {
 		if (this.typeRestriction == null) {
 			this.typeRestriction = typeRestriction;
 		}
@@ -114,7 +114,7 @@ public class NodeConstraint {
 		return this.typeRestriction;
 	}
 	
-	NodeConstraint initMaxOccurs(final int maxOccurs) {
+	public NodeConstraint initMaxOccurs(final int maxOccurs) {
 		if (this.maxOccurs == NodeConstraint.DEFAULT_OCCURS) {
 			this.maxOccurs = maxOccurs;
 		}
@@ -125,7 +125,7 @@ public class NodeConstraint {
 		return this.maxOccurs;
 	}
 	
-	NodeConstraint initMinOccurs(final int minOccurs) {
+	public NodeConstraint initMinOccurs(final int minOccurs) {
 		if (this.minOccurs == NodeConstraint.DEFAULT_OCCURS) {
 			this.minOccurs = minOccurs;
 		}
@@ -136,7 +136,7 @@ public class NodeConstraint {
 		return this.minOccurs;
 	}
 	
-	NodeConstraint initDefaultValue(final String defaultValue) {
+	public NodeConstraint initDefaultValue(final String defaultValue) {
 		if (this.defaultValue == null) {
 			this.defaultValue = defaultValue;
 		}
@@ -154,7 +154,7 @@ public class NodeConstraint {
 		return this.defaultValue;
 	}
 	
-	NodeConstraint initFixedValue(final String fixedValue) {
+	public NodeConstraint initFixedValue(final String fixedValue) {
 		if (this.fixedValue == null) {
 			this.fixedValue = fixedValue;
 		}
@@ -191,7 +191,7 @@ public class NodeConstraint {
 //	}
 	
 	
-	NodeConstraint initAttributeUse(AttributeUse use) {
+	public NodeConstraint initAttributeUse(AttributeUse use) {
 		if (this.use == null) {
 			this.use = use;
 		}
@@ -209,7 +209,7 @@ public class NodeConstraint {
 		return this.use;
 	}
 	
-	NodeConstraint initAppInfo(String appInfo) {
+	public NodeConstraint initAppInfo(String appInfo) {
 		if (this.appInfo == null) {
 			this.appInfo = appInfo;
 		}
