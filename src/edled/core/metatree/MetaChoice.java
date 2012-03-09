@@ -1,17 +1,19 @@
-package edled.core;
+package edled.core.metatree;
 
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-public class MetaSequence implements MetaNode {
+import edled.core.NodeConstraint;
+
+public class MetaChoice implements MetaNode {
 	
 	private NodeConstraint constraint = null;
 	private MetaNode parent = null;
 	private List<MetaNode> children = null;
 	
-	public MetaSequence(final NodeConstraint constraint) {
+	public MetaChoice(final NodeConstraint constraint) {
 		this.constraint = constraint;
 		this.children = new LinkedList<MetaNode>();
 	}
@@ -28,12 +30,7 @@ public class MetaSequence implements MetaNode {
 
 	@Override
 	public MetaXMLNodeKind getKind() {
-		return MetaXMLNodeKind.SEQUENCE_COMPOSITOR;
-	}
-
-	@Override
-	public boolean isCompositor() {
-		return true;
+		return MetaXMLNodeKind.CHOICE_COMPOSITOR;
 	}
 
 	@Override
@@ -44,11 +41,6 @@ public class MetaSequence implements MetaNode {
 	@Override
 	public MetaNode getParent() {
 		return this.parent;
-	}
-	
-	@Override
-	public void setParent(final MetaNode parent) {
-		this.parent = parent;
 	}
 
 	@Override
@@ -67,12 +59,22 @@ public class MetaSequence implements MetaNode {
 			node.setParent(null);
 		}
 	}
+
+	@Override
+	public void setParent(MetaNode parent) {
+		this.parent = parent;
+	}
 	
 	@Override
 	public String toString() {
-		return "MetaXMLSequence{constraint=" + this.constraint +"}";		
+		return "MetaXMLChoice{constraint=" + this.constraint +"}";		
 	}
 
+	@Override
+	public boolean isCompositor() {
+		return true;
+	}
+	
 	@Override
 	public int getIndex(MetaNode child) {
 		return this.children.indexOf(child);
@@ -108,5 +110,5 @@ public class MetaSequence implements MetaNode {
 	public Map<String, MetaNode> getAttributes() {
 		return new LinkedHashMap<String, MetaNode>();
 	}
-	
+
 }

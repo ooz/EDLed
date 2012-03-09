@@ -32,6 +32,13 @@ import com.sun.xml.xsom.parser.AnnotationParser;
 import com.sun.xml.xsom.parser.AnnotationParserFactory;
 import com.sun.xml.xsom.parser.XSOMParser;
 
+import edled.core.metatree.MetaAttr;
+import edled.core.metatree.MetaChoice;
+import edled.core.metatree.MetaElem;
+import edled.core.metatree.MetaNode;
+import edled.core.metatree.MetaSequence;
+import edled.core.metatree.MetaTreeBuilder;
+
 /**
  * MetaTreeBuilder using the XSOM framework.
  * 

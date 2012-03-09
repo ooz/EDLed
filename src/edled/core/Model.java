@@ -4,6 +4,8 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Observable;
+import java.util.Observer;
 
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
@@ -20,7 +22,10 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 
-import edled.core.MetaNode.MetaXMLNodeKind;
+import edled.core.metatree.MetaAttr;
+import edled.core.metatree.MetaNode;
+import edled.core.metatree.MetaTreeBuilder;
+import edled.core.metatree.MetaNode.MetaXMLNodeKind;
 import edled.core.validation.EDLRule;
 import edled.core.validation.EDLRuleValidator;
 import edled.core.validation.SimpleTypeValidator;
@@ -37,7 +42,7 @@ import edled.xml.XMLUtility;
  * 
  * @author Oliver Zscheyge
  */
-public class Model {
+public class Model extends Observable implements Observer {
 	
 	private static final Logger logger = Logger.getLogger(Model.class);
 	
@@ -761,5 +766,11 @@ public class Model {
 		for (MetaNode child : metaNode.getChildren()) {
 			_printAllDistinctBaseTypes(child, distinctBaseTypes);
 		}
+	}
+
+	@Override
+	public void update(Observable o, Object arg) {
+		setChanged();
+		notifyObservers(arg);
 	}
 }

@@ -1,23 +1,21 @@
-package edled.core;
+package edled.core.metatree;
 
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-public class MetaElem implements MetaNode {
+import edled.core.NodeConstraint;
+
+public class MetaGroup implements MetaNode {
 	
-	private String name = null;
 	private NodeConstraint constraint = null;
 	private MetaNode parent = null;
 	private List<MetaNode> children = null;
-	private Map<String, MetaNode> attributes = null;
 	
-	public MetaElem(final String name, final NodeConstraint constraint) {
-		this.name = name;
+	public MetaGroup(final NodeConstraint constraint) {
 		this.constraint = constraint;
 		this.children = new LinkedList<MetaNode>();
-		this.attributes = new LinkedHashMap<String, MetaNode>();
 	}
 
 	@Override
@@ -32,12 +30,12 @@ public class MetaElem implements MetaNode {
 
 	@Override
 	public MetaXMLNodeKind getKind() {
-		return MetaXMLNodeKind.ELEMENT;
+		return MetaXMLNodeKind.GROUP_COMPOSITOR;
 	}
 
 	@Override
 	public String getName() {
-		return this.name;
+		return null;
 	}
 
 	@Override
@@ -50,40 +48,31 @@ public class MetaElem implements MetaNode {
 		if (!this.children.contains(node)
 			&& node.getKind() != MetaXMLNodeKind.ATTRIBUTE) {
 			this.children.add(node);
-		} else if (!this.attributes.containsKey(node.getName())
-				   && node.getKind() == MetaXMLNodeKind.ATTRIBUTE) {
-			this.attributes.put(node.getName(), node);
+			node.setParent(this);
 		}
-		
-		node.setParent(this);
 	}
 
 	@Override
 	public void remove(final MetaNode node) {
-		if (!this.children.contains(node)
-			&& node.getKind() != MetaXMLNodeKind.ATTRIBUTE) {
+		if (node.getKind() != MetaXMLNodeKind.ATTRIBUTE) {
 			this.children.remove(node);
-		} else if (!this.attributes.containsKey(node.getName())
-				   && node.getKind() == MetaXMLNodeKind.ATTRIBUTE) {
-			this.attributes.remove(node.getName());
+			node.setParent(null);
 		}
-		
-		node.setParent(null);
 	}
 
 	@Override
 	public void setParent(MetaNode parent) {
 		this.parent = parent;
 	}
-
+	
 	@Override
 	public String toString() {
-		return "MetaXMLElem{name=" + this.name + ", constraint=" + this.constraint +"}";		
+		return "MetaXMLGroup{constraint=" + this.constraint +"}";		
 	}
 
 	@Override
 	public boolean isCompositor() {
-		return false;
+		return true;
 	}
 	
 	@Override
@@ -119,7 +108,7 @@ public class MetaElem implements MetaNode {
 
 	@Override
 	public Map<String, MetaNode> getAttributes() {
-		return this.attributes;
+		return new LinkedHashMap<String, MetaNode>();
 	}
-	
+
 }

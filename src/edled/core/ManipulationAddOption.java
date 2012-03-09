@@ -3,6 +3,9 @@ package edled.core;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
+import edled.core.metatree.MetaAttr;
+import edled.core.metatree.MetaNode;
+
 public class ManipulationAddOption implements ManipulationOption {
 	
 //	public static final String ADD_ADDITIONAL_MSG = "Add additional"; // + "\"<elemname>\""

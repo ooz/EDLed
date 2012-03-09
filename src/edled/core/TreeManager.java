@@ -16,8 +16,9 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 
-import edled.core.MetaNode.MetaXMLNodeKind;
 import edled.core.NodeConstraint.AttributeUse;
+import edled.core.metatree.MetaNode;
+import edled.core.metatree.MetaNode.MetaXMLNodeKind;
 import edled.core.validation.EDLRule;
 import edled.core.validation.ValidationResult;
 import edled.xml.XMLUtility;

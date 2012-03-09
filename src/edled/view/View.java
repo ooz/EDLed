@@ -16,8 +16,8 @@ import org.w3c.dom.Node;
 
 import edled.Application;
 import edled.core.ManipulationOption;
-import edled.core.MetaNode;
 import edled.core.Model;
+import edled.core.metatree.MetaNode;
 import edled.core.validation.ValidationResult;
 import edled.plugin.Plugin;
 

@@ -2,6 +2,8 @@ package edled.core;
 
 import org.w3c.dom.Node;
 
+import edled.core.metatree.MetaNode;
+
 public class ManipulationChoiceOption implements ManipulationOption {
 	
 	private String description = "";

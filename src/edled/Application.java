@@ -17,9 +17,9 @@ import org.apache.log4j.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
-import edled.core.MetaTreeBuilder;
 import edled.core.Model;
 import edled.core.XSOMMetaTreeBuilder;
+import edled.core.metatree.MetaTreeBuilder;
 import edled.core.validation.EDLRuleValidator;
 import edled.plugin.Plugin;
 import edled.plugin.PluginLoader;
