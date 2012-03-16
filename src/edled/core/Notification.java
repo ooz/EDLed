@@ -5,14 +5,27 @@ import java.util.Observer;
 
 public class Notification extends Observable implements Observer {
 	
-	private final String msg;
+	public static enum NotificationKind {
+		Info,
+		Warn,
+		Error
+	}
 	
-	public Notification(final String msg) {
+	private final String msg;
+	private final NotificationKind kind;
+	
+	public Notification(final String msg,
+						final NotificationKind kind) {
 		this.msg = msg;
+		this.kind = kind;
 	}
 	
 	public String getMessage() {
 		return this.msg;
+	}
+	
+	public NotificationKind getKind() {
+		return this.kind;
 	}
 
 	@Override
