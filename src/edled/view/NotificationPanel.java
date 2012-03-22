@@ -1,26 +1,70 @@
 package edled.view;
 
+import java.awt.Adjustable;
 import java.awt.BorderLayout;
+import java.awt.event.AdjustmentEvent;
+import java.awt.event.AdjustmentListener;
 
+import javax.swing.BoxLayout;
 import javax.swing.JPanel;
+import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
 
-@SuppressWarnings("serial")
+import edled.core.Notification;
+import edled.core.Notification.NotificationKind;
+
 public class NotificationPanel extends JPanel {
 	
-	private final JTextArea txtArea = new JTextArea();
+	/** Generated. */
+	private static final long serialVersionUID = 153448051603781971L;
+	
+	private final JScrollPane scrollPane;
+	private final JScrollBar vertBar;
+	private final JPanel itemPane = new JPanel();
+	
+	/** Indicates whether the vertical scrollbar is at the lowest location. */
+	private Boolean atBottom = true;
+	/** Ignore the scrolling caused by adding NotificationItems. */
+	private Boolean justAddedIgnoreScroll = true;
 	
 	public NotificationPanel() {
 		super(new BorderLayout());
 		
-		this.txtArea.setEditable(false);
-		this.add(new JScrollPane(this.txtArea));
+		this.scrollPane = new JScrollPane(this.itemPane);
+		this.vertBar = this.scrollPane.getVerticalScrollBar();
+		this.vertBar.addAdjustmentListener(new AdjustmentListener() {
+			@Override
+			public void adjustmentValueChanged(AdjustmentEvent e) {
+				Adjustable a = e.getAdjustable();
+				
+				if (!justAddedIgnoreScroll) {
+					if (a.getValue() + a.getVisibleAmount() < a.getMaximum()) {
+						atBottom = false;
+					} else {
+						atBottom = true;
+					}
+				}
+				
+				if (atBottom) {
+					a.setValue(a.getMaximum());
+					justAddedIgnoreScroll = false;
+				}
+			}
+		});
+		
+		this.add(this.scrollPane);
+		
+		this.itemPane.setLayout(new BoxLayout(this.itemPane, BoxLayout.Y_AXIS));
 	}
 	
 	public void add(final String txt) {
-		this.txtArea.append(txt);
+		this.itemPane.add(new NotificationItem(
+							new Notification(txt, NotificationKind.Info)));
+		this.itemPane.revalidate();
+		
+		if (atBottom) {
+			justAddedIgnoreScroll = true;
+		}
 	}
-	
 
 }
