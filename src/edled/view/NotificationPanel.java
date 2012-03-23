@@ -2,6 +2,7 @@ package edled.view;
 
 import java.awt.Adjustable;
 import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.event.AdjustmentEvent;
 import java.awt.event.AdjustmentListener;
 
@@ -11,7 +12,6 @@ import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
 
 import edled.core.Notification;
-import edled.core.Notification.NotificationKind;
 
 public class NotificationPanel extends JPanel {
 	
@@ -57,14 +57,32 @@ public class NotificationPanel extends JPanel {
 		this.itemPane.setLayout(new BoxLayout(this.itemPane, BoxLayout.Y_AXIS));
 	}
 	
-	public void add(final String txt) {
-		this.itemPane.add(new NotificationItem(
-							new Notification(txt, NotificationKind.Info)));
+//	public void add(final String txt) {
+//		this.itemPane.add(new NotificationItem(
+//							this,
+//							new Notification(txt, NotificationKind.Info)));
+//		this.itemPane.revalidate();
+//		
+//		if (atBottom) {
+//			justAddedIgnoreScroll = true;
+//		}
+//	}
+	
+	public void add(final Notification n) {
+		this.itemPane.add(new NotificationItem(this, n));
+		
 		this.itemPane.revalidate();
 		
 		if (atBottom) {
 			justAddedIgnoreScroll = true;
 		}
+	}
+	
+	@Override
+	public void remove(final Component comp) {
+		this.itemPane.remove(comp);
+		this.itemPane.revalidate();
+		this.itemPane.repaint();
 	}
 
 }

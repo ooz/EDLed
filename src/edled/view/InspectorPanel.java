@@ -19,7 +19,6 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.JTree;
@@ -31,6 +30,7 @@ import org.w3c.dom.Node;
 
 import edled.core.ManipulationOption;
 import edled.core.ManipulationOption.ManipulationOptionKind;
+import edled.core.RuleViolationNotification;
 import edled.core.metatree.MetaNode;
 import edled.core.metatree.NodeConstraint;
 import edled.core.validation.EDLRule;
@@ -593,15 +593,8 @@ public class InspectorPanel extends JPanel implements TreeReceiver {
 	 * @param validationResult ValidationResult of a DOM node.
 	 */
 	private void printViolatedRules(final ValidationResult validationResult) {
-		StringBuffer compoundMsg = new StringBuffer();
 		for (EDLRule violatedRule : validationResult.getViolatedRules()) {
-			compoundMsg.append(violatedRule.getMessage() + "\n");
-		}
-		if (!validationResult.getViolatedRules().isEmpty()) {
-			this.view.showMessage(compoundMsg.toString(),
-					JOptionPane.INFORMATION_MESSAGE);
-			// this.view.showWarnDialog(compoundMsg.toString());
-			// System.out.print(compoundMsg.toString());
+			this.view.show(new RuleViolationNotification(violatedRule));
 		}
 	}
 

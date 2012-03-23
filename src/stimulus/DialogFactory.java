@@ -687,10 +687,10 @@ public class DialogFactory {
 				
 				mediaObjList.addMediaObject(new MediaText(idInput, nameInput, textInput, size, color, position));
 			} catch (NumberFormatException e) {
-				appView.showMessage("Could not add text media object: position coordinates are not valid!", JOptionPane.ERROR_MESSAGE);
+//				appView.showMessage("Could not add text media object: position coordinates are not valid!", JOptionPane.ERROR_MESSAGE);
 			}
 		} catch (NumberFormatException e) {
-			appView.showMessage("Could not add text media object: text size is no integer!", JOptionPane.ERROR_MESSAGE);
+//			appView.showMessage("Could not add text media object: text size is no integer!", JOptionPane.ERROR_MESSAGE);
 		}
 	}
 	private void addImageMediaObject(final StimulusPlugin controller,
@@ -711,7 +711,7 @@ public class DialogFactory {
 			
 			mediaObjList.addMediaObject(new MediaImage(idInput, nameInput, position, new File(filePathInput)));
 		} catch (NumberFormatException e) {
-			appView.showMessage("Could not add image media object: position coordinates are not valid!", JOptionPane.ERROR_MESSAGE);
+//			appView.showMessage("Could not add image media object: position coordinates are not valid!", JOptionPane.ERROR_MESSAGE);
 		}
 	}
 	private void addAudioMediaObject(final StimulusPlugin controller,
@@ -740,7 +740,7 @@ public class DialogFactory {
 			
 			mediaObjList.addMediaObject(new MediaVideo(idInput, nameInput, position, new File(filePathInput)));
 		} catch (NumberFormatException e) {
-			appView.showMessage("Could not add video media object: position coordinates are not valid!", JOptionPane.ERROR_MESSAGE);
+//			appView.showMessage("Could not add video media object: position coordinates are not valid!", JOptionPane.ERROR_MESSAGE);
 		}
 	}
 	
@@ -955,12 +955,12 @@ public class DialogFactory {
 							timetable.add(eventsToAdd);
 						}
 					} else {
-						controller.getApplication().getView()
-							.showMessage("Input error! Tried to set non compatible value tuples in event addition dialogue!", JOptionPane.ERROR_MESSAGE);
+//						controller.getApplication().getView()
+//							.showMessage("Input error! Tried to set non compatible value tuples in event addition dialogue!", JOptionPane.ERROR_MESSAGE);
 					}
 				} catch(NumberFormatException e) {
-					controller.getApplication().getView()
-						.showMessage("Input error! A non valid time/duration was given!", JOptionPane.ERROR_MESSAGE);
+//					controller.getApplication().getView()
+//						.showMessage("Input error! A non valid time/duration was given!", JOptionPane.ERROR_MESSAGE);
 				}
 			}
 		});
@@ -982,8 +982,8 @@ public class DialogFactory {
 				}
 				
 			} catch(NumberFormatException e) {
-				controller.getApplication().getView()
-					.showMessage("Input error! A non valid time/duration range was given!", JOptionPane.ERROR_MESSAGE);
+//				controller.getApplication().getView()
+//					.showMessage("Input error! A non valid time/duration range was given!", JOptionPane.ERROR_MESSAGE);
 			}
 			
 			return values;

@@ -1,9 +1,6 @@
 package edled.view;
 
 import java.io.File;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -17,6 +14,7 @@ import org.w3c.dom.Node;
 import edled.Application;
 import edled.core.ManipulationOption;
 import edled.core.Model;
+import edled.core.Notification;
 import edled.core.metatree.MetaNode;
 import edled.core.validation.ValidationResult;
 import edled.plugin.Plugin;
@@ -46,8 +44,8 @@ public class View {
 	/** The area listing user notifications. */
 	private NotificationPanel notificationPanel;
 	
-	/** DateFormatter for the message time stamps. */
-	private final DateFormat dateFormatter;
+//	/** DateFormatter for the message time stamps. */
+//	private final DateFormat dateFormatter;
 	
 	/**
 	 * Creates the view (all graphical user interfaces).
@@ -64,7 +62,7 @@ public class View {
 		} catch (Exception e) {
 		}
 		
-		this.dateFormatter = new SimpleDateFormat("HH:mm:ss");
+//		this.dateFormatter = new SimpleDateFormat("HH:mm:ss");
 		
 		this.controller = controller;
 		this.edlInspectorPanel = new InspectorPanel(this);
@@ -220,12 +218,19 @@ public class View {
 	 * @param msg     The message string to write.
 	 * @param msgType Type of the message. Uses the same types as JOptionPane.
 	 */
-	public void showMessage(final String msg, 
-							final int msgType) {
+//	public void showMessage(final String msg, 
+//							final int msgType) {
+//		synchronized (this.notificationPanel) {
+//			this.notificationPanel.add(this.dateFormatter.format(new Date()) + " " + msg);
+//		}
+//		logger.info(msg);
+//	}
+	
+	public void show(final Notification n) {
 		synchronized (this.notificationPanel) {
-			this.notificationPanel.add(this.dateFormatter.format(new Date()) + " " + msg);
+			this.notificationPanel.add(n);
 		}
-		logger.info(msg);
+		logger.info(n.getMessage());
 	}
 
 	/**

@@ -4,16 +4,15 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Observable;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
-
-
 import edled.core.validation.EDLRuleParameter.ParameterValue;
 import edled.xml.XMLUtility;
 
-public class EDLRule {
+public class EDLRule extends Observable {
 	
 	private final String id;
 	private final Map<String, EDLRuleParameter> parameters;
@@ -73,8 +72,15 @@ public class EDLRule {
 			this.value = true;
 		}
 		
+		if (this.value) {
+			setChanged();
+			notifyObservers(this);
+			deleteObservers();
+		}
+		
 		return paramEvalRslt.referencedNodes;
 	}
+	
 	public boolean isSatisfied() {
 		return this.value;
 	}

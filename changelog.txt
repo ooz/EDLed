@@ -1,6 +1,10 @@
-# EDLed v1.?4?.0 #
+# EDLed v2.0.0 #
 ????-??-??
 
+ * New notification subsystem.
+   Replacing the old message area at the bottom of the main window.
+   Notifications are removed once an issue is resolved.
+   Currently they are only used for EDLRule violations.
  * The EDL XSD will now be validated parallel to the program launch.
    The validation process takes approx. 40-50 seconds.
 
