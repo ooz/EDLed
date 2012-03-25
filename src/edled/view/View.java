@@ -227,8 +227,16 @@ public class View {
 //	}
 	
 	public void show(final Notification n) {
+		show(n, false);
+	}
+	
+	public void show(final Notification n, final boolean removable) {
 		synchronized (this.notificationPanel) {
-			this.notificationPanel.add(n);
+			if (removable) {
+				this.notificationPanel.add(new RemovableNotificationItem(this.notificationPanel, n));	
+			} else {
+				this.notificationPanel.add(new ObservingNotificationItem(this.notificationPanel, n));
+			}
 		}
 		logger.info(n.getMessage());
 	}

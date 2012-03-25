@@ -11,8 +11,6 @@ import javax.swing.JPanel;
 import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
 
-import edled.core.Notification;
-
 public class NotificationPanel extends JPanel {
 	
 	/** Generated. */
@@ -68,13 +66,16 @@ public class NotificationPanel extends JPanel {
 //		}
 //	}
 	
-	public void add(final Notification n) {
-		this.itemPane.add(new ObservingNotificationItem(this, n));
-		
+	public void add(final NotificationItem ni) {
+		this.itemPane.add(ni);
+		updateScrollBehaviour();
+	}
+	
+	private void updateScrollBehaviour() {
 		this.itemPane.revalidate();
 		
-		if (atBottom) {
-			justAddedIgnoreScroll = true;
+		if (this.atBottom) {
+			this.justAddedIgnoreScroll = true;
 		}
 	}
 	

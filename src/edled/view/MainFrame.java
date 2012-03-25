@@ -37,6 +37,8 @@ import javax.swing.KeyStroke;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import edled.core.Notification;
+import edled.core.Notification.NotificationKind;
 import edled.plugin.Plugin;
 import edled.util.Configuration;
 
@@ -107,6 +109,12 @@ public class MainFrame extends JFrame implements TreeReceiver {
 		setupMenuBar();
 		setupSplitsAndTabs(edlInspectorPanel, 
 						   notificationPanel);
+		
+		this.view.show(new Notification("heyho0", NotificationKind.Warn), true);
+		this.view.show(new Notification("heyho1", NotificationKind.Warn), true);
+		this.view.show(new Notification("heyho2", NotificationKind.Warn), true);
+		this.view.show(new Notification("heyho3", NotificationKind.Warn), true);
+		this.view.show(new Notification("heyho4", NotificationKind.Warn), true);
 	}
 	
 	private void closeMainWindow() {
