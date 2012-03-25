@@ -11,7 +11,7 @@ import javax.swing.JPanel;
 
 import edled.core.Notification;
 
-public class NotificationItem extends JPanel implements Observer {
+public class ObservingNotificationItem extends JPanel implements Observer {
 	
 	/** Generated. */
 	private static final long serialVersionUID = 3926495998174191472L;
@@ -19,7 +19,7 @@ public class NotificationItem extends JPanel implements Observer {
 	private NotificationPanel pane;
 	private Notification n;
 
-	public NotificationItem(final NotificationPanel pane,
+	public ObservingNotificationItem(final NotificationPanel pane,
 							final Notification n) {
 		super(new FlowLayout(FlowLayout.LEFT));
 		

@@ -69,7 +69,7 @@ public class NotificationPanel extends JPanel {
 //	}
 	
 	public void add(final Notification n) {
-		this.itemPane.add(new NotificationItem(this, n));
+		this.itemPane.add(new ObservingNotificationItem(this, n));
 		
 		this.itemPane.revalidate();
 		
