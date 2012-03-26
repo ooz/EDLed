@@ -31,6 +31,8 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
+import edled.core.Notification;
+import edled.core.Notification.NotificationKind;
 import edled.util.Configuration;
 import edled.view.View;
 
@@ -687,10 +689,10 @@ public class DialogFactory {
 				
 				mediaObjList.addMediaObject(new MediaText(idInput, nameInput, textInput, size, color, position));
 			} catch (NumberFormatException e) {
-//				appView.showMessage("Could not add text media object: position coordinates are not valid!", JOptionPane.ERROR_MESSAGE);
+				appView.show(new Notification("Could not add text media object: position coordinates are not valid!", NotificationKind.Warn), true);
 			}
 		} catch (NumberFormatException e) {
-//			appView.showMessage("Could not add text media object: text size is no integer!", JOptionPane.ERROR_MESSAGE);
+			appView.show(new Notification("Could not add text media object: text size is no integer!", NotificationKind.Warn), true);
 		}
 	}
 	private void addImageMediaObject(final StimulusPlugin controller,
@@ -711,7 +713,7 @@ public class DialogFactory {
 			
 			mediaObjList.addMediaObject(new MediaImage(idInput, nameInput, position, new File(filePathInput)));
 		} catch (NumberFormatException e) {
-//			appView.showMessage("Could not add image media object: position coordinates are not valid!", JOptionPane.ERROR_MESSAGE);
+			appView.show(new Notification("Could not add image media object: position coordinates are not valid!", NotificationKind.Warn), true);
 		}
 	}
 	private void addAudioMediaObject(final StimulusPlugin controller,
@@ -740,7 +742,7 @@ public class DialogFactory {
 			
 			mediaObjList.addMediaObject(new MediaVideo(idInput, nameInput, position, new File(filePathInput)));
 		} catch (NumberFormatException e) {
-//			appView.showMessage("Could not add video media object: position coordinates are not valid!", JOptionPane.ERROR_MESSAGE);
+			appView.show(new Notification("Could not add video media object: position coordinates are not valid!", NotificationKind.Warn), true);
 		}
 	}
 	

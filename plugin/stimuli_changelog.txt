@@ -1,3 +1,8 @@
+# Stimuli v1.2.0 (StimulusPlugin) #
+2012-03-26
+
+ * Updated for the new EDLed notification system.
+
 # Stimuli v1.1.1 (StimulusPlugin) #
 2011-08-29
 

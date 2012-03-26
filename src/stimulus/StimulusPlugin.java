@@ -34,7 +34,7 @@ public class StimulusPlugin implements Plugin {
 	private static final String NAME = "Stimuli";
 	private static final String AUTHOR = "Oliver Zscheyge";
 	private static final String DESCRIPTION = "Plugin for graphical creation and preview of a fMRI stimulus presentation";
-	private static final String VERSION = "1.1.1";
+	private static final String VERSION = "1.2.0";
 	
 	private Application appController = null;
 	private final StimulusView pluginView;
