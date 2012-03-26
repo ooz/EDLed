@@ -288,11 +288,7 @@ public class View {
 	}
 	
 	public String getIconSizeModifier() {
-		if (System.getProperty("os.name").contains("Linux")) {
-			return View.ICON_SIZE_MODIFIER_16;
-		} else {
-			return View.ICON_SIZE_MODIFIER_12;
-		}
+		return IconProvider.getInstance().getIconSizeModifier();
 	}
 
 }

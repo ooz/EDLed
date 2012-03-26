@@ -1,0 +1,231 @@
+package edled.view;
+
+import java.io.File;
+import java.net.MalformedURLException;
+
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
+
+import org.apache.log4j.Logger;
+
+import edled.util.Configuration;
+
+/** 
+ * Class that keeps track of all icons used in the application.
+ * 
+ * @author Oliver Zscheyge
+ */
+public class IconProvider {
+	
+	/** */
+	private static final Logger logger = Logger.getLogger(IconProvider.class);
+	
+	private static IconProvider instance = null;
+	
+	/* 
+	 * All following unqualified file names will be preceeded either by
+	 * ICON_SIZE_MODIFIER_12 or ICON_SIZE_MODIFIER_16. 
+	 */
+	/** Unqualified file name of the "plugin"-icon. */
+	private static final String PLUGIN_FILENAME = "plugin.png";
+	/** Alternative text that will be rendered if no "plugin"-icon is available. */
+	public static final String PLUGIN_ALT_TEXT = "[P]";
+	
+	/** Unqualified file name of the "add additional node"-icon.  */
+	private static final String ADD_ADDITIONAL_FILENAME = "add.png";
+	/** Alternative text that will be rendered if no "add additional node"-icon is available. */
+	public static final String ADD_ADDITIONAL_ALT_TEXT = "[+]";
+	
+	/** Unqualified file name of the "add child node"-icon. */
+	private static final String ADD_CHILD_FILENAME = "add_child.png";
+	/** Alternative text that will be rendered if no "add child node"-icon is available. */
+	public static final String ADD_CHILD_ALT_TEXT = "[#]";
+	
+	/** Unqualified file name of the "add attribute"-icon. */
+	private static final String ADD_ATTRIBUTE_FILENAME = "add_attr.png";
+	/** Alternative text that will be rendered if no "add attribute"-icon is available. */
+	public static final String ADD_ATTRIBUTE_ALT_TEXT = "[A+]";
+	
+	/** Unqualified file name of the "XSD/EDLRule validation error"-icon. */
+	private static final String ERROR_FILENAME = "error.png";
+	/** Alternative text that will be rendered if no "XSD/EDLRule validation error"-icon is available. */
+	public static final String ERROR_ALT_TEXT = "[!]";
+	
+	/** Unqualified file name of the "remove this node"-icon. */
+	private static final String REMOVE_FILENAME = "remove.png";
+	/** Alternative text that will be rendered if no "remove this node"-icon is available. */
+	public static final String REMOVE_ALT_TEXT = "[-]";
+	
+	/** Unqualified file name of the "node has removable attribute(s)"-icon. */
+	private static final String REMOVE_ATTRIBUTE_FILENAME = "rm_attr.png";
+	/** Alternative text that will be rendered if no "node has removable attribute(s)"-icon is available. */
+	public static final String REMOVE_ATTRIBUTE_ALT_TEXT = "[A-]";
+	
+	/** Unqualified file name of the "alternative node available"-icon. */
+	private static final String CHOICE_FILENAME = "alternative.png";
+	/** Alternative text that will be rendered if no "alternative node available"-icon is available. */
+	public static final String CHOICE_ALT_TEXT = "[||]";
+	
+	/** Icon indicating that the node can be alternatively configured by a plugin. */
+	private Icon pluginIcon = null;
+	
+	/** Icon indicating that additional nodes of the same type can be added. */
+	private Icon addIcon = null;
+	/** Icon indicating that an optional child node can be added. */
+	private Icon addChildIcon = null;
+	/** Icon indicating that an optional attribute node can be added. */
+	private Icon addAttributeIcon = null;
+	/** Icon indicating an XSD or EDLRule violation. */
+	private Icon errorIcon = null;
+	/** Icon indicating that the node can be deleted. */
+	private Icon removeIcon = null;
+	/** Icon indicating that the node has attribute nodes that can be deleted. */
+	private Icon removeAttributeIcon = null;
+	/** Icon indicating that an alternative node can be chosen. */
+	private Icon choiceIcon = null;
+	
+	private IconProvider() {
+		Configuration config = Configuration.getInstance();
+		String imgPath = config.resolveVariables("$IMG_DIR");
+		String iconSizeModifier = getIconSizeModifier();
+		
+		// Load plugin icon.
+		File iconFile = new File(imgPath + Configuration.FILE_SEPARATOR + iconSizeModifier + PLUGIN_FILENAME);
+		if (iconFile.isFile()) {
+			try {
+				this.pluginIcon = new ImageIcon(iconFile.toURI().toURL());
+			} catch (MalformedURLException e) {
+				logger.debug("Plugin icon URL malformed!", e);
+			}
+		} else {
+			logger.info("Could not find plugin icon.");
+		}
+		
+		// Load add icon.
+		iconFile = new File(imgPath + Configuration.FILE_SEPARATOR + iconSizeModifier + ADD_ADDITIONAL_FILENAME);
+		if (iconFile.isFile()) {
+			try {
+				this.addIcon = new ImageIcon(iconFile.toURI().toURL());
+			} catch (MalformedURLException e) {
+				logger.debug("Add icon URL malformed!", e);
+			}
+		} else {
+			logger.info("Could not find add icon.");
+		}
+		// Load add child icon.
+		iconFile = new File(imgPath + Configuration.FILE_SEPARATOR + iconSizeModifier + ADD_CHILD_FILENAME);
+		if (iconFile.isFile()) {
+			try {
+				this.addChildIcon = new ImageIcon(iconFile.toURI().toURL());
+			} catch (MalformedURLException e) {
+				logger.debug("Add child icon URL malformed!", e);
+			}
+		} else {
+			logger.info("Could not find add child icon.");
+		}
+		// Load add attribute icon.
+		iconFile = new File(imgPath + Configuration.FILE_SEPARATOR + iconSizeModifier + ADD_ATTRIBUTE_FILENAME);
+		if (iconFile.isFile()) {
+			try {
+				this.addAttributeIcon = new ImageIcon(iconFile.toURI().toURL());
+			} catch (MalformedURLException e) {
+				logger.debug("Add attribute icon URL malformed!", e);
+			}
+		} else {
+			logger.info("Could not find add attribute icon.");
+		}
+		// Load error icon.
+		iconFile = new File(imgPath + Configuration.FILE_SEPARATOR + iconSizeModifier + ERROR_FILENAME);
+		if (iconFile.isFile()) {
+			try {
+				this.errorIcon = new ImageIcon(iconFile.toURI().toURL());
+			} catch (MalformedURLException e) {
+				logger.debug("Error icon URL malformed!", e);
+			}
+		} else {
+			logger.info("Could not find error icon.");
+		}
+		// Load remove icon.
+		iconFile = new File(imgPath + Configuration.FILE_SEPARATOR + iconSizeModifier + REMOVE_FILENAME);
+		if (iconFile.isFile()) {
+			try {
+				this.removeIcon = new ImageIcon(iconFile.toURI().toURL());
+			} catch (MalformedURLException e) {
+				logger.debug("Remove icon URL malformed!", e);
+			}
+		} else {
+			logger.info("Could not find remove icon.");
+		}
+		// Load remove attribute icon.
+		iconFile = new File(imgPath + Configuration.FILE_SEPARATOR + iconSizeModifier + REMOVE_ATTRIBUTE_FILENAME);
+		if (iconFile.isFile()) {
+			try {
+				this.removeAttributeIcon = new ImageIcon(iconFile.toURI().toURL());
+			} catch (MalformedURLException e) {
+				logger.debug("Remove attribute icon URL malformed!", e);
+			}
+		} else {
+			logger.info("Could not find remove attribute icon.");
+		}
+		// Load choice icon.
+		iconFile = new File(imgPath + Configuration.FILE_SEPARATOR + iconSizeModifier + CHOICE_FILENAME);
+		if (iconFile.isFile()) {
+			try {
+				this.choiceIcon = new ImageIcon(iconFile.toURI().toURL());
+			} catch (MalformedURLException e) {
+				logger.debug("Choice icon URL malformed!", e);
+			}
+		} else {
+			logger.info("Could not find choice icon.");
+		}
+	}
+	
+	public static IconProvider getInstance() {
+		if (IconProvider.instance == null) {
+			IconProvider.instance = new IconProvider();
+		}
+		
+		return IconProvider.instance;
+	}
+	
+	public String getIconSizeModifier() {
+		if (System.getProperty("os.name").contains("Linux")) {
+			return View.ICON_SIZE_MODIFIER_16;
+		} else {
+			return View.ICON_SIZE_MODIFIER_12;
+		}
+	}
+
+	public Icon getPluginIcon() {
+		return pluginIcon;
+	}
+
+	public Icon getAddIcon() {
+		return addIcon;
+	}
+
+	public Icon getAddChildIcon() {
+		return addChildIcon;
+	}
+
+	public Icon getAddAttributeIcon() {
+		return addAttributeIcon;
+	}
+
+	public Icon getErrorIcon() {
+		return errorIcon;
+	}
+
+	public Icon getRemoveIcon() {
+		return removeIcon;
+	}
+
+	public Icon getRemoveAttributeIcon() {
+		return removeAttributeIcon;
+	}
+
+	public Icon getChoiceIcon() {
+		return choiceIcon;
+	}
+
+}
