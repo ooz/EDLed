@@ -1,3 +1,10 @@
+# Stimuli v1.2.1 (StimulusPlugin) #
+????-??-??
+
+ * Fix display of media object list
+ * Media objects can new be edited by double clicking on them
+
+
 # Stimuli v1.2.0 (StimulusPlugin) #
 2012-03-26
 

@@ -125,6 +125,12 @@ public class MediaObjectListPanel extends JPanel implements Observer, KeyListene
 				selectedMediaObjs.clear();
 				selectedMediaObjs.add(mediaObj);
 				
+				// Edit on double click
+				if (e.getClickCount() == 2) {
+					JDialog dialog = DialogFactory.getDefaultFactory().createMediaObjectDialog(self, controller, mediaObj);
+					dialog.setVisible(true);
+				}
+				
 				repaint();
 			}
 			
