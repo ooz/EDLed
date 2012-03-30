@@ -2,6 +2,7 @@ package stimulus;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
@@ -173,8 +174,10 @@ public class StimulusView extends JPanel {
 		layoutDummy.add(Box.createVerticalGlue());
 		layoutDummy.add(this.timetablePane);
 		
+		JScrollPane mediaObjScrollPane = new JScrollPane(this.mediaObjectPane);
+		mediaObjScrollPane.setMinimumSize(new Dimension(100, 100));
 		JSplitPane split = new JSplitPane(JSplitPane.VERTICAL_SPLIT, 
-										  new JScrollPane(this.mediaObjectPane), 
+										  mediaObjScrollPane, 
 										  new JScrollPane(layoutDummy));
 		split.setDividerLocation(0.5);
 		

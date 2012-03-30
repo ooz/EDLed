@@ -50,8 +50,6 @@ public class MediaObjectListPanel extends JPanel implements Observer, KeyListene
 		this.selectedMediaObjs = new LinkedList<MediaObject>();
 		this.mediaObjPanels = new LinkedHashMap<MediaObject, JPanel>();
 		
-		this.setPreferredSize(new Dimension(10, 100));
-		
 		setLayout(new FlowLayout(FlowLayout.LEFT));
 		
 		addKeyListener(this);
@@ -115,7 +113,7 @@ public class MediaObjectListPanel extends JPanel implements Observer, KeyListene
 		
 		pane.setToolTipText("MediaObject named " + mediaObj.getName() + " with ID: " + mediaObj.getID());
 		
-		pane.setPreferredSize(new Dimension(80, 60));
+		pane.setPreferredSize(new Dimension(80, 66));
 		
 		final Component self = this;
 		pane.addMouseListener(new MouseAdapter() {
@@ -153,17 +151,6 @@ public class MediaObjectListPanel extends JPanel implements Observer, KeyListene
 			private JPopupMenu buildPopupMenuFor(final MediaObject mediaObj) {
 
 				JPopupMenu popup = new JPopupMenu();
-				
-				// TODO: implement!
-//				JMenuItem editItem = new JMenuItem("Edit");
-//				editItem.addActionListener(new ActionListener() {
-//					@Override
-//					public void actionPerformed(ActionEvent e) {
-//						// TODO Auto-generated method stub
-//						
-//					}
-//				});
-//				popup.add(editItem);
 				
 				JMenuItem deleteItem = new JMenuItem("Delete");
 				deleteItem.addActionListener(new ActionListener() {
