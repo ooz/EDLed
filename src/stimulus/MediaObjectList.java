@@ -26,7 +26,7 @@ public class MediaObjectList extends Observable {
 		return new LinkedList<MediaObject>(this.mediaObjects.values());
 	}
 	
-	synchronized void addMediaObject(final MediaObject toAdd) {
+	synchronized void add(final MediaObject toAdd) {
 		
 		String id = toAdd.getID();
 		String name = toAdd.getName();

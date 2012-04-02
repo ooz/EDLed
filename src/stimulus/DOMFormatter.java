@@ -308,7 +308,7 @@ public class DOMFormatter {
 				mediaObj = null;
 			}
 			if (mediaObj != null) {
-				mediaObjList.addMediaObject(mediaObj);
+				mediaObjList.add(mediaObj);
 			}
 		}
 		

@@ -687,7 +687,7 @@ public class DialogFactory {
 				
 				Point position = new Point(x, y);
 				
-				mediaObjList.addMediaObject(new MediaText(idInput, nameInput, textInput, size, color, position));
+				mediaObjList.add(new MediaText(idInput, nameInput, textInput, size, color, position));
 			} catch (NumberFormatException e) {
 				appView.show(new Notification("Could not add text media object: position coordinates are not valid!", NotificationKind.Warn), true);
 			}
@@ -711,7 +711,7 @@ public class DialogFactory {
 			
 			Point position = new Point(x, y);
 			
-			mediaObjList.addMediaObject(new MediaImage(idInput, nameInput, position, new File(filePathInput)));
+			mediaObjList.add(new MediaImage(idInput, nameInput, position, new File(filePathInput)));
 		} catch (NumberFormatException e) {
 			appView.show(new Notification("Could not add image media object: position coordinates are not valid!", NotificationKind.Warn), true);
 		}
@@ -722,7 +722,7 @@ public class DialogFactory {
 									 final String filePathInput) {
 		
 		controller.getModel().getMediaObjectList()
-			.addMediaObject(new MediaAudio(idInput, nameInput, new File(filePathInput)));
+			.add(new MediaAudio(idInput, nameInput, new File(filePathInput)));
 	}
 	private void addVideoMediaObject(final StimulusPlugin controller,
 									 final String idInput,
@@ -740,7 +740,7 @@ public class DialogFactory {
 			
 			Point position = new Point(x, y);
 			
-			mediaObjList.addMediaObject(new MediaVideo(idInput, nameInput, position, new File(filePathInput)));
+			mediaObjList.add(new MediaVideo(idInput, nameInput, position, new File(filePathInput)));
 		} catch (NumberFormatException e) {
 			appView.show(new Notification("Could not add video media object: position coordinates are not valid!", NotificationKind.Warn), true);
 		}
