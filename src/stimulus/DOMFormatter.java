@@ -308,9 +308,12 @@ public class DOMFormatter {
 				mediaObj = null;
 			}
 			if (mediaObj != null) {
-				mediaObjList.add(mediaObj);
+				mediaObjList.add(mediaObj, false);
 			}
 		}
+		
+		// Update observers
+		mediaObjList.add(new LinkedList<MediaObject>());
 		
 		return true;
 	}

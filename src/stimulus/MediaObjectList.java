@@ -26,7 +26,23 @@ public class MediaObjectList extends Observable {
 		return new LinkedList<MediaObject>(this.mediaObjects.values());
 	}
 	
-	synchronized void add(final MediaObject toAdd) {
+	void add(final MediaObject toAdd) {
+		add(toAdd, true);
+	}
+	
+	void add(final List<MediaObject> objs) {
+		for (MediaObject toAdd : objs) {
+			add(toAdd, false);
+		}
+		
+		synchronized (this) {
+			setChanged();
+			notifyObservers();
+		}
+	}
+	
+	synchronized void add(final MediaObject toAdd, 
+						  final boolean notifyObservers) {
 		
 		String id = toAdd.getID();
 		String name = toAdd.getName();
@@ -68,8 +84,10 @@ public class MediaObjectList extends Observable {
 			this.mediaObjects.put(toAdd.getID(), toAdd);
 		}
 		
-		setChanged();
-		notifyObservers();
+		if (notifyObservers) {
+			setChanged();
+			notifyObservers();
+		}
 	}
 	synchronized void removeMediaObject(final MediaObject toRemove) {
 		this.mediaObjects.remove(toRemove.getID());
