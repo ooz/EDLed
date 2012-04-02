@@ -3,12 +3,16 @@
 
  * Fix display of media object list
  * Media objects can new be edited by double clicking on them
+ * Speedup loading of large media object lists
+
 
 
 # Stimuli v1.2.0 (StimulusPlugin) #
 2012-03-26
 
  * Updated for the new EDLed notification system.
+
+
 
 # Stimuli v1.1.1 (StimulusPlugin) #
 2011-08-29
