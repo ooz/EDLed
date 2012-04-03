@@ -1,4 +1,4 @@
 #!/bin/bash
 
-java -jar edled.jar $1
+java -jar edled.jar -Xmx2g $@
 

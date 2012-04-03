@@ -59,7 +59,7 @@ public class Launcher extends Thread {
 	 * @param argv Command line arguments.
 	 */
 	public static void main(String[] argv) {
-		List<String> args = Arrays.asList(argv);
+		List<String> args = new LinkedList<String>(Arrays.asList(argv));
 		List<String> jvmParams = filterJVMParams(args);
 		args.removeAll(jvmParams);
 		
@@ -138,7 +138,6 @@ public class Launcher extends Thread {
 	 * @param args List of Strings to join.
 	 * @return     String representing args with each original String being
 	 * 			   separated by a space character.
-	 * 			   Empty String if args is empty.
 	 */
 	private static String joinArgs(List<String> args) {
 		StringBuffer sb = new StringBuffer();
