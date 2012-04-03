@@ -137,9 +137,9 @@ public class Application implements Runnable {
 					Schema xsdSchema = XMLUtility.loadSchema(new File(
 							self.config.resolveVariables(Application.XSD_XSD_PATH)));
 					if (xsdSchema == null) {
-						logger.warn("Could not find the XML schema for XSDs!");
+						logger.warn("Could not find the XML schema for XSDs! No internet connection?");
 						self.view.showWarnDialog("Could not find the XML schema for XSDs!\n" 
-								+ "Please check your EDLed installation/reinstall EDLed!");
+								+ "Please check your EDLed installation and internet connection!");
 					}
 					
 					Document xsdDoc = XMLUtility.loadDocument(self.xsdFile, xsdSchema);
