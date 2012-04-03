@@ -43,7 +43,7 @@ RES_DIR = "res/"
 
 EDLED_APP_DIR = "EDLed/"
 EDLED_DIR     = "edled/"
-EDLED_MAIN    = "Application.java"
+EDLED_MAIN    = "Launcher.java"
 STIMULUS_DIR  = "stimulus/"
 STIMULUS_MAIN = "StimulusPlugin.java"
 DESIGN_DIR    = "design/"
