@@ -6,13 +6,14 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
+import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
 
 public class Launcher extends Thread {
 	
 	private final static String MAC_OS_X = "Mac OS X";
 	private final static String MAC_OS_X_OPTIONS = "-Xdock:name=\"EDLed\" -Xdock:icon=res/img/edled.png ";
-	
-	
 	
 	private final InputStream is;
 	private final PrintStream os;
@@ -44,20 +45,19 @@ public class Launcher extends Thread {
 	/**
 	 * @param args
 	 */
-	public static void main(String[] args) {
-		String osSpecific = "";
-		if (System.getProperty("os.name").startsWith(MAC_OS_X)) {
-			osSpecific = MAC_OS_X_OPTIONS;
-		}
+	public static void main(String[] argv) {
+		List<String> args = Arrays.asList(argv);
+		List<String> jvmParams = filterJVMParams(args);
+		args.removeAll(jvmParams);
 		
-		String argv = "";
+		String osSpecific = generateOSSpecific();
 		String cmd = "java "
 				   + "-cp "
 				   + ".:edled.jar:plugin/:res/lib/ "
 				   + osSpecific
-				   + "-Xmx1g "
+				   + joinArgs(jvmParams)
 				   + "edled.Application "
-				   + argv
+				   + joinArgs(args);
 				   ;
 		
 		String appPath = "";
@@ -83,6 +83,36 @@ public class Launcher extends Thread {
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	private static List<String> filterJVMParams(final List<String> args) {
+		List<String> opts = new LinkedList<String>();
+		
+		for (String arg : args) {
+			if (arg.startsWith("-")) {
+				opts.add(arg);
+			}
+		}
+		
+		return opts;
+	}
+	
+	private static String generateOSSpecific() {
+		if (System.getProperty("os.name").startsWith(MAC_OS_X)) {
+			return MAC_OS_X_OPTIONS;
+		}
+		
+		return "";
+	}
+	
+	private static String joinArgs(List<String> args) {
+		StringBuffer sb = new StringBuffer();
+		
+		for (String arg : args) {
+			sb.append(arg + " ");
+		}
+		
+		return sb.toString();
 	}
 
 }
