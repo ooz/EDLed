@@ -10,19 +10,30 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
+/**
+ * Class that launches the edled.Application class in a separate process.
+ * This enables configuration of the JVM. All CLI output is redirected
+ * to the launcher thread.
+ * 
+ * @author Oliver Zscheyge
+ */
 public class Launcher extends Thread {
 	
+	/** Indicator for Apple's Mac OS X in system property "os.name". */
 	private final static String MAC_OS_X = "Mac OS X";
+	/** Additional JVM options for Mac OS X. */
 	private final static String MAC_OS_X_OPTIONS = "-Xdock:name=\"EDLed\" -Xdock:icon=res/img/edled.png ";
 	
+	/** InputStream that should be redirection to PrintStream os. */
 	private final InputStream is;
+	/** Target for the redirection of is. */
 	private final PrintStream os;
 	
 	/**
 	 * Constructor.
 	 * 
 	 * @param from Redirects this InputStream to the PrintStream to.
-	 * @param to
+	 * @param to   PrintStream to take the input from from.
 	 */
 	Launcher(InputStream from, PrintStream to) {
 		this.is = from;
@@ -43,7 +54,9 @@ public class Launcher extends Thread {
 	}
 
 	/**
-	 * @param args
+	 * Launcher entry point.
+	 * 
+	 * @param argv Command line arguments.
 	 */
 	public static void main(String[] argv) {
 		List<String> args = Arrays.asList(argv);
@@ -58,7 +71,6 @@ public class Launcher extends Thread {
 				   + joinArgs(jvmParams)
 				   + "edled.Application "
 				   + joinArgs(args);
-				   ;
 		
 		String appPath = "";
 		String execDir = System.getProperty("user.dir") 
@@ -85,6 +97,14 @@ public class Launcher extends Thread {
 		}
 	}
 	
+	/**
+	 * Filters all command line parameters that start with a minus ("-")
+	 * indicating JVM options.
+	 * 
+	 * @param args List of all launcher parameters.
+	 * @return     List of Strings only containing parameters starting with a 
+	 * 			   minus ("-").
+	 */
 	private static List<String> filterJVMParams(final List<String> args) {
 		List<String> opts = new LinkedList<String>();
 		
@@ -97,6 +117,12 @@ public class Launcher extends Thread {
 		return opts;
 	}
 	
+	/**
+	 * Yields a String with additional operation system specific JVM options.
+	 * 
+	 * @return String containing OS specific flags for the JVM.
+	 * 		   Empty string if there are none for the host system.
+	 */
 	private static String generateOSSpecific() {
 		if (System.getProperty("os.name").startsWith(MAC_OS_X)) {
 			return MAC_OS_X_OPTIONS;
@@ -105,6 +131,15 @@ public class Launcher extends Thread {
 		return "";
 	}
 	
+	/**
+	 * Joins a List of Strings to a single String where each original String
+	 * is separated by a space character.
+	 * 
+	 * @param args List of Strings to join.
+	 * @return     String representing args with each original String being
+	 * 			   separated by a space character.
+	 * 			   Empty String if args is empty.
+	 */
 	private static String joinArgs(List<String> args) {
 		StringBuffer sb = new StringBuffer();
 		
