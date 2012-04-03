@@ -1,3 +1,10 @@
+# EDLed v2.?.? #
+2012-??-??
+
+ * Reworked the application launch. EDLed can now be started just by executing
+   the edled.jar file on Linux systems.
+   The edled.sh script can still be used as an alternative CLI launch method. 
+
 # EDLed v2.0.0 #
 2012-03-26
 
