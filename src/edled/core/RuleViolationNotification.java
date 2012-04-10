@@ -4,12 +4,13 @@ import java.util.Observable;
 
 import edled.core.validation.EDLRule;
 
-public class RuleViolationNotification extends Notification<String> {
+public class RuleViolationNotification extends StringNotification {
 	
 	private EDLRule rule;
 
 	public RuleViolationNotification(final EDLRule rule) {
-		super(rule.getMessage(), Notification.NotificationKind.Warn);
+		super(rule.getMessage(),
+			  Notification.NotificationKind.Warn);
 		
 		this.rule = rule;
 		rule.addObserver(this);

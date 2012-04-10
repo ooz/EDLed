@@ -5,6 +5,7 @@ import java.net.MalformedURLException;
 
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
+import javax.swing.JLabel;
 
 import org.apache.log4j.Logger;
 
@@ -66,6 +67,16 @@ public class IconProvider {
 	/** Alternative text that will be rendered if no "alternative node available"-icon is available. */
 	public static final String CHOICE_ALT_TEXT = "[||]";
 	
+	/** Unqualified file name of the "expand text"-icon. */
+	private static final String MORE_FILENAME = "more.png";
+	/** Alternative text that will be rendered if no "expand text"-icon is available. */
+	public static final String MORE_ALT_TEXT = "[more]";
+	
+	/** Unqualified file name of the "discard/close item"-icon. */
+	private static final String CLOSE_FILENAME = "close.png";
+	/** Alternative text that will be rendered if no "discard/close"-icon is available. */
+	public static final String CLOSE_ALT_TEXT = "[close]";
+	
 	/** Icon indicating that the node can be alternatively configured by a plugin. */
 	private Icon pluginIcon = null;
 	
@@ -83,6 +94,11 @@ public class IconProvider {
 	private Icon removeAttributeIcon = null;
 	/** Icon indicating that an alternative node can be chosen. */
 	private Icon choiceIcon = null;
+	
+	/** Icon indicating that there is additional (e.g. notification) text available. */
+	private Icon moreIcon = null;
+	/** Icon for discarding/removing/closing an item (e.g. notification). */
+	private Icon closeIcon = null;
 	
 	private IconProvider() {
 		Configuration config = Configuration.getInstance();
@@ -178,6 +194,30 @@ public class IconProvider {
 		} else {
 			logger.info("Could not find choice icon.");
 		}
+		
+		// Load more icon.
+		iconFile = new File(imgPath + Configuration.FILE_SEPARATOR + iconSizeModifier + MORE_FILENAME);
+		if (iconFile.isFile()) {
+			try {
+				this.moreIcon = new ImageIcon(iconFile.toURI().toURL());
+			} catch (MalformedURLException e) {
+				logger.debug("More icon URL malformed!", e);
+			}
+		} else {
+			logger.info("Could not find more icon.");
+		}
+		
+		// Load close icon.
+		iconFile = new File(imgPath + Configuration.FILE_SEPARATOR + iconSizeModifier + CLOSE_FILENAME);
+		if (iconFile.isFile()) {
+			try {
+				this.closeIcon = new ImageIcon(iconFile.toURI().toURL());
+			} catch (MalformedURLException e) {
+				logger.debug("Close icon URL malformed!", e);
+			}
+		} else {
+			logger.info("Could not find close icon.");
+		}
 	}
 	
 	public static IconProvider getInstance() {
@@ -226,6 +266,36 @@ public class IconProvider {
 
 	public Icon getChoiceIcon() {
 		return choiceIcon;
+	}
+	
+	public Icon getMoreIcon() {
+		return moreIcon;
+	}
+	
+	public Icon getCloseIcon() {
+		return closeIcon;
+	}
+	
+	
+	/* # Label generators # */
+	private JLabel makeLabel(final Icon icon,
+							 final String altText) {
+		JLabel label;
+		if (icon == null) {
+			label = new JLabel(altText);
+		} else {
+			label = new JLabel(icon);
+		}
+		label.setMaximumSize(label.getPreferredSize());
+		return label;
+	}
+	
+	public JLabel makeMoreLabel() {
+		return makeLabel(this.getMoreIcon(), MORE_ALT_TEXT);
+	}
+	
+	public JLabel makeCloseLabel() {
+		return makeLabel(this.getCloseIcon(), CLOSE_ALT_TEXT);
 	}
 
 }
