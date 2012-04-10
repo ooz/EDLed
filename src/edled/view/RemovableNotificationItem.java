@@ -23,11 +23,6 @@ public class RemovableNotificationItem extends NotificationItem {
 									 final Notification<String> n) {
 		super(pane, n);
 		
-		this.removeAll();
-		this.setLayout(new BorderLayout());
-		
-		this.add(new JLabel(n.brief()), BorderLayout.CENTER);
-		
 		IconProvider ip = IconProvider.getInstance();
 		JLabel rm;
 		if (ip.getRemoveIcon() != null) {

@@ -1,8 +1,8 @@
 package edled.view;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.FlowLayout;
 
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -18,7 +18,7 @@ public class NotificationItem extends JPanel {
 
 	public NotificationItem(final NotificationPanel pane,
 							final Notification<String> n) {
-		super(new FlowLayout(FlowLayout.LEFT));
+		super(new BorderLayout());
 
 		this.pane = pane;
 
@@ -38,8 +38,8 @@ public class NotificationItem extends JPanel {
 
 		this.setAlignmentX(LEFT_ALIGNMENT);
 
-		this.add(l);
-		this.setMaximumSize(new Dimension(Integer.MAX_VALUE, (int) this
-				.getPreferredSize().getHeight()));
+		this.add(l, BorderLayout.CENTER);
+		this.setMaximumSize(new Dimension(Integer.MAX_VALUE, 
+										  (int) this.getPreferredSize().getHeight()));
 	}
 }
