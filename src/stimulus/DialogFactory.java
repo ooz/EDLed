@@ -689,10 +689,10 @@ public class DialogFactory {
 				
 				mediaObjList.add(new MediaText(idInput, nameInput, textInput, size, color, position));
 			} catch (NumberFormatException e) {
-				appView.show(new Notification("Could not add text media object: position coordinates are not valid!", NotificationKind.Warn), true);
+				appView.show(new Notification<String>("Could not add text media object: position coordinates are not valid!", NotificationKind.Warn), true);
 			}
 		} catch (NumberFormatException e) {
-			appView.show(new Notification("Could not add text media object: text size is no integer!", NotificationKind.Warn), true);
+			appView.show(new Notification<String>("Could not add text media object: text size is no integer!", NotificationKind.Warn), true);
 		}
 	}
 	private void addImageMediaObject(final StimulusPlugin controller,
@@ -713,7 +713,7 @@ public class DialogFactory {
 			
 			mediaObjList.add(new MediaImage(idInput, nameInput, position, new File(filePathInput)));
 		} catch (NumberFormatException e) {
-			appView.show(new Notification("Could not add image media object: position coordinates are not valid!", NotificationKind.Warn), true);
+			appView.show(new Notification<String>("Could not add image media object: position coordinates are not valid!", NotificationKind.Warn), true);
 		}
 	}
 	private void addAudioMediaObject(final StimulusPlugin controller,
@@ -742,7 +742,7 @@ public class DialogFactory {
 			
 			mediaObjList.add(new MediaVideo(idInput, nameInput, position, new File(filePathInput)));
 		} catch (NumberFormatException e) {
-			appView.show(new Notification("Could not add video media object: position coordinates are not valid!", NotificationKind.Warn), true);
+			appView.show(new Notification<String>("Could not add video media object: position coordinates are not valid!", NotificationKind.Warn), true);
 		}
 	}
 	

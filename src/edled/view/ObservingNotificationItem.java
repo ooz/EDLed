@@ -11,10 +11,10 @@ public class ObservingNotificationItem extends NotificationItem implements Obser
 	private static final long serialVersionUID = 3926495998174191472L;
 	
 	
-	private Notification n;
+	private Notification<String> n;
 
 	public ObservingNotificationItem(final NotificationPanel pane,
-							final Notification n) {
+									 final Notification<String> n) {
 		super(pane, n);
 		
 		this.n = n;

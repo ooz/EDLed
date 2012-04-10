@@ -4,7 +4,7 @@ import java.util.Observable;
 
 import edled.core.validation.EDLRule;
 
-public class RuleViolationNotification extends Notification {
+public class RuleViolationNotification extends Notification<String> {
 	
 	private EDLRule rule;
 

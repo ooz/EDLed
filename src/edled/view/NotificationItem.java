@@ -17,14 +17,14 @@ public class NotificationItem extends JPanel {
 	protected NotificationPanel pane;
 
 	public NotificationItem(final NotificationPanel pane,
-							final Notification n) {
+							final Notification<String> n) {
 		super(new FlowLayout(FlowLayout.LEFT));
 
 		this.pane = pane;
 
-		JLabel l = new JLabel(n.getMessage());
+		JLabel l = new JLabel(n.brief());
 
-		switch (n.getKind()) {
+		switch (n.kind()) {
 		case Error:
 			this.setBackground(Color.RED);
 			l.setForeground(Color.WHITE);

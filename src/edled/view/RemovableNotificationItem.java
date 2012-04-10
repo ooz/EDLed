@@ -20,13 +20,13 @@ public class RemovableNotificationItem extends NotificationItem {
 	private final static Cursor NORMAL = new Cursor(Cursor.DEFAULT_CURSOR);
 
 	public RemovableNotificationItem(final NotificationPanel pane,
-									 final Notification n) {
+									 final Notification<String> n) {
 		super(pane, n);
 		
 		this.removeAll();
 		this.setLayout(new BorderLayout());
 		
-		this.add(new JLabel(n.getMessage()), BorderLayout.CENTER);
+		this.add(new JLabel(n.brief()), BorderLayout.CENTER);
 		
 		IconProvider ip = IconProvider.getInstance();
 		JLabel rm;
