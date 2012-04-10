@@ -290,6 +290,38 @@ public class IconProvider {
 		return label;
 	}
 	
+	public JLabel makePluginLabel() {
+		return makeLabel(this.getPluginIcon(), PLUGIN_ALT_TEXT);
+	}
+
+	public JLabel makeAddLabel() {
+		return makeLabel(this.getAddIcon(), ADD_ADDITIONAL_ALT_TEXT);
+	}
+
+	public JLabel makeAddChildLabel() {
+		return makeLabel(this.getAddChildIcon(), ADD_CHILD_ALT_TEXT);
+	}
+
+	public JLabel makeAddAttributeLabel() {
+		return makeLabel(this.getAddAttributeIcon(), ADD_ATTRIBUTE_ALT_TEXT);
+	}
+
+	public JLabel makeErrorLabel() {
+		return makeLabel(this.getErrorIcon(), ERROR_ALT_TEXT);
+	}
+
+	public JLabel makeRemoveLabel() {
+		return makeLabel(this.getRemoveIcon(), REMOVE_ALT_TEXT);
+	}
+
+	public JLabel makeRemoveAttributeLabel() {
+		return makeLabel(this.getRemoveAttributeIcon(), REMOVE_ATTRIBUTE_ALT_TEXT);
+	}
+
+	public JLabel makeChoiceLabel() {
+		return makeLabel(this.getChoiceIcon(), CHOICE_ALT_TEXT);
+	}
+	
 	public JLabel makeMoreLabel() {
 		return makeLabel(this.getMoreIcon(), MORE_ALT_TEXT);
 	}

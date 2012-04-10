@@ -87,22 +87,12 @@ public class TreeRenderer implements TreeCellRenderer {
 		
 		JLabel label = null;
 		if (!this.view.getValidationResultForNode(currentXMLNode, true).isValid()) {
-			if (this.iconProvider.getErrorIcon() == null) {
-				label = new JLabel(IconProvider.ERROR_ALT_TEXT);
-			} else {
-				label = new JLabel(this.iconProvider.getErrorIcon());
-			}
-			label.setMaximumSize(label.getPreferredSize());
+			label = this.iconProvider.makeErrorLabel();
 			indicatorPane.add(label);
 		}
 		
 		if (this.view.getNodesConfiguredByPlugins().containsKey(currentXMLNode)) {
-			if (this.iconProvider.getPluginIcon() == null) {
-				label = new JLabel(IconProvider.PLUGIN_ALT_TEXT);
-			} else {
-				label = new JLabel(this.iconProvider.getPluginIcon());
-			}
-			label.setMaximumSize(label.getPreferredSize());
+			label = this.iconProvider.makePluginLabel();
 			indicatorPane.add(label);
 		}
 		
@@ -117,61 +107,35 @@ public class TreeRenderer implements TreeCellRenderer {
 			switch (option.getKind()) {
 			case ADD_ADDITIONAL:
 				if (!hasAddOption) {
-					
-					if (this.iconProvider.getAddIcon() == null) {
-						label = new JLabel(IconProvider.ADD_ADDITIONAL_ALT_TEXT);
-					} else {
-						label = new JLabel(this.iconProvider.getAddIcon());
-					}
-					label.setMaximumSize(label.getPreferredSize());
+					label = this.iconProvider.makeAddLabel();
 					indicatorPane.add(label);
 					hasAddOption = true;
 				}
 				break;
 			case ADD_ATTRIBUTE:
 				if (!hasAddAttrOption) {
-					if (this.iconProvider.getAddAttributeIcon() == null) {
-						label = new JLabel(IconProvider.ADD_ATTRIBUTE_ALT_TEXT);
-					} else {
-						label = new JLabel(this.iconProvider.getAddAttributeIcon());
-					}
-					label.setMaximumSize(label.getPreferredSize());
+					label = this.iconProvider.makeAddAttributeLabel();
 					indicatorPane.add(label);
 					hasAddAttrOption = true;
 				}
 				break;
 			case ADD_CHILD:
 				if (!hasAddChildOption) {
-					if (this.iconProvider.getAddChildIcon() == null) {
-						label = new JLabel(IconProvider.ADD_CHILD_ALT_TEXT);
-					} else {
-						label = new JLabel(this.iconProvider.getAddChildIcon());
-					}
-					label.setMaximumSize(label.getPreferredSize());
+					label = this.iconProvider.makeAddChildLabel();
 					indicatorPane.add(label);
 					hasAddChildOption = true;
 				}
 				break;
 			case CHOICE:
 				if (!hasChoiceOption) {
-					if (this.iconProvider.getChoiceIcon() == null) {
-						label = new JLabel(IconProvider.CHOICE_ALT_TEXT);
-					} else {
-						label = new JLabel(this.iconProvider.getChoiceIcon());
-					}
-					label.setMaximumSize(label.getPreferredSize());
+					label = this.iconProvider.makeChoiceLabel();
 					indicatorPane.add(label);
 					hasChoiceOption = true;
 				}
 				break;
 			case REMOVE:
 				if (!hasRemoveOption) {
-					if (this.iconProvider.getRemoveIcon() == null) {
-						label = new JLabel(IconProvider.REMOVE_ALT_TEXT);
-					} else {
-						label = new JLabel(this.iconProvider.getRemoveIcon());
-					}
-					label.setMaximumSize(label.getPreferredSize());
+					label = this.iconProvider.makeRemoveLabel();
 					indicatorPane.add(label);
 					hasRemoveOption = true;
 				}
@@ -200,12 +164,7 @@ public class TreeRenderer implements TreeCellRenderer {
 					&& !hasAttrRemoveOption) {
 					
 //					ManipulationOption removeAttrOption = options.get(0);
-					if (this.iconProvider.getRemoveAttributeIcon() == null) {
-						label = new JLabel(IconProvider.REMOVE_ATTRIBUTE_ALT_TEXT);
-					} else {
-						label = new JLabel(this.iconProvider.getRemoveAttributeIcon());
-					}
-					label.setMaximumSize(label.getPreferredSize());
+					label = this.iconProvider.makeRemoveAttributeLabel();
 					indicatorPane.add(label);
 					hasAttrRemoveOption = true;
 				}
