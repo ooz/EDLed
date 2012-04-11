@@ -1,3 +1,9 @@
+# EDLed v3.0.2 #
+2012-04-11
+
+ * Mac OS X keyboard shortcuts for open, new, save and quit now use the command
+   instead of the control key.
+
 # EDLed v3.0.1 #
 2012-04-11
 
