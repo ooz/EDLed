@@ -5,7 +5,9 @@ import java.awt.Cursor;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
+import javax.swing.BoxLayout;
 import javax.swing.JLabel;
+import javax.swing.JPanel;
 
 import edled.core.Notification;
 
@@ -13,6 +15,8 @@ public class RemovableNotificationItem extends NotificationItem {
 	
 	/** Generated. */
 	private static final long serialVersionUID = -7105764978359273927L;
+	
+	private final static String REMOVE_TOOLTIP = "Click to remove.";
 	
 	private final RemovableNotificationItem self = this;
 	
@@ -24,12 +28,8 @@ public class RemovableNotificationItem extends NotificationItem {
 		super(pane, n);
 		
 		IconProvider ip = IconProvider.getInstance();
-		JLabel rm;
-		if (ip.getRemoveIcon() != null) {
-			rm = new JLabel(ip.getRemoveIcon());
-		} else {
-			rm = new JLabel(IconProvider.REMOVE_ALT_TEXT);
-		}
+		JLabel rm = ip.makeCloseLabel();
+		rm.setToolTipText(REMOVE_TOOLTIP);
 		
 		rm.addMouseListener(new MouseAdapter() {
 			@Override
@@ -46,7 +46,14 @@ public class RemovableNotificationItem extends NotificationItem {
 			}
 		});
 		
-		this.add(rm, BorderLayout.EAST);
+		JPanel rmPane = new JPanel();
+		rmPane.setLayout(new BoxLayout(rmPane, BoxLayout.PAGE_AXIS));
+		rmPane.setAlignmentY(TOP_ALIGNMENT);
+		rmPane.setBackground(getBackground());
+		
+		rmPane.add(rm);
+		
+		this.add(rmPane, BorderLayout.EAST);
 	}
 
 }

@@ -3,10 +3,10 @@ package edled.view;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.FlowLayout;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
+import javax.swing.BoxLayout;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
@@ -17,6 +17,9 @@ public class NotificationItem extends JPanel {
 
 	/** Generated. */
 	private static final long serialVersionUID = 4161259864915056060L;
+	
+	private final static String EXPAND_TOOLTIP = "Click to expand.";
+	private final static String COLLAPSE_TOOLTIP = "Click to collapse.";
 	
 	protected NotificationPanel pane;
 
@@ -38,75 +41,91 @@ public class NotificationItem extends JPanel {
 			this.setBackground(Color.WHITE);
 		}
 
-		JPanel labelPane = createNotificationLabelPane(n);
+		setupNotificationLabel(n);
 
-		this.add(labelPane, BorderLayout.WEST);
 		this.setMaximumSize(new Dimension(Integer.MAX_VALUE, 
 										  (int) this.getPreferredSize().getHeight()));
 	}
 	
-	private JPanel createNotificationLabelPane(final Notification<String> n) {
+	private void setupNotificationLabel(final Notification<String> n) {
 		IconProvider ip = IconProvider.getInstance();
 		
 		final String brief = n.brief();
 		final String verbose = n.verbose();
 		
-		final JPanel labelPane = new JPanel(new FlowLayout(FlowLayout.LEADING));
-		
-		labelPane.setBackground(this.getBackground());
+		final JPanel briefPane = new JPanel();
+		briefPane.setLayout(new BoxLayout(briefPane, BoxLayout.LINE_AXIS));
+		briefPane.setAlignmentX(LEFT_ALIGNMENT);
+		briefPane.setBackground(this.getBackground());
 		
 		final JTextArea briefArea = new JTextArea(brief);
 		briefArea.setBackground(this.getBackground());
 		briefArea.setForeground(this.getForeground());
 		briefArea.setEditable(false);
-		labelPane.add(briefArea);
+		
+		briefPane.add(briefArea);
 		
 		if (verbose != null && verbose != "") {
 			final JLabel moreLabel = ip.makeMoreLabel();
-			moreLabel.setToolTipText("Click to expand.");
-			labelPane.add(moreLabel);
+			briefArea.setToolTipText(EXPAND_TOOLTIP);
+			moreLabel.setToolTipText(EXPAND_TOOLTIP);
+			briefArea.append(" [...]");
+			briefPane.add(moreLabel);
+			
+			final JPanel verbosePane = new JPanel();
+			verbosePane.setLayout(new BoxLayout(verbosePane, BoxLayout.LINE_AXIS));
+			verbosePane.setAlignmentX(LEFT_ALIGNMENT);
+			verbosePane.setBackground(this.getBackground());
+			
+			final JTextArea verboseArea = new JTextArea(verbose);
+			verboseArea.setToolTipText(COLLAPSE_TOOLTIP);
+			verboseArea.setBackground(getBackground());
+			verboseArea.setForeground(getForeground());
+			verboseArea.setEditable(false);
+			
+			verbosePane.add(verboseArea);
 			
 			MouseAdapter adapter = new MouseAdapter() {
-				
 				private boolean expand = true;
 				
 				@Override
 				public void mouseClicked(MouseEvent e) {
 					if (expand) {
-						labelPane.removeAll();
-						JTextArea ta = new JTextArea(verbose);
-						ta.setEditable(false);
-						ta.setBackground(getBackground());
-						ta.setForeground(getForeground());
-						
-						ta.addMouseListener(this);
-						labelPane.add(ta);
+						remove(briefPane);
+						add(verbosePane, BorderLayout.CENTER);
 						expand = false;
+//						verbosePane.revalidate();
+//						verbosePane.repaint();
 						
 						revalidate();
 						setMaximumSize(new Dimension(Integer.MAX_VALUE, 
-								  (int) getPreferredSize().getHeight()));
-						//repaint();
+								       (int) getPreferredSize().getHeight()));
+//						repaint();
+
 					} else {
-						labelPane.removeAll();
-						labelPane.add(briefArea);
-						labelPane.add(moreLabel);
+						remove(verbosePane);
+						add(briefPane, BorderLayout.CENTER);
 						expand = true;
+//						briefPane.revalidate();
+//						briefPane.repaint();
 						
 						revalidate();
 						setMaximumSize(new Dimension(Integer.MAX_VALUE, 
-								  (int) getPreferredSize().getHeight()));
-						//repaint();
+								       (int) getPreferredSize().getHeight()));
+//						repaint();
 					}
 				}
 			};
+			
 			briefArea.addMouseListener(adapter);
 			moreLabel.addMouseListener(adapter);
-			labelPane.addMouseListener(adapter);
+			briefPane.addMouseListener(adapter);
+			verboseArea.addMouseListener(adapter);
+			verbosePane.addMouseListener(adapter);
 			this.addMouseListener(adapter);
 		}
 		
-		return labelPane;
+		add(briefPane, BorderLayout.CENTER);
 	}
 	
 }
