@@ -84,7 +84,8 @@ public class TreeView extends JTree {
 				}
 				Node selectedXMLNode = (Node) selectedNode.getUserObject();
 				
-				inspector.showNodeInfo(selectedXMLNode, self.view.getMetaXMLNodeForNode(selectedXMLNode));
+				inspector.showNodeInfo(selectedXMLNode, 
+									   self.view.getMetaXMLNodeForNode(selectedXMLNode));
 			}
 		});
 		
@@ -167,6 +168,15 @@ public class TreeView extends JTree {
 				if (this.option.getKind() == ManipulationOptionKind.REMOVE
 					|| this.option.getKind() == ManipulationOptionKind.CHOICE) {
 					self.inspector.showNodeInfo(null, null);
+				} else {
+					DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) self.getLastSelectedPathComponent();
+					if (selectedNode == null) {
+						self.inspector.showNodeInfo(null, null);
+					}
+					Node selectedXMLNode = (Node) selectedNode.getUserObject();
+					
+					inspector.showNodeInfo(selectedXMLNode, 
+										   self.view.getMetaXMLNodeForNode(selectedXMLNode));
 				}
 			}
 		}
