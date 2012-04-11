@@ -8,13 +8,11 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.io.File;
-import java.net.MalformedURLException;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
 import javax.swing.Icon;
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
@@ -24,7 +22,6 @@ import javax.swing.JTextField;
 import javax.swing.JTree;
 import javax.swing.SpringLayout;
 
-import org.apache.log4j.Logger;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 
@@ -48,8 +45,6 @@ import edled.xml.XMLUtility;
  * @author Oliver Zscheyge
  */
 public class InspectorPanel extends JPanel implements TreeReceiver {
-	/** */
-	private static final Logger logger = Logger.getLogger(InspectorPanel.class);
 
 	private static final long serialVersionUID = 1L;
 
@@ -60,11 +55,6 @@ public class InspectorPanel extends JPanel implements TreeReceiver {
 	
 	/** Default file name shown in the file chooser caller button. */
 	private static final String DEFAULT_FILE_NAME = "...";
-	
-	/** Unqualified file name of the "info/appinfo/annotation"-icon. */
-	private static final String INFO_FILENAME = "info.png";
-	/** Alternative text that will be rendered if no "info/appinfo/annotation"-icon is available. */
-	private static final String INFO_ALT_TEXT = "[?]";
 
 	/** Reference to the view fascade. */
 	private final View view;
@@ -86,23 +76,10 @@ public class InspectorPanel extends JPanel implements TreeReceiver {
 		this.layout = new SpringLayout();
 		this.setLayout(this.layout);
 		
-		Configuration config = Configuration.getInstance();
-		String imgPath = config.resolveVariables("$IMG_DIR");
 		
 		// Load plugin icon.
-		File iconFile = new File(imgPath 
-								 + Configuration.FILE_SEPARATOR 
-								 + view.getIconSizeModifier() 
-								 + INFO_FILENAME);
-		if (iconFile.isFile()) {
-			try {
-				this.infoIcon = new ImageIcon(iconFile.toURI().toURL());
-			} catch (MalformedURLException e) {
-				logger.debug("Info icon URL malformed!", e);
-			}
-		} else {
-			logger.info("Could not find plugin icon.");
-		}
+		IconProvider ip = IconProvider.getInstance();
+		this.infoIcon = ip.getInfoIcon();
 	}
 
 	@Override
@@ -139,7 +116,7 @@ public class InspectorPanel extends JPanel implements TreeReceiver {
 			String labelText = "<html><b>" + xmlNode.getNodeName() + "</b></html>";
 			if (edlNodeConstraint.hasAppInfo()) {
 				if (this.infoIcon == null) {
-					labelText = "<html><b>" + INFO_ALT_TEXT + " " + xmlNode.getNodeName() + "</b></html>";
+					labelText = "<html><b>" + IconProvider.INFO_ALT_TEXT + " " + xmlNode.getNodeName() + "</b></html>";
 					nodeNameLabel = new JLabel(labelText);
 				} else {
 					nodeNameLabel = new JLabel(labelText, this.infoIcon, JLabel.TRAILING);

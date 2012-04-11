@@ -27,6 +27,11 @@ public class IconProvider {
 	 * All following unqualified file names will be preceeded either by
 	 * ICON_SIZE_MODIFIER_12 or ICON_SIZE_MODIFIER_16. 
 	 */
+	/** Unqualified file name of the "info/appinfo/annotation"-icon. */
+	private static final String INFO_FILENAME = "info.png";
+	/** Alternative text that will be rendered if no "info/appinfo/annotation"-icon is available. */
+	public static final String INFO_ALT_TEXT = "[?]";
+	
 	/** Unqualified file name of the "plugin"-icon. */
 	private static final String PLUGIN_FILENAME = "plugin.png";
 	/** Alternative text that will be rendered if no "plugin"-icon is available. */
@@ -77,6 +82,8 @@ public class IconProvider {
 	/** Alternative text that will be rendered if no "discard/close"-icon is available. */
 	public static final String CLOSE_ALT_TEXT = "[close]";
 	
+	/** Icon indicating that a description for a configuration entry is available. */
+	private Icon infoIcon = null;
 	/** Icon indicating that the node can be alternatively configured by a plugin. */
 	private Icon pluginIcon = null;
 	
@@ -105,8 +112,20 @@ public class IconProvider {
 		String imgPath = config.resolveVariables("$IMG_DIR");
 		String iconSizeModifier = getIconSizeModifier();
 		
+		// Load info icon.
+		File iconFile = new File(imgPath + Configuration.FILE_SEPARATOR + iconSizeModifier + INFO_FILENAME);
+		if (iconFile.isFile()) {
+			try {
+				this.infoIcon = new ImageIcon(iconFile.toURI().toURL());
+			} catch (MalformedURLException e) {
+				logger.debug("Info icon URL malformed!", e);
+			}
+		} else {
+			logger.info("Could not find plugin icon.");
+		}
+		
 		// Load plugin icon.
-		File iconFile = new File(imgPath + Configuration.FILE_SEPARATOR + iconSizeModifier + PLUGIN_FILENAME);
+		iconFile = new File(imgPath + Configuration.FILE_SEPARATOR + iconSizeModifier + PLUGIN_FILENAME);
 		if (iconFile.isFile()) {
 			try {
 				this.pluginIcon = new ImageIcon(iconFile.toURI().toURL());
@@ -235,6 +254,10 @@ public class IconProvider {
 			return View.ICON_SIZE_MODIFIER_12;
 		}
 	}
+	
+	public Icon getInfoIcon() {
+		return infoIcon;
+	}
 
 	public Icon getPluginIcon() {
 		return pluginIcon;
@@ -288,6 +311,10 @@ public class IconProvider {
 		}
 		label.setMaximumSize(label.getPreferredSize());
 		return label;
+	}
+	
+	public JLabel makeInfoLabel() {
+		return makeLabel(this.getInfoIcon(), INFO_ALT_TEXT);
 	}
 	
 	public JLabel makePluginLabel() {
