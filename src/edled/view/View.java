@@ -4,7 +4,6 @@ import java.io.File;
 import java.util.List;
 import java.util.Map;
 
-import javax.swing.JOptionPane;
 import javax.swing.JTextArea;
 import javax.swing.UIManager;
 
@@ -15,6 +14,8 @@ import edled.Application;
 import edled.core.ManipulationOption;
 import edled.core.Model;
 import edled.core.Notification;
+import edled.core.Notification.NotificationKind;
+import edled.core.StringNotification;
 import edled.core.metatree.MetaNode;
 import edled.core.validation.ValidationResult;
 import edled.plugin.Plugin;
@@ -248,10 +249,14 @@ public class View {
 	 * @param msg The string message to show in the dialog.
 	 */
 	public void showErrorDialog(final String msg) {
-		JOptionPane.showMessageDialog(this.mainWindow, 
-				  					  msg, 
-				  					  "Error", 
-				  					  JOptionPane.ERROR_MESSAGE);
+		show(new StringNotification(StringNotification.generateBrief(msg), 
+									StringNotification.generateVerbose(msg), 
+									NotificationKind.Error), 
+			 true);
+//		JOptionPane.showMessageDialog(this.mainWindow, 
+//				  					  msg, 
+//				  					  "Error", 
+//				  					  JOptionPane.ERROR_MESSAGE);
 	}
 
 	/**
@@ -260,10 +265,14 @@ public class View {
 	 * @param msg The string message to show in the dialog.
 	 */
 	public void showInfoDialog(final String msg) {
-		JOptionPane.showMessageDialog(this.mainWindow, 
-									  msg, 
-									  "Info", 
-									  JOptionPane.INFORMATION_MESSAGE);
+		show(new StringNotification(StringNotification.generateBrief(msg), 
+									StringNotification.generateVerbose(msg), 
+									NotificationKind.Info), 
+			 true);
+//		JOptionPane.showMessageDialog(this.mainWindow, 
+//									  msg, 
+//									  "Info", 
+//									  JOptionPane.INFORMATION_MESSAGE);
 	}
 
 	/**
@@ -272,10 +281,14 @@ public class View {
 	 * @param msg The string message to show in the dialog.
 	 */
 	public void showWarnDialog(final String msg) {
-		JOptionPane.showMessageDialog(this.mainWindow,
-			    					  msg,
-			    					  "Warning",
-			    					  JOptionPane.WARNING_MESSAGE);
+		show(new StringNotification(StringNotification.generateBrief(msg), 
+									StringNotification.generateVerbose(msg), 
+									NotificationKind.Warn), 
+			 true);
+//		JOptionPane.showMessageDialog(this.mainWindow,
+//			    					  msg,
+//			    					  "Warning",
+//			    					  JOptionPane.WARNING_MESSAGE);
 	}
 	
 	public String getAppName() {
