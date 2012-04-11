@@ -1,3 +1,8 @@
+# EDLed v3.0.1 #
+2012-04-11
+
+ * Fixed a bug causing no repaint after opening/creating a configuration.
+
 # EDLed v3.0.0 #
 2012-04-11
 
