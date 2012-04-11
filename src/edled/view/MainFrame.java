@@ -497,6 +497,8 @@ public class MainFrame extends JFrame implements TreeReceiver {
 	public void setTree(final JTree tree) {
 		this.treeView = tree;
 		this.generalPanel.setTree(tree);
+		
+		this.repaint();
 	}
 	
 	/**
