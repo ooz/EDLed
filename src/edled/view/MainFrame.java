@@ -207,6 +207,7 @@ public class MainFrame extends JFrame implements TreeReceiver {
 				closeMainWindow();
 			}
 		});
+		item.setAccelerator(KeyStroke.getKeyStroke('Q', this.accelerator_mask));
 		fileMenu.add(item);
 		menubar.add(fileMenu);
 		// END File menu.
