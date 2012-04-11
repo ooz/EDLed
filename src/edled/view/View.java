@@ -65,7 +65,7 @@ public class View {
 //		this.dateFormatter = new SimpleDateFormat("HH:mm:ss");
 		
 		this.controller = controller;
-		this.edlInspectorPanel = new InspectorPanel(this);
+		this.edlInspectorPanel = new MultiInspectorPanel(this);
 		this.messageArea = new JTextArea();
 		this.messageArea.setEditable(false);
 		this.notificationPanel = new NotificationPanel();

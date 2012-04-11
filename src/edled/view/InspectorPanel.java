@@ -57,7 +57,7 @@ public class InspectorPanel extends JPanel implements TreeReceiver {
 	private static final String DEFAULT_FILE_NAME = "...";
 
 	/** Reference to the view fascade. */
-	private final View view;
+	protected final View view;
 
 	/** 
 	 * Reference to the JTree displaying the EDL/XML document structure 
@@ -170,7 +170,7 @@ public class InspectorPanel extends JPanel implements TreeReceiver {
 			int attrCount = nodeAttributes.getLength();
 			if (attrCount > 0) {
 
-				JLabel attrHeader = new JLabel("<html><b>Attributes</b></html>");
+				JLabel attrHeader = new JLabel("<html><b>Attributes:</b></html>");
 				this.add(attrHeader);
 				this.layout.putConstraint(SpringLayout.NORTH, attrHeader,
 						ATTR_FIELD_PADDING, SpringLayout.SOUTH, prefComp);
