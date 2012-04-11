@@ -1,5 +1,5 @@
 # EDLed v3.0.0 #
-2012-??-??
+2012-04-11
 
  * Reworked the application launch. EDLed can now be started just by executing
    the edled.jar file on Linux systems.
@@ -7,6 +7,8 @@
  * The notification system now supports brief/verbose notifications.
  * The node inspector now also shows all direct child elements of a node.
  * All dialogs are now realized as notifications.
+ * EDLed now comes bundled with latest EDL version incorporating dynamic design
+   support.
 
 # EDLed v2.0.0 #
 2012-03-26
