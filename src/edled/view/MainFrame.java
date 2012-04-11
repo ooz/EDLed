@@ -64,6 +64,9 @@ public class MainFrame extends JFrame implements TreeReceiver {
 									  + "by the Tango Desktop Project\n"
 									  + "(http://tango.freedesktop.org/)";
 	
+	/** Indicator for Apple's Mac OS X in system property "os.name". */
+	private final static String MAC_OS_X = "Mac OS X";
+	
 	/** Reference to the view fascade. */
 	private View view = null;
 	
@@ -77,6 +80,8 @@ public class MainFrame extends JFrame implements TreeReceiver {
 	
 	private JTree treeView = null;
 	private InspectorPanel inspector = null;
+	
+	private final int accelerator_mask;
 	
 	/** 
 	 * Map holding the plugin views (key) and their associated qualified
@@ -102,6 +107,12 @@ public class MainFrame extends JFrame implements TreeReceiver {
 		this.view = view;
 		this.inspector = edlInspectorPanel;
 		this.pluginViews = new LinkedHashMap<JPanel, String>();
+		
+		if (System.getProperty("os.name").startsWith(MAC_OS_X)) {
+			this.accelerator_mask = InputEvent.META_DOWN_MASK;
+		} else {
+			this.accelerator_mask = InputEvent.CTRL_DOWN_MASK;
+		}
 		
 		setupWindow();
 		setupMenuBar();
@@ -145,7 +156,7 @@ public class MainFrame extends JFrame implements TreeReceiver {
 				newDocument();
 			}
 		});
-		item.setAccelerator(KeyStroke.getKeyStroke('N', InputEvent.CTRL_DOWN_MASK));
+		item.setAccelerator(KeyStroke.getKeyStroke('N', this.accelerator_mask));
 		fileMenu.add(item);
 		
 		// Open...
@@ -156,7 +167,7 @@ public class MainFrame extends JFrame implements TreeReceiver {
 				load();
 			}
 		});
-		item.setAccelerator(KeyStroke.getKeyStroke('O', InputEvent.CTRL_DOWN_MASK));
+		item.setAccelerator(KeyStroke.getKeyStroke('O', this.accelerator_mask));
 		fileMenu.add(item);
 		
 		// Open Recent
@@ -173,7 +184,7 @@ public class MainFrame extends JFrame implements TreeReceiver {
 				save(false);
 			}
 		});
-		item.setAccelerator(KeyStroke.getKeyStroke('S', InputEvent.CTRL_DOWN_MASK));
+		item.setAccelerator(KeyStroke.getKeyStroke('S', this.accelerator_mask));
 		fileMenu.add(item);
 		
 		// Save as...
