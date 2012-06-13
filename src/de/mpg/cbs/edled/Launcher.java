@@ -69,7 +69,7 @@ public class Launcher extends Thread {
 				   + ".:edled.jar:plugin/:res/lib/ "
 				   + osSpecific
 				   + joinArgs(jvmParams)
-				   + "edled.Application "
+				   + "de.mpg.cbs.edled.Application "
 				   + joinArgs(args);
 		
 		String appPath = "";
