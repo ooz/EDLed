@@ -42,11 +42,11 @@ PLUGIN_DIR = "plugin/"
 RES_DIR = "res/"
 
 EDLED_APP_DIR = "EDLed/"
-EDLED_DIR     = "edled/"
+EDLED_DIR     = "de/mpg/cbs/edled/"
 EDLED_MAIN    = "Launcher.java"
-STIMULUS_DIR  = "stimulus/"
+STIMULUS_DIR  = "de/mpg/cbs/edledplugin/stimulus/"
 STIMULUS_MAIN = "StimulusPlugin.java"
-DESIGN_DIR    = "design/"
+DESIGN_DIR    = "de/mpg/cbs/edledplugin/design/"
 DESIGN_MAIN   = "DesignPlugin.java"
 
 LIB_DIR       = "res/lib/"
@@ -89,14 +89,15 @@ if __name__ == "__main__":
     build(libsWithPaths, BUILD_DIR + DESIGN_DIR + DESIGN_MAIN)
 
     print(" Packaging .jar archives...")
-    system("echo \"pushd ./;cd build/;jar cmf ../MANIFEST.MF edled.jar edled/;jar cf stimulus.StimulusPlugin.jar stimulus/;jar cf design.DesignPlugin.jar design/;popd\" > createJARs.sh")
+    system("echo \"pushd ./;cd build/;jar cmf ../MANIFEST.MF edled.jar de/mpg/cbs/edled/;jar cf de.mpg.cbs.edledplugin.stimulus.StimulusPlugin.jar de/mpg/cbs/edledplugin/stimulus/;jar cf de.mpg.cbs.edledplugin.design.DesignPlugin.jar de/mpg/cbs/edledplugin/design/;popd\" > createJARs.sh")
     system("bash createJARs.sh")
     system("rm createJARs.sh")
 
     print(" Remove directory/packages containing the compiled .class files...")
-    system("rm -rf build/design/")
-    system("rm -rf build/edled/")
-    system("rm -rf build/stimulus/")
+    system("rm -rf build/de/")
+#    system("rm -rf build/design/")
+#    system("rm -rf build/edled/")
+#    system("rm -rf build/stimulus/")
 
     print(" Copying ressource directory...")
     targetDir = BUILD_DIR + EDLED_APP_DIR
