@@ -19,6 +19,7 @@ import de.mpg.cbs.edled.core.Notification.NotificationKind;
 import de.mpg.cbs.edled.core.metatree.MetaNode;
 import de.mpg.cbs.edled.core.validation.ValidationResult;
 import de.mpg.cbs.edled.plugin.Plugin;
+import de.mpg.cbs.edled.util.FileStatus;
 
 
 /**
@@ -121,9 +122,9 @@ public class View {
 	 * Asks the controller to load a given XML (EDL) file.
 	 * 
 	 * @param file The file to load.
-	 * @return     Boolean indicating whether the load process was successful.
+	 * @return     FileStatus indicating whether the load process was successful.
 	 */
-	boolean loadXMLFile(final File file) {
+	FileStatus loadXMLFile(final File file) {
 		this.edlInspectorPanel.showNodeInfo(null, null); // Clear inspector.
 		
 		return this.controller.load(file);

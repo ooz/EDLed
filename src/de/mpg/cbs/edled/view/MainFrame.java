@@ -39,6 +39,7 @@ import javax.swing.event.ChangeListener;
 
 import de.mpg.cbs.edled.plugin.Plugin;
 import de.mpg.cbs.edled.util.Configuration;
+import de.mpg.cbs.edled.util.FileStatus;
 
 
 
@@ -389,15 +390,26 @@ public class MainFrame extends JFrame implements TreeReceiver {
 		}
 	}
 	private void loadFile(final File fileToLoad) {
-		if (this.view.loadXMLFile(fileToLoad)) {
+		FileStatus status = this.view.loadXMLFile(fileToLoad);
+		switch (status) {
+		case SUCCESS:
 			this.setTitle(fileToLoad.getPath() + " - " + this.view.getAppName());
 			this.previousSeletion = null;
 			updateRecentsMenu();
 			updateAppAndPlugins();
-		} else {
+			break;
+		case NOT_FOUND:
 			this.view.showErrorDialog("The file " 
-					                  + fileToLoad.getName() 
-					                  + " is not a valid according to the given XSD (see Menu>Edit>Preferences)!");
+	                  + fileToLoad.getName() 
+	                  + " could not be found!");
+			break;
+		case NOT_COMPLIANT:
+			this.view.showErrorDialog("The file " 
+	                  + fileToLoad.getName() 
+	                  + " is not a valid according to the given XSD (see Menu>Edit>Preferences)!");
+			break;
+		default:
+			break;
 		}
 	}
 	

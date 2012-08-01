@@ -25,6 +25,7 @@ import de.mpg.cbs.edled.plugin.Plugin;
 import de.mpg.cbs.edled.plugin.PluginLoader;
 import de.mpg.cbs.edled.plugin.ReplacementManager;
 import de.mpg.cbs.edled.util.Configuration;
+import de.mpg.cbs.edled.util.FileStatus;
 import de.mpg.cbs.edled.util.FileUtility;
 import de.mpg.cbs.edled.view.View;
 import de.mpg.cbs.edled.xml.XMLUtility;
@@ -280,11 +281,11 @@ public class Application implements Runnable {
 	 * Loads a XML (EDL) document from a given file.
 	 * 
 	 * @param from The file representing the XML (EDL) configuration.
-	 * @return     Boolean indication whether the read/load process was successful
-	 * 			   and whether the document is an instance of the given XSD.
+	 * @return     FileStatus indicating whether the read/load process was 
+	 * 			   successful and whether the document is an instance of the 
+	 * 			   given XSD.
 	 */
-	public boolean load(final File from) {
-		
+	public FileStatus load(final File from) {
 		Schema schema = XMLUtility.loadSchema(this.xsdFile);
 		Document document = XMLUtility.loadDocument(from, schema);
 		MetaTreeBuilder metaTreeBuilder = new XSOMMetaTreeBuilder(this.xsdFile);
@@ -299,7 +300,7 @@ public class Application implements Runnable {
 				newModel = null;
 			}
 		} else {
-			return false;
+			return FileStatus.NOT_FOUND;
 		}
 		
 		if (newModel != null) {
@@ -309,10 +310,10 @@ public class Application implements Runnable {
 			
 			logger.info("Opened " + from.getPath());
 			
-			return true;
-		} else {
-			return false;
+			return FileStatus.SUCCESS;
 		}
+		
+		return FileStatus.NOT_COMPLIANT;
 	}
 	
 	/**
