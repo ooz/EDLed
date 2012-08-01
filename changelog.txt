@@ -2,6 +2,8 @@
 2012-08-??
 
  * Updated EDLRules to the latest version.
+ * If a non-existent file is opened an appropriate error message is shown.
+   It will not be labeled as "not schema compliant" anymore.
 
 # EDLed v3.0.2 #
 2012-04-11
