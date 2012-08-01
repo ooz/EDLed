@@ -2,6 +2,7 @@ package de.mpg.cbs.edled.view;
 
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -69,6 +70,11 @@ public class InspectorPanel extends JPanel implements TreeReceiver {
 	 */
 	private JTree tree = null;
 	private SpringLayout layout;
+	
+	/** Hand (link) cursor. */
+	private final static Cursor HAND = new Cursor(Cursor.HAND_CURSOR);
+	/** Normal mouse pointer. */
+	private final static Cursor NORMAL = new Cursor(Cursor.DEFAULT_CURSOR);
 	
 	/** Icon indicating that mouseovering the icon or associated node name label
 	 *  will show the node description/annotation. */
@@ -575,6 +581,14 @@ public class InspectorPanel extends JPanel implements TreeReceiver {
 			@Override
 			public void mouseClicked(final MouseEvent e) {
 				view.showNodeDescription(text);
+			}
+			@Override
+			public void mouseEntered(MouseEvent e) {
+				setCursor(HAND);
+			}
+			@Override
+			public void mouseExited(MouseEvent e) {
+				setCursor(NORMAL);
 			}
 		};
 	}
