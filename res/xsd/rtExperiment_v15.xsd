@@ -10,10 +10,19 @@
 
   <xs:element name="rtExperiment">
     <xs:annotation>
-      <xs:appinfo>Root Element This contains all sections: environment,
-      experimentData, mriParams (optional), preprocessing (optional),
-      statistics (optional), activationProcessing (optional), stimulusData
-      (optional), viewProperties (optional)</xs:appinfo>
+      <xs:appinfo>
+             Root Element which contains all sections describing an experiment.
+
+             Elements:
+               environment,
+               experimentData, 
+               mriParams (optional), 
+               preprocessing (optional),
+               statistics (optional), 
+               activationProcessing (optional), 
+               stimulusData (optional), 
+               viewProperties (optional)
+      </xs:appinfo>
     </xs:annotation>
 
     <xs:complexType>
@@ -39,9 +48,26 @@
     </xs:complexType>
   </xs:element>
 
-  <!--+++++++++++++++++++Begin Environment+++++++++++++++++++-->
 
+
+  <!--+++++++++++++++++++Begin Environment+++++++++++++++++++-->
   <xs:element name="environment">
+    <xs:annotation>
+      <xs:appinfo>
+             This element contains information concerning the interaction with the world outside (environment).
+
+              Elements:
+                logging:                         log settings during runtime
+                startTrigger:                  wait for start trigger from environment before starting the analysis (needed for synchronization)
+                dataFolder (optional):   location of input data expected (any URI)
+                resultFolder (optional): location of result 
+                resultImage (optional): the imageModalities for the result images (usually statistical maps, e.g. t-values or correlation values)
+                                                     If this element is not used, no result images are saved during runtime.
+
+              Attributes:
+                globalTimeUnit: just milliseconds used in this version
+      </xs:appinfo>
+    </xs:annotation>
     <xs:complexType>
       <xs:sequence>
         <xs:element maxOccurs="1" minOccurs="1" ref="logging"></xs:element>
@@ -57,7 +83,7 @@
         <xs:element maxOccurs="1" minOccurs="0" name="resultFolder"
                     type="xs:anyURI"></xs:element>
 
-        <xs:element minOccurs="0" ref="resultImage"></xs:element>
+        <xs:element maxOccurs="1" minOccurs="0" ref="resultImage"></xs:element>
       </xs:sequence>
 
       <xs:attribute name="globalTimeUnit" use="required">
@@ -70,9 +96,21 @@
     </xs:complexType>
   </xs:element>
 
-  <!--+++Logging++++-->
 
+  <!--+++logging++++-->
   <xs:element name="logging">
+    <xs:annotation>
+      <xs:appinfo>
+             This element contains information concerning logging of applications runtime information.
+
+              Elements:
+                logFolder (optional): location to store log files (URI, e.g. /Users/realtime/log)
+                logFile (optional):      filename of logfile (URI, e.g. logRT.txt)
+ 
+              Attributes:
+                doLogging: true if logging should be enabled, false otherwise
+      </xs:appinfo>
+    </xs:annotation>
     <xs:complexType>
       <xs:sequence>
         <xs:element maxOccurs="1" minOccurs="0" name="logFolder"
@@ -81,19 +119,30 @@
         <xs:element maxOccurs="1" minOccurs="0" name="logFile"
                     type="xs:anyURI"></xs:element>
       </xs:sequence>
-
       <xs:attribute name="doLogging" type="xs:boolean" use="required"></xs:attribute>
     </xs:complexType>
   </xs:element>
 
-  <!--+++Trigger at Startup++++-->
 
+  <!--+++startTrigger++++-->
   <xs:element name="startTrigger">
+    <xs:annotation>
+      <xs:appinfo>
+             This element contains information concerning the start trigger from the environment (parallel and serial ports supported).
+             In combination with logging the start trigger can be used to synchronize environment (e.g. MRI scanner) and application.
+
+              Elements:
+                parallelPortTrigger: port settings for parallel port
+                serialPortTrigger:    port settings for serial port
+ 
+              Attributes:
+                waitForInitialTrigger: true if should wait for initial trigger to start, false otherwise
+      </xs:appinfo>
+    </xs:annotation>
     <xs:complexType>
       <xs:sequence>
         <xs:choice>
           <xs:element maxOccurs="1" minOccurs="1" ref="parallelPortTrigger"></xs:element>
-
           <xs:element maxOccurs="1" minOccurs="1" ref="serialPortTrigger"></xs:element>
         </xs:choice>
       </xs:sequence>
@@ -105,10 +154,14 @@
 
   <xs:element name="parallelPortTrigger">
     <xs:annotation>
-      <xs:appinfo>This element describes the settings for parallel port
-      communication. triggerPort: for example 0x379 bitOffset: offset for data
-      bit (for example 6) negativeLogic: use negative logic (0 or
-      1)</xs:appinfo>
+      <xs:appinfo>
+          This element describes the settings for parallel port communication.
+
+          Elements:
+            triggerPort:                  port adress (e.g. 0x379) 
+            bitOffset (default = 6): offset for data
+            negativeLogic:            use negative logic (0 or 1)
+      </xs:appinfo>
     </xs:annotation>
 
     <xs:complexType>
@@ -136,14 +189,17 @@
 
   <xs:element name="serialPortTrigger">
     <xs:annotation>
-      <xs:appinfo>This element describes the settings for serial port
-      communication. triggerPort: for example COM1, COM2, etc. (Windows) or
-      /dev/ttySPortName (Linux) baudRate: used bit-rate (for example 9600 or
-      19200) dataBits: number of bits for each character (5,6,7,8 or 9 -
-      usually 8 for all kind of data) parity: one of (none, odd, even, mark,
-      space) default is none triggerCode: the code that is send from device as
-      trigger (e.g. 255) - use "ANY" if all codes should be
-      accepted</xs:appinfo>
+      <xs:appinfo>
+          This element describes the settings for serial port communication. 
+          
+          Elements: 
+            triggerPort:   port adress (e.g. COM1, COM2 for Windows or /dev/ttySPortName for Unix) 
+            baudRate:    used bit-rate (e.g. 9600 or 19200) 
+            dataBits:       number of bits for each character (one of 5,6,7,8  - usually 8 for all kind of data) 
+            parity  (default: "none"): one of "none", "odd", "even", "mark", "space"
+            triggerCode: the code that is send from device as trigger (e.g. 255) - use "ANY" if all 
+                                 codes should be accepted
+      </xs:appinfo>
     </xs:annotation>
 
     <xs:complexType>
@@ -168,7 +224,6 @@
     <xs:simpleType>
       <xs:restriction base="xs:unsignedInt">
         <xs:minInclusive value="5"></xs:minInclusive>
-
         <xs:maxInclusive value="8"></xs:maxInclusive>
       </xs:restriction>
     </xs:simpleType>
@@ -178,13 +233,9 @@
     <xs:simpleType>
       <xs:restriction base="xs:token">
         <xs:enumeration value="none"></xs:enumeration>
-
         <xs:enumeration value="odd"></xs:enumeration>
-
         <xs:enumeration value="even"></xs:enumeration>
-
         <xs:enumeration value="mark"></xs:enumeration>
-
         <xs:enumeration value="space"></xs:enumeration>
       </xs:restriction>
     </xs:simpleType>
@@ -193,65 +244,100 @@
   <!--+++End Trigger at Startup++++-->
 
   <xs:element name="resultImage">
+    <xs:annotation>
+      <xs:appinfo>
+          This element holds information of the format of result images (usually statistical maps, e.g. t-values or correlation values).
+
+          Elements:
+            imageModalities
+      </xs:appinfo>
+    </xs:annotation>
     <xs:complexType>
       <xs:sequence>
         <xs:element ref="imageModalities"></xs:element>
       </xs:sequence>
     </xs:complexType>
   </xs:element>
-
   <!--+++++++++++++++++++End Environment+++++++++++++++++++-->
 
-  <!--+++++++++++++++++++Begin ExperimentData+++++++++++++++++++-->
 
+
+  <!--+++++++++++++++++++Begin ExperimentData+++++++++++++++++++-->
   <xs:element name="experimentData">
+    <xs:annotation>
+      <xs:appinfo>
+             This element holds information of the experimental conditions (experimental design, input data etc.). 
+
+              Elements:
+                description (optional): free text description of the properties of the experiment
+                paradigm:                    the design of the experiment (regressors etc.), can be used for statistical analysis
+                imageModalities:         format of input image data
+                misc (optional):            not used
+
+              Attributes:
+                trSimulation: true if simulation of the experimentr timing should be done (should be false for real time experiments)
+      </xs:appinfo>
+    </xs:annotation>
     <xs:complexType>
       <xs:sequence>
-        <xs:element minOccurs="0" ref="description"></xs:element>
-
+        <xs:element name="description" type="xs:string" minOccurs="0" ></xs:element>
         <xs:element maxOccurs="1" minOccurs="1" ref="paradigm"></xs:element>
-
         <xs:element maxOccurs="1" minOccurs="1" ref="imageModalities"></xs:element>
-
         <xs:element minOccurs="0" ref="misc"></xs:element>
       </xs:sequence>
-
       <xs:attribute name="trSimulation" type="xs:boolean" use="required"></xs:attribute>
     </xs:complexType>
   </xs:element>
 
-  <xs:element name="description" type="xs:string"></xs:element>
 
   <!--+++Paradigm++++-->
-
   <xs:element name="paradigm">
+    <xs:annotation>
+      <xs:appinfo>
+             Describes the design of the experiment (regressors etc.), that can be used for statistical analysis.
+             Three types of designs are supported growingWindow, slidingWindow, or dynamic.
+
+              Elements:
+                gwDesignStruct:          describes a growing window design (data source for analysis is growing from the first to the last scan)
+                or                
+                swDesignStruct:          describes a sliding window design (data source for analysis is a constant window moved over the scans)
+                or                
+                dynamicDesignStruct: a dynamic design, regressors are externally defined during runtime
+
+                covariateStruct (optional): covariates for given regressors                
+
+              Attributes:
+                ignoreScansAtStart: number of scans that should be ignored at start of experiment,
+                                                 these will not be used in any analysis (e.g. used to account for MR saturation effects)
+      </xs:appinfo>
+    </xs:annotation>
     <xs:complexType>
       <xs:sequence>
         <xs:choice>
           <xs:element maxOccurs="1" minOccurs="0" ref="gwDesignStruct"></xs:element>
-
           <xs:element maxOccurs="1" minOccurs="0" ref="swDesignStruct"></xs:element>
-
           <xs:element maxOccurs="1" minOccurs="0" ref="dynamicDesignStruct"></xs:element>
         </xs:choice>
-
         <xs:element maxOccurs="1" minOccurs="0" ref="covariateStruct"></xs:element>
       </xs:sequence>
-
       <xs:attribute name="ignoreScansAtStart" type="xs:unsignedInt"
                     use="required"></xs:attribute>
     </xs:complexType>
   </xs:element>
 
-  <!--+++ Structure for Growing  Window designs +++-->
-
+ 
+ <!--+++ Structure for Growing  Window designs +++-->
   <xs:element name="gwDesignStruct">
     <xs:annotation>
-      <xs:appinfo>This element describes a Growing-Window designs. That means
-      that all scans acquired before the actual one are included in the
-      analysis (the analysis window grows).</xs:appinfo>
-    </xs:annotation>
+      <xs:appinfo>
+          This element describes a Growing-Window designs. That means
+          that all scans acquired before the actual one are included in the
+          analysis (the analysis window grows).
 
+          Elements:
+            timeBasedRegressor: one ore more regressors describing the reference timing for analysis (e.g. the paradigm timing that is folded with HRF)
+      </xs:appinfo>
+    </xs:annotation>
     <xs:complexType>
       <xs:sequence>
         <xs:element maxOccurs="unbounded" minOccurs="0"
@@ -259,17 +345,20 @@
       </xs:sequence>
     </xs:complexType>
   </xs:element>
+
 
   <!--+++ Structure for Sliding  Window designs +++-->
-
   <xs:element name="swDesignStruct">
     <xs:annotation>
-      <xs:appinfo>This element describes a Sliding-Window designs. That means
-      that all scans acquired before the actual one minus defined window-size
-      are NOT included in the analysis (the analysis window
-      moves).</xs:appinfo>
-    </xs:annotation>
+      <xs:appinfo>
+          This element describes a Sliding-Window designs. That means
+          that all scans acquired before the actual one minus defined window-size
+          are NOT included in the analysis (the analysis window moves).
 
+          Elements:
+            timeBasedRegressor: one ore more regressors describing the reference timing for analysis (e.g. the paradigm timing that is folded with HRF)
+      </xs:appinfo>
+    </xs:annotation>
     <xs:complexType>
       <xs:sequence>
         <xs:element maxOccurs="unbounded" minOccurs="0"
@@ -277,34 +366,40 @@
       </xs:sequence>
     </xs:complexType>
   </xs:element>
+
 
   <!--+++ Struct for dynamic designs +++-->
-
   <xs:element name="dynamicDesignStruct">
     <xs:annotation>
-      <xs:appinfo>Dynamic Design for unknown design timing. Just the maximal
-      duration has to be given. Attributes: maxLength - maximal length of
-      design [ms]</xs:appinfo>
-    </xs:annotation>
+      <xs:appinfo>
+           Dynamic Design for unknown design timing. Just the maximal duration has to be given. 
 
+          Elements:
+            timeBasedRegressor: not used for dynamic designs
+
+            Attributes: 
+              maxLength - maximal length of design 
+       </xs:appinfo>
+    </xs:annotation>
     <xs:complexType>
       <xs:sequence>
-        <xs:element maxOccurs="unbounded" minOccurs="0"
-                    ref="timeBasedRegressor"></xs:element>
+        <xs:element maxOccurs="unbounded" minOccurs="0"  ref="timeBasedRegressor"></xs:element>
       </xs:sequence>
-
-      <xs:attribute name="maxLength" type="xs:unsignedLong" use="required"></xs:attribute>
+          <xs:attribute name="maxLength" type="xs:unsignedLong" use="required"></xs:attribute>
     </xs:complexType>
   </xs:element>
 
-  <!--+++ Struct for covriates +++-->
 
+  <!--+++ Struct for covriates +++-->
   <xs:element name="covariateStruct">
     <xs:annotation>
-      <xs:appinfo>Defines the covriates, e.g. movement
-      parameters.</xs:appinfo>
-    </xs:annotation>
+      <xs:appinfo>
+          Defines the covriates, e.g. movement parameters.
 
+          Elements:
+             covariate (optional): one or more covariates that should be used in analysis
+      </xs:appinfo>
+    </xs:annotation>
     <xs:complexType>
       <xs:sequence>
         <xs:element maxOccurs="unbounded" minOccurs="0" ref="covariate"></xs:element>
@@ -312,119 +407,157 @@
     </xs:complexType>
   </xs:element>
 
-  <!--+++ timeBasedRegressor +++-->
 
+
+  <!--+++ timeBasedRegressor +++-->
   <xs:element name="timeBasedRegressor">
     <xs:annotation>
-      <xs:appinfo>This element describes the timing of an analysis using the
-      unit milliseconds. Attributes: regressorID - unique identifier name -
-      name size - over all time length of regressor useRefFct - reference to
-      the HRF-model (referenceFunction) that should be used
-      useRefFctFirstDerivative - include first derivative in the model
-      (optional) useRefFctSecondDerivative - include second derivative in the
-      model (optional) scaleHeightToZeroMean - indicate if convolved regressor
-      should be scaled to mean zero height (usually no)</xs:appinfo>
-    </xs:annotation>
+      <xs:appinfo>
+        This element describes the timing of an analysis using the unit milliseconds. 
 
+        Elements:
+          tbrDesign: the element holding statistical events (e.g. begin of stimulation)
+
+        Attributes: 
+          regressorID: unique identifier (e.g. regCond1)
+          name:           user defined name
+          size:              over all time length of regressor 
+          useRefFct:    reference to the HRF-model (referenceFunction) that should be used
+          useRefFctFirstDerivative (optional):      include first derivative in the model
+          useRefFctSecondDerivative (optional): include second derivative in the model
+          scaleHeightToZeroMean:                      indicate if convolved regressor should be scaled to mean zero height (usually no)
+      </xs:appinfo>
+    </xs:annotation>
     <xs:complexType>
       <xs:sequence>
         <xs:element maxOccurs="1" minOccurs="1" ref="tbrDesign"></xs:element>
       </xs:sequence>
-
-      <xs:attribute name="regressorID" type="xs:ID" use="required"></xs:attribute>
-
-      <xs:attribute name="name" type="xs:string" use="required"></xs:attribute>
-
-      <xs:attribute name="length" type="xs:unsignedLong" use="required"></xs:attribute>
-
-      <xs:attribute name="useRefFct" type="xs:IDREF" use="required"></xs:attribute>
-
-      <xs:attribute default="false" name="useRefFctFirstDerivative"
-                    type="xs:boolean" use="optional"></xs:attribute>
-
-      <xs:attribute default="false" name="useRefFctSecondDerivative"
-                    type="xs:boolean" use="optional"></xs:attribute>
-
-      <xs:attribute name="scaleHeightToZeroMean" type="xs:boolean"
-                    use="required"></xs:attribute>
+        <xs:attribute name="regressorID" type="xs:ID" use="required"></xs:attribute>
+        <xs:attribute name="name" type="xs:string" use="required"></xs:attribute>
+        <xs:attribute name="length" type="xs:unsignedLong" use="required"></xs:attribute>
+        <xs:attribute name="useRefFct" type="xs:IDREF" use="required"></xs:attribute>
+        <xs:attribute default="false" name="useRefFctFirstDerivative"  type="xs:boolean" use="optional"></xs:attribute>
+        <xs:attribute default="false" name="useRefFctSecondDerivative"  type="xs:boolean" use="optional"></xs:attribute>
+       <xs:attribute name="scaleHeightToZeroMean" type="xs:boolean" use="required"></xs:attribute>
     </xs:complexType>
   </xs:element>
 
-  <!--+++ Covariate +++-->
 
+  <!--+++ Covariate +++-->
   <xs:element name="covariate">
     <xs:annotation>
-      <xs:appinfo>Defines a single covriate, e.g. a movement parameter. The
-      values are given as vector in attribute "valueVector", delimited by a
-      white space. The number of Elements in this vector is given by attribute
-      "numberOfElements" and should correspond to the number of scans (without
-      ignores at startup) in the whole experiment. Attributes: covariateID -
-      unique ID name - human readable name numberOfElements - number of values
-      in valueVector (should correspond to the number of scans in experiment)
-      [int] valueVector - a vector of values in delimited by white spaces
-      [double]</xs:appinfo>
-    </xs:annotation>
+      <xs:appinfo>
+         Defines a single covriate, e.g. a movement parameter. The values are given as vector in
+         attribute "valueVector", delimited by a white space. The number of Elements in this vector 
+         is given by attribute "numberOfElements" and should correspond to the number of scans 
+         (without ignores at startup) in the whole experiment. 
 
+         Attributes: 
+          covariateID:              unique identifier (e.g. covMovX) 
+          name:                       user defined name 
+          numberOfElements: number of values in valueVector (should correspond to the number of scans in experiment)
+          valueVector:             a vector of values in delimited by white spaces      
+      </xs:appinfo>
+    </xs:annotation>
     <xs:complexType>
       <xs:attribute name="covariateID" type="xs:ID" use="required"></xs:attribute>
-
       <xs:attribute name="name" type="xs:string" use="required"></xs:attribute>
-
-      <xs:attribute name="numberOfElements" type="xs:unsignedInt"
-                    use="required"></xs:attribute>
-
+      <xs:attribute name="numberOfElements" type="xs:unsignedInt" use="required"></xs:attribute>
       <xs:attribute name="valueVector" type="xs:string" use="required"></xs:attribute>
     </xs:complexType>
   </xs:element>
 
-  <!--+++ tbrDesign (for time based regressors) +++-->
 
+  <!--+++ tbrDesign (for time based regressors) +++-->
   <xs:element name="tbrDesign">
     <xs:complexType>
       <xs:sequence>
         <xs:element maxOccurs="unbounded" minOccurs="1" ref="statEvent"></xs:element>
       </xs:sequence>
-
-      <xs:attribute name="length" type="xs:unsignedLong" use="required"></xs:attribute>
-
-      <xs:attribute name="repetitions" type="xs:unsignedInt" use="required"></xs:attribute>
+        <xs:attribute name="length" type="xs:unsignedLong" use="required"></xs:attribute>
+        <xs:attribute name="repetitions" type="xs:unsignedInt" use="required"></xs:attribute>
     </xs:complexType>
   </xs:element>
 
+
+  <!-- statEvent -->
   <xs:element name="statEvent">
     <xs:annotation>
-      <xs:appinfo>Attributes: time - startTime of event [ms] duration -
-      duration of event [ms] parametricScaleFactor - scaleFactor for
-      parametric modulation [scalar]</xs:appinfo>
-    </xs:annotation>
+      <xs:appinfo>
+            Holds statistical events in a design (e.g. the start and duration of a certain stimulus) and the corresponding
+            parametric modulation factor (should be 1 if no scaling is intended).
 
+            Attributes: 
+              time:         startTime of event [ms] 
+              duration:   duration of event [ms] 
+              parametricScaleFactor: scaleFactor for parametric modulation (1 for no scaling) [scalar]
+      </xs:appinfo>
+    </xs:annotation>
     <xs:complexType>
       <xs:attribute name="time" type="xs:unsignedLong" use="required"></xs:attribute>
-
       <xs:attribute name="duration" type="xs:unsignedInt" use="required"></xs:attribute>
-
-      <xs:attribute name="parametricScaleFactor" type="xs:double"
-                    use="required"></xs:attribute>
+      <xs:attribute name="parametricScaleFactor" type="xs:double" use="required"></xs:attribute>
     </xs:complexType>
   </xs:element>
 
-  <!--+++ END Struct for Sliding Window designs +++  -->
 
-  <!-- Begin Image Modalities-->
 
+  <!-- Image Modalities -->
   <xs:element name="imageModalities">
+    <xs:annotation>
+      <xs:appinfo>
+            Describes the properties of an MR image of format Ima (.ima), Nifti Analyze (.hdr/.img), Nifti (.nii), or Dicom (.dcm).
+
+            Elements:
+              imgBase:   a string describing the names of the images without numbering 
+                                at the end, e.g. "imageEPI_" for series "imageEPI_0001",  "imageEPI_0002" ...
+              byteOrder: byteOrder of image data, "littleEndian" or "bigEndian" (default: "littleEndian")
+              TR:            repetition time of MR measurement (e.g. 2000 for 2s)
+              
+              img3D:        a dataset stored as 3D matrix (standard case in nifti)
+              or
+              imgMosaic: a dataset stored as 2D matrix as mosaic (standard for dicom)             
+
+            Attributes: 
+              imgDataType (optional): always set to image
+              imgType:   one of  IMA (for Siemens export, .ima), 
+                                            ANALYZE  (Nifti Analyze .hdr/.img), 
+                                            NIFTI (.nii),
+                                            DICOM (.dcm)
+              imgDataExtension: one of .ima, .hdr, .nii, or .dcm
+        </xs:appinfo>
+    </xs:annotation>
     <xs:complexType>
       <xs:sequence>
-        <xs:element default="myImage" name="imgBase" type="xs:string"></xs:element>
 
-        <xs:element default="littleEndian" name="byteOrder" type="xs:string"></xs:element>
 
-        <xs:element maxOccurs="1" minOccurs="1" name="TR"
-                    type="xs:unsignedInt"></xs:element>
+        <xs:element default="myImage" name="imgBase" type="xs:string">
+         <xs:annotation>
+            <xs:appinfo>
+                 A string describing the names of the images without numbering 
+                 at the end, e.g. "imageEPI_" for series "imageEPI_0001",  "imageEPI_0002" ...
+           </xs:appinfo>
+         </xs:annotation>
+        </xs:element>
+
+        <xs:element default="littleEndian" name="byteOrder" type="xs:string">
+        <xs:annotation>
+            <xs:appinfo>
+                 A string describing the byteOrder of image data, "littleEndian" or "bigEndian" (default: "little endian").
+           </xs:appinfo>
+         </xs:annotation>
+       </xs:element>
+
+        <xs:element maxOccurs="1" minOccurs="1" name="TR" type="xs:unsignedInt">
+        <xs:annotation>
+            <xs:appinfo>
+                The repetition time of MR measurement (e.g. 2000 for 2s).
+           </xs:appinfo>
+         </xs:annotation>
+        </xs:element>
 
         <xs:choice>
           <xs:element ref="img3D"></xs:element>
-
           <xs:element ref="imgMosaic"></xs:element>
         </xs:choice>
       </xs:sequence>
@@ -432,6 +565,7 @@
       <xs:attributeGroup ref="attlist.imageModalities"></xs:attributeGroup>
     </xs:complexType>
   </xs:element>
+
 
   <xs:attributeGroup name="attlist.imageModalities">
     <xs:attribute name="imgDataType" use="optional">
@@ -446,11 +580,8 @@
       <xs:simpleType>
         <xs:restriction base="xs:token">
           <xs:enumeration value="IMA"></xs:enumeration>
-
           <xs:enumeration value="ANALYZE"></xs:enumeration>
-
           <xs:enumeration value="NIFTII"></xs:enumeration>
-
           <xs:enumeration value="DICOM"></xs:enumeration>
         </xs:restriction>
       </xs:simpleType>
@@ -460,11 +591,8 @@
       <xs:simpleType>
         <xs:restriction base="xs:token">
           <xs:enumeration value=".ima"></xs:enumeration>
-
           <xs:enumeration value=".hdr"></xs:enumeration>
-
           <xs:enumeration value=".nii"></xs:enumeration>
-
           <xs:enumeration value=".dcm"></xs:enumeration>
         </xs:restriction>
       </xs:simpleType>
@@ -472,82 +600,113 @@
   </xs:attributeGroup>
 
   <xs:element name="img3D">
+    <xs:annotation>
+      <xs:appinfo>
+            Describes the properties of a 3D MR image (usually ANALYZE or NIFTII).
+
+            Elements:  
+              imgWidth:  X-Dimension of 3D matrix (e.g. 64)
+              imgHeight: Y-Dimension of 3D matrix (e.g. 64)
+              slices:        Z-Dimension (number of slices) of 3D matrix (e.g. 30)
+              bpp:           Bits per pixel (e.g. "int16", "int32") (default: "int16")              
+        </xs:appinfo>
+    </xs:annotation>
     <xs:complexType>
       <xs:sequence>
         <xs:element ref="imgWidth"></xs:element>
-
         <xs:element ref="imgHeight"></xs:element>
-
         <xs:element ref="slices"></xs:element>
-
         <xs:element ref="bpp"></xs:element>
       </xs:sequence>
     </xs:complexType>
   </xs:element>
 
   <xs:element name="imgMosaic">
+        <xs:annotation>
+         <xs:appinfo>
+               Describes the properties of a 3D MR image that is represented as 2D (mosaic) image (usually IMA or DICOM).
+               The size of the 2D matrix is always: (tileWidth*n) x (tileHeight*n). For  6x6 tiles of 64 pixel a 384x384 
+               matrix is used to encode 30 slices with the unneded additional 6 tiles being filled with zeros.
+
+                Elements:  
+                  imgWidth:  X-Dimension of 2D matrix (e.g. 384)
+                  imgHeight: Y-Dimension of 2D matrix (e.g. 384)
+                  slices:        Z-Dimension (number of slices) of 3D matrix that is represented here as 2D (e.g. 30)
+                  tileWidth:   X-Dimension of a single tile (X-Dimension of 3D matrix) (e.g. 64)
+                  tileWidth:   Y-Dimension of a single tile (Y-Dimension of 3D matrix) (e.g. 64)
+                  bpp:           Bits per pixel (e.g. "int16", "int32") (default: "int16")              
+            </xs:appinfo>
+        </xs:annotation>
     <xs:complexType>
       <xs:sequence>
         <xs:element ref="imgWidth"></xs:element>
-
         <xs:element ref="imgHeight"></xs:element>
-
         <xs:element ref="slices"></xs:element>
-
         <xs:element name="tileWidth" type="xs:unsignedInt"></xs:element>
-
         <xs:element name="tileHeight" type="xs:unsignedInt"></xs:element>
-
         <xs:element ref="bpp"></xs:element>
       </xs:sequence>
     </xs:complexType>
   </xs:element>
 
   <xs:element name="imgWidth" type="xs:unsignedInt"></xs:element>
-
   <xs:element name="imgHeight" type="xs:unsignedInt"></xs:element>
-
   <xs:element name="slices" type="xs:unsignedInt"></xs:element>
-
-  <xs:element name="bpp" type="xs:string"></xs:element>
-
+  <xs:element name="bpp" type="xs:string" default="int16"></xs:element>
   <xs:element name="misc" type="xs:int"></xs:element>
 
   <!--+++ End Image Modalities +++-->
 
   <!--+++++++++++++++++++End ExperimentData+++++++++++++++++++-->
 
+
+
+
+
+
   <!--+++++++++++++++++++ Begin mriParams +++++++++++++++++++-->
 
   <xs:element name="mriParams">
+        <xs:annotation>
+         <xs:appinfo>
+               MR parameters used for measurement of functional scans (EPI sequences) used as basis of experiment. Here it is expected that just one slice group is measured.
+
+                Elements:  
+                  MR_TAG_BANDWIDTH (optional):                      readout bandwith in Hz per Pixel (e.g. 1806)
+                  MR_TAG_BASE_RESOLUTION (optional):         single slice base resolution (e.g. 64)
+                  MR_TAG_PHASE_RESOLUTION (optional):      resolution in phase direction in percent (e.g. 100 or 80)
+                  MR_TAG_TE (optional):                                       echo time for scan in milliseconds (e.g. 25)
+                  MR_TAG_TR (optional):                                       repetition time for scan in milliseconds (e.g. 2000)
+                  MR_TAG_SG_SIZE (optional):                             number of slices, just one slicegroup is expected  (e.g. 30)
+                  MR_TAG_SLICE_THICKNESS (optional):           thickness of slices in millimeter  (e.g. 4)
+                  MR_TAG_SG_DISTANCE_FACTOR (optional):  distance between slices in percent of slice thickness (e.g. 10)
+                  MR_TAG_READOUT_FOV (optional):                 field of view size in readout direction in millimeter (e.g. 192)
+                  MR_TAG_PHASE_FOV (optional):                      field of view size in phase direction in millimeter (e.g. 192)
+                  MR_TAG_FLIP_ANGLE (optional):                      flip angle of sequence in degree (e.g. 90)
+                  MR_TAG_MEASUREMENTS (optional):              number of scans that should be done in the experiment (e.g. 300) 
+              
+              Attributes:
+                fieldStrength:    magnet field strength of the mr-scanner, one of 1.5T, 3T, 4T, or 7T
+                vendorName:    vendor of the mr-scanner, one of  Siemens, Phillips, Bruker
+                systemVersion: software version of the software running at the mr-scanner (e.g. VB17 for a Siemens scanner)
+            </xs:appinfo>
+        </xs:annotation>
     <xs:complexType>
       <xs:sequence>
         <xs:element maxOccurs="1" minOccurs="0" ref="MR_TAG_BANDWIDTH"></xs:element>
-
         <xs:element maxOccurs="1" minOccurs="0" ref="MR_TAG_BASE_RESOLUTION"></xs:element>
-
         <xs:element maxOccurs="1" minOccurs="0" ref="MR_TAG_PHASE_RESOLUTION"></xs:element>
-
         <xs:element maxOccurs="1" minOccurs="0" ref="MR_TAG_TE"></xs:element>
-
         <xs:element maxOccurs="1" minOccurs="0" ref="MR_TAG_TR"></xs:element>
-
         <xs:element maxOccurs="1" minOccurs="0" ref="MR_TAG_SG_SIZE"></xs:element>
-
         <xs:element maxOccurs="1" minOccurs="0" ref="MR_TAG_SLICE_THICKNESS"></xs:element>
-
         <xs:element maxOccurs="1" minOccurs="0"
                     ref="MR_TAG_SG_DISTANCE_FACTOR"></xs:element>
-
         <xs:element maxOccurs="1" minOccurs="0" ref="MR_TAG_READOUT_FOV"></xs:element>
-
         <xs:element maxOccurs="1" minOccurs="0" ref="MR_TAG_PHASE_FOV"></xs:element>
-
         <xs:element maxOccurs="1" minOccurs="0" ref="MR_TAG_FLIP_ANGLE"></xs:element>
-
         <xs:element maxOccurs="1" minOccurs="0" ref="MR_TAG_MEASUREMENTS"></xs:element>
       </xs:sequence>
-
       <xs:attributeGroup ref="attlist.mriParams"></xs:attributeGroup>
     </xs:complexType>
   </xs:element>
@@ -557,11 +716,8 @@
       <xs:simpleType>
         <xs:restriction base="xs:token">
           <xs:enumeration value="1.5T"></xs:enumeration>
-
           <xs:enumeration value="3T"></xs:enumeration>
-
           <xs:enumeration value="4T"></xs:enumeration>
-
           <xs:enumeration value="7T"></xs:enumeration>
         </xs:restriction>
       </xs:simpleType>
@@ -571,9 +727,7 @@
       <xs:simpleType>
         <xs:restriction base="xs:token">
           <xs:enumeration value="Siemens"></xs:enumeration>
-
           <xs:enumeration value="Phillips"></xs:enumeration>
-
           <xs:enumeration value="Bruker"></xs:enumeration>
         </xs:restriction>
       </xs:simpleType>
@@ -705,6 +859,8 @@
   <xs:attribute name="vendorTag" type="xs:string"></xs:attribute>
 
   <!--+++++++++++++++++++ End mriParams +++++++++++++++++++-->
+
+
 
   <!--+++++++++++++++++++ Begin Preprocessing +++++++++++++++++++-->
 
