@@ -7,6 +7,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.io.File;
 import java.util.LinkedList;
 import java.util.List;
@@ -124,9 +127,11 @@ public class InspectorPanel extends JPanel implements TreeReceiver {
 				}
 				
 				// Add node description tooltip to nodeNameLabel.
-				String tooltipText = edlNodeConstraint.getAppInfo().replace("\n", "<br>");
+				String nodeDescription = edlNodeConstraint.getAppInfo();
+				String tooltipText = nodeDescription.replace("\n", "<br>");
 				tooltipText = "<html>" + tooltipText + "</html>";
 				nodeNameLabel.setToolTipText(tooltipText);
+				nodeNameLabel.addMouseListener(buildTooltipMouseListener(nodeDescription));
 			} else {
 				nodeNameLabel = new JLabel(labelText);
 			}
@@ -561,6 +566,15 @@ public class InspectorPanel extends JPanel implements TreeReceiver {
 					pathField.setText(relativizedPath);
 					view.setNodeValue(node, relativizedPath);
 				}
+			}
+		};
+	}
+	
+	private MouseListener buildTooltipMouseListener(final String text) {
+		return new MouseAdapter() {
+			@Override
+			public void mouseClicked(final MouseEvent e) {
+				view.showNodeDescription(text);
 			}
 		};
 	}

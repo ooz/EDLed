@@ -38,6 +38,9 @@ public class View {
 	
 	/** Main frame/window of the application. */
 	private MainFrame mainWindow;
+	/** Window to show a node's description. */
+	private DescriptionFrame descriptionWindow;
+	
 	/** Application controller. */
 	private Application controller;
 	/** The area in which messages for the user a displayed. */
@@ -78,6 +81,9 @@ public class View {
 										this.notificationPanel);
 		
 		this.mainWindow.setVisible(true);
+		
+		this.descriptionWindow = new DescriptionFrame();
+		this.descriptionWindow.setVisible(false);
 	}
 	
 	/**
@@ -209,6 +215,11 @@ public class View {
 	 */
 	Map<Node, Plugin> getNodesConfiguredByPlugins() {
 		 return this.controller.getNodesConfiguredByPlugins();
+	}
+	
+	public void showNodeDescription(final String text) {
+		this.descriptionWindow.show(text);
+		this.descriptionWindow.setVisible(true);
 	}
 	
 //	Plugin getPlugin(final String qualifiedName) {
