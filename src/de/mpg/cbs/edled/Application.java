@@ -39,7 +39,7 @@ import de.mpg.cbs.edled.xml.XMLUtility;
 public class Application implements Runnable {
 	
 	private static final String APPLICATION_NAME = "EDLed";
-	private static final String VERSION = "3.0.2";
+	private static final String VERSION = "3.1.0";
 	private static final String AUTHOR = "Oliver Zscheyge";
 	
 	private static final String MSG_HOWTO_CORRECT_XSD = 
