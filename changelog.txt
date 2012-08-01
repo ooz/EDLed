@@ -1,3 +1,8 @@
+# EDled v3.0.3 #
+2012-08-??
+
+ * Updated EDLRules to the latest version.
+
 # EDLed v3.0.2 #
 2012-04-11
 
