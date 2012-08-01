@@ -1,9 +1,12 @@
-# EDled v3.0.3 #
-2012-08-??
+# EDled v3.1.0 #
+2012-08-01
 
- * Updated EDLRules to the latest version.
+ * Clicking on a node's label/the info icon now shows a window containing the
+   node's description.
  * If a non-existent file is opened an appropriate error message is shown.
    It will not be labeled as "not schema compliant" anymore.
+ * Updated EDLRules to the latest version.
+ * Updated EDL XSD rtExperiment_v15.xsd to r35.
 
 # EDLed v3.0.2 #
 2012-04-11
