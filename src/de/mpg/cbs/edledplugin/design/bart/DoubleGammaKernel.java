@@ -1,5 +1,8 @@
 package de.mpg.cbs.edledplugin.design.bart;
 
+import flanagan.complex.Complex;
+import flanagan.math.FourierTransform;
+
 public class DoubleGammaKernel extends DesignKernel {
 	
 	public static class GammaParams {
@@ -95,18 +98,71 @@ public class DoubleGammaKernel extends DesignKernel {
 	private static final double C3 = Math.log(2);
 	
 	private final GammaParams params;
+	double numberSamplesForInit; // unsigned long
+	double samplingRateInMs; // unsigned long
 	private final double scaleTimeUnit;
 	
 	public DoubleGammaKernel(final String id,
-							 final GammaParams params) {
+							 final GammaParams params, 
+							 final double numberSamplesForInit,
+							 final double samplingRate) {
 		super(id);
 		this.params = params;
+		this.numberSamplesForInit = numberSamplesForInit;
+		this.samplingRateInMs = samplingRate;
 		
 		if (this.params.timeUnit == DesignKernelTimeUnit.KERNEL_TIME_MS) {
 			this.scaleTimeUnit = 0.001;
 		} else {
 			this.scaleTimeUnit = 1.0;
 		}
+		
+		generateGammaKernel();
+	}
+	
+	private void generateGammaKernel() {
+		// unsigned long
+		long numberSamplesInResult = ((long) this.numberSamplesForInit / 2) + 1;//defined for results of fftw3
+		/*always generate with both derivates - so you can ask member variables if you need them*/
+		double[] kernel0 = new double[(int) this.numberSamplesForInit];//just temp to write values in
+		this.kernelDeriv0 =  new Complex[(int) numberSamplesInResult];
+		
+		double[] kernel1 = new double[(int) this.numberSamplesForInit];
+		this.kernelDeriv1 = new Complex[(int) numberSamplesInResult];
+		
+		double[] kernel2 = new double[(int) this.numberSamplesForInit];
+		this.kernelDeriv2 = new Complex[(int) numberSamplesInResult];
+		
+		for (int i = 0; i < this.numberSamplesForInit; i++) {
+			kernel0[i] = 0.0;
+			kernel1[i] = 0.0;
+			kernel2[i] = 0.0;
+		}
+		
+		// sample the whole stuff e.g. something bout 20 ms;
+		int indexS = 0;
+		for (long timeSample = 0; timeSample < this.params.overallWidth; timeSample += this.samplingRateInMs) {
+			if (indexS >= this.numberSamplesForInit) break;        
+			//unsigned long indexS = (unsigned long)timeSample/mSamplingRateInMs;
+			kernel0[indexS] = getGammaValue(timeSample, this.params.offset);
+			kernel1[indexS] = getGammaDeriv1Value(timeSample, this.params.offset);
+			kernel2[indexS] = getGammaDeriv2Value(timeSample, this.params.offset);
+			indexS++;
+		}
+
+		/* do fft for kernels right now - result buffers are the members the convolution will ask for*/
+		double[] paddedKernel0 = DesignElement.padToNextPowerOfTwo(kernel0);
+		FourierTransform pk0 = new FourierTransform(paddedKernel0);
+		pk0.transform();
+		this.kernelDeriv0 = pk0.getTransformedDataAsComplex();
+		
+		FourierTransform pk1 = new FourierTransform(DesignElement.padToNextPowerOfTwo(kernel1));
+		pk1.transform();
+		this.kernelDeriv1 = pk1.getTransformedDataAsComplex();
+		
+		FourierTransform pk2 = new FourierTransform(DesignElement.padToNextPowerOfTwo(kernel2));
+		pk2.transform();
+		this.kernelDeriv2 = pk2.getTransformedDataAsComplex();
 	}
 
 	@Override

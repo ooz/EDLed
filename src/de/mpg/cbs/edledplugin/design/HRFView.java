@@ -119,7 +119,7 @@ public class HRFView extends JPanel implements ItemListener, DesignElementReceiv
 				}
 				this.allSeries.put(fstDerivName, fstDerivSeries);
 			}
-			if (PLOT_DERIVS == 2) {
+			if (PLOT_DERIVS >= 2) {
 				String sndDerivName = kernelName + SECOND_DERIV_POSTFIX;
 				XYSeries sndDerivSeries = createEmptySeries(sndDerivName);
 				for (int i = 0; i < fctData.length; i++) {

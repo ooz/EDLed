@@ -175,7 +175,8 @@ public class DesignElement extends Observable {
 		
 		// Fetch reference functions (gGamma/gloverKernel)
 		KernelFormatter kernelFormatter = new KernelFormatter();
-		this.gammaKernels = kernelFormatter.createGammaKernels(refFctsNode);
+		this.gammaKernels = kernelFormatter.createGammaKernels(refFctsNode,
+															   this.getNumberSamplesForInit());
 		this.gloverKernels = kernelFormatter.createGloverKernels(refFctsNode, 
 															     this.getNumberSamplesForInit());
 		
@@ -228,7 +229,6 @@ public class DesignElement extends Observable {
 			
 			// TODO skipped timeUnit check!
 			LOGGER.debug("DesignElement creation: Skipped timeUnit check.");
-			
 			if (gammaKernels.get(hrfKernelName) != null) {
 				regressor.regConvolKernel = this.gammaKernels.get(hrfKernelName);
 			} else {
@@ -299,14 +299,14 @@ public class DesignElement extends Observable {
 	    
 	    for (int eventNr = 0; eventNr < this.getNumberEvents(); eventNr++) {   
 	        /* get data */
-	        int trialcount = 0;
+//	        int trialcount = 0;
 	        double t0;
 	        double h;
 			    
 	        Regressor reg = this.getRegressorList().get(eventNr);
 	        List<Trial> trials = reg.regTrialList;
 	        for (Trial trial : trials) {
-	        	trialcount++;
+//	        	trialcount++;
 	        	
 	        	t0 = trial.onset;
 	        	double tmax = t0 + trial.duration;
@@ -321,7 +321,7 @@ public class DesignElement extends Observable {
 	            }
 	        }
 	        
-	        /* Removed trialcount checks */
+	        /* TODO: Removed trialcount checks */
 	        
 	        /* fft */
 	        fftPlanForward[eventNr] = new FourierTransform(DesignElement.padToNextPowerOfTwo(buffersForwardIn[eventNr])); //= fftw_plan_dft_r2c_1d(mNumberSamplesForInit, mBuffersForwardIn[eventNr], mBuffersForwardOut[eventNr], FFTW_ESTIMATE);

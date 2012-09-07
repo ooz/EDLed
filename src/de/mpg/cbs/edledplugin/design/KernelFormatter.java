@@ -23,7 +23,8 @@ public class KernelFormatter {
 	 * @param referenceFunctionsNode
 	 * @return Map. Key: function ID, value: function kernel.
 	 */
-	public Map<String, DoubleGammaKernel> createGammaKernels(final Node referenceFunctionsNode) {
+	public Map<String, DoubleGammaKernel> createGammaKernels(final Node referenceFunctionsNode,
+			 												 final long numberSamplesForInit) {
 		Map<String, DoubleGammaKernel> kernels = new HashMap<String, DoubleGammaKernel>();
 		NodeList gammaKernelNodes = ((Element) referenceFunctionsNode).getElementsByTagName("dGamma");
 		
@@ -51,7 +52,9 @@ public class KernelFormatter {
 													 DesignKernelTimeUnit.KERNEL_TIME_MS);
 				
 				kernels.put(refFctID, new DoubleGammaKernel(refFctID, 
-														    params));
+														    params,
+														    numberSamplesForInit,
+														    DesignElement.SAMPLING_RATE_IN_MS));
 			}
 		}
 		
