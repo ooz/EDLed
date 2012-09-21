@@ -150,7 +150,7 @@ public class ConvolutionView extends JPanel
 			float[][] regValues = this.design.getRegressorValues();
 			float minRegValue = Float.MAX_VALUE;
 			float maxRegValue = Float.MIN_VALUE;
-			for (int row = 0; row < regValues.length; row++) {
+			for (int row = 0; row < regValues.length - 1; row++) {
 				for (int col = 0; col < regValues[row].length; col++) {
 					float regValue = regValues[row][col];
 					if (regValue < minRegValue) {
@@ -178,6 +178,9 @@ public class ConvolutionView extends JPanel
 						colorValue -= minRegValue;
 					}
 					colorValue /= maxRegValue;
+					if (colorValue > 1.0f) {
+						colorValue = 1.0f;
+					}
 					Color color = new Color(colorValue, colorValue, colorValue);
 					g2D.setColor(color);
 					g2D.setBackground(color);
