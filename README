@@ -26,12 +26,12 @@ Requirements:
 
 Build process:
 
- 1. Run "build.py" from terminal.
+ 1. Run "make.py" from terminal.
  2. Goto "build" directory.
  3. "EDLed" is the freshly built application directory.
 
 
 
-Copyright (c) 2010-2012 Oliver Zscheyge <zscheyge@cbs.mpg.de>
+Copyright (c) 2010-2013 Oliver Zscheyge <zscheyge@cbs.mpg.de>
 See LICENSE file for further information.
 
