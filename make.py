@@ -3,9 +3,11 @@
 
 import sys
 from subprocess import *
+from operator import *
 
 def terminal(cmd):
     return Popen(cmd, stdout=PIPE).communicate()[0]
+
 def system(cmd):
     call(cmd, shell=True)
 
@@ -49,8 +51,28 @@ STIMULUS_MAIN = "StimulusPlugin.java"
 DESIGN_DIR    = "de/mpg/cbs/edledplugin/design/"
 DESIGN_MAIN   = "DesignPlugin.java"
 
-LIB_DIR       = "res/lib/"
+JAVA_PACKAGE_SEP = "."
+FILE_SEP = "/"
 JAR_EXT       = ".jar"
+JAVA_EXT      = ".java"
+
+PLUGINS = [ "de.mpg.cbs.edledplugin.stimulus.StimulusPlugin"
+          , "de.mpg.cbs.edledplugin.design.DesignPlugin"
+          ]
+
+def pluginPackageDir(plugin):
+    packageComps = plugin.split(JAVA_PACKAGE_SEP)[:-1]
+    return reduce(lambda p, q: p + FILE_SEP + q, packageComps) + FILE_SEP
+
+def pluginJar(plugin):
+    return plugin + JAR_EXT
+
+def createJarCMD(plugin):
+    jar = pluginJar(plugin)
+    packageDir = pluginPackageDir(plugin)
+    return "jar cf %s %s;" % (jar, packageDir)
+
+LIB_DIR       = "res/lib/"
 
 CLASSPATH_FILE = ".classpath"
 MANIFEST_FILE = "MANIFEST.MF"
@@ -89,7 +111,8 @@ if __name__ == "__main__":
     build(libsWithPaths, BUILD_DIR + DESIGN_DIR + DESIGN_MAIN)
 
     print(" Packaging .jar archives...")
-    system("echo \"pushd ./;cd build/;jar cmf ../MANIFEST.MF edled.jar de/mpg/cbs/edled/;jar cf de.mpg.cbs.edledplugin.stimulus.StimulusPlugin.jar de/mpg/cbs/edledplugin/stimulus/;jar cf de.mpg.cbs.edledplugin.design.DesignPlugin.jar de/mpg/cbs/edledplugin/design/;popd\" > createJARs.sh")
+    pluginJarCMDs = "" + reduce(add, map(createJarCMD, PLUGINS))
+    system("echo \"pushd ./;cd build/;jar cmf ../MANIFEST.MF edled.jar de/mpg/cbs/edled/;" + pluginJarCMDs + "popd\" > createJARs.sh")
     system("bash createJARs.sh")
     system("rm createJARs.sh")
 
@@ -102,16 +125,20 @@ if __name__ == "__main__":
     print(" Copying ressource directory...")
     targetDir = BUILD_DIR + EDLED_APP_DIR
     system("mkdir -p " + targetDir)
-    system("cp -r " + RES_DIR + " " + targetDir)
+    system("mkdir -p " + targetDir + PLUGIN_DIR)
+    system("mkdir -p " + targetDir + RES_DIR)
+    system("cp -r " + RES_DIR + "/* " + targetDir + RES_DIR)
 
     print(" Copying plugin directory...")
-    system("cp -r " + PLUGIN_DIR + " " + targetDir)
+    system("cp -r " + PLUGIN_DIR + "/* " + targetDir + PLUGIN_DIR)
 
     print(" Moving main application JAR file...")
     system("mv -f " + BUILD_DIR + "edled.jar" + " " + targetDir + "edled.jar")
 
     print(" Moving plugin JAR files...")
-    system("mv -f " + BUILD_DIR + "*.jar" + " " + targetDir + PLUGIN_DIR)
+    for plugin in PLUGINS:
+        jar = pluginJar(plugin)
+        system("mv -f " + BUILD_DIR + jar + " " + targetDir + PLUGIN_DIR + jar)
 
     print(" Copying various documentation files...")
     system("cp changelog.txt" + " " + targetDir)
