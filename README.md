@@ -1,9 +1,18 @@
+EDLed
+=====
+
 EDLed is a graphical editor for EDL files used in real-time fMRI applications.
 
+Screenshots
+-----------
 
+![](https://raw.githubusercontent.com/ooz/EDLed/master/doc/screenshots/40_native_gui.png)
+![](https://raw.githubusercontent.com/ooz/EDLed/master/doc/screenshots/03_edlruleerror.png)
+![](https://raw.githubusercontent.com/ooz/EDLed/master/doc/screenshots/04_manipulationoption.png)
+![](https://raw.githubusercontent.com/ooz/EDLed/master/doc/screenshots/11_play2.png)
 
 Installing and running EDLed
-============================
+----------------------------
 
 Just copy the application directory "EDLed" to your preferred location.
 Use
@@ -12,10 +21,8 @@ or
 "edled.sh" (GNU/Linux, Mac OS X: double click or run from terminal)
 to start the application.
 
-
-
 Building EDLed from scratch
-===========================
+---------------------------
 
 Requirements:
 
