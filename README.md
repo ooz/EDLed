@@ -8,7 +8,7 @@ Screenshots
 
 ![](https://raw.githubusercontent.com/ooz/EDLed/master/doc/screenshots/40_native_gui.png)
 ![](https://raw.githubusercontent.com/ooz/EDLed/master/doc/screenshots/03_edlruleerror.png)
-![](https://raw.githubusercontent.com/ooz/EDLed/master/doc/screenshots/04_manipulationoption.png)
+![](https://raw.githubusercontent.com/ooz/EDLed/master/doc/screenshots/04_manipulationoptions.png)
 ![](https://raw.githubusercontent.com/ooz/EDLed/master/doc/screenshots/11_play2.png)
 
 Installing and running EDLed
