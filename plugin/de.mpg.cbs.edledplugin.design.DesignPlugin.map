@@ -1,0 +1,15 @@
+# Map file for the design plugin.
+# Based EDL specification v1.4.
+
+PARADIGM
+/rtExperiment/experimentData/paradigm
+
+TR
+/rtExperiment/experimentData/imageModalities/TR
+
+REFERENCE_FUNCTIONS
+/rtExperiment/statistics/referenceFunctions
+
+MEASUREMENTS
+/rtExperiment/mriParams/MR_TAG_MEASUREMENTS
+

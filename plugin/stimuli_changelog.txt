@@ -1,0 +1,37 @@
+# Stimuli v1.2.1 (StimulusPlugin) #
+????-??-??
+
+ * Fix display of media object list
+ * Media objects can new be edited by double clicking on them
+ * Speedup loading of large media object lists
+
+
+
+# Stimuli v1.2.0 (StimulusPlugin) #
+2012-03-26
+
+ * Updated for the new EDLed notification system.
+
+
+
+# Stimuli v1.1.1 (StimulusPlugin) #
+2011-08-29
+
+## Bug fixes ##
+ * Fixed a bug that caused the presentation to stop/reset at 5 seconds instead 
+   of 0 seconds.
+ * Made the plugin more robust against incomplete media object definitions.
+ * The existence of an intro element does not hide the timetable anymore.
+   (intro is no yet supported)
+
+
+
+# Stimuli v1.1.0 (StimulusPlugin) #
+2011-01-21
+
+## New features ##
+ * File references in media objects (image/audio/video) are now resolved based 
+   on the EDL file location (relative).
+ * Added support for dragging text and image media objects on the presentation
+   screen (adjusting the position of those media objects).
+

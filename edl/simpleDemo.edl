@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rtExperiment edlVersion="1.4">
+    <environment globalTimeUnit="milliseconds">
+        <logging doLogging="false"/>
+        <startTrigger waitForInitialTrigger="false">
+            <parallelPortTrigger>
+                <triggerPort/>
+            </parallelPortTrigger>
+        </startTrigger>
+        <dataFolder/>
+    </environment>
+    <experimentData trSimulation="">
+        <paradigm ignoreScansAtStart=""/>
+        <imageModalities imgDataExtension=".ima" imgType="IMA">
+            <imgBase/>
+            <byteOrder/>
+            <img3D/>
+        </imageModalities>
+    </experimentData>
+    <stimulusData>
+        <stimEnvironment>
+            <startTrigger waitForInitialTrigger="false">
+                <parallelPortTrigger>
+                    <triggerPort/>
+                </parallelPortTrigger>
+            </startTrigger>
+            <logEvents>
+                <logFileBase/>
+            </logEvents>
+            <screen>
+                <screenResolutionX>800</screenResolutionX>
+                <screenResolutionY>600</screenResolutionY>
+            </screen>
+        </stimEnvironment>
+        <mediaObjectList>
+            <mediaObject moID="A" name="LetterA" type="TEXT">
+                <contentText>
+                    <text>A</text>
+                    <tColor>
+                        <tcRed>1.0</tcRed>
+                        <tcGreen>0.0</tcGreen>
+                        <tcBlue>0.0</tcBlue>
+                    </tColor>
+                    <tSize>32</tSize>
+                    <posX>400</posX>
+                    <posY>250</posY>
+                </contentText>
+            </mediaObject>
+            <mediaObject moID="B" name="LetterB" type="TEXT">
+                <contentText>
+                    <text>B</text>
+                    <tColor>
+                        <tcRed>1.0</tcRed>
+                        <tcGreen>0.96862745</tcGreen>
+                        <tcBlue>0.0</tcBlue>
+                    </tColor>
+                    <tSize>32</tSize>
+                    <posX>400</posX>
+                    <posY>250</posY>
+                </contentText>
+            </mediaObject>
+        </mediaObjectList>
+        <timeTable timeTolerance="0">
+            <freeStimulusDesign overallPresLength="10000">
+                <stimEvent duration="5000" time="0">
+                    <mObjectID>A</mObjectID>
+                </stimEvent>
+                <stimEvent duration="5000" time="5000">
+                    <mObjectID>B</mObjectID>
+                </stimEvent>
+            </freeStimulusDesign>
+        </timeTable>
+    </stimulusData>
+</rtExperiment>

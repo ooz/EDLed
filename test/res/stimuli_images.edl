@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rtExperiment edlVersion="1.5">
+    <environment globalTimeUnit="milliseconds">
+        <logging doLogging="true">
+            <logFolder>LOG\</logFolder>
+            <logFile>log.txt</logFile>
+        </logging>
+        <startTrigger waitForInitialTrigger="true">
+            <parallelPortTrigger>
+                <triggerPort>378</triggerPort>
+                <bitOffset>0</bitOffset>
+                <negativeLogic>0</negativeLogic>
+            </parallelPortTrigger>
+        </startTrigger>
+        <dataFolder>data\</dataFolder>
+        <resultFolder>data\results\</resultFolder>
+    </environment>
+    <experimentData trSimulation="0">
+        <paradigm ignoreScansAtStart="5">
+            <gwDesignStruct>
+                <timeBasedRegressor length="480000" name="tbr1_image" regressorID="tbr1" scaleHeightToZeroMean="false" useRefFct="dGamma1" useRefFctFirstDerivative="false" useRefFctSecondDerivative="false">
+                    <tbrDesign length="24000" repetitions="20">
+                        <statEvent duration="6000" parametricScaleFactor="1" time="0"/>
+                    </tbrDesign>
+                </timeBasedRegressor>
+            </gwDesignStruct>
+        </paradigm>
+        <imageModalities imgDataExtension=".dcm" imgDataType="image" imgType="DICOM">
+            <imgBase>myImage</imgBase>
+            <byteOrder>littleEndian</byteOrder>
+            <TR>2000</TR>
+            <imgMosaic>
+                <imgWidth>348</imgWidth>
+                <imgHeight>348</imgHeight>
+                <slices>30</slices>
+                <tileWidth>64</tileWidth>
+                <tileHeight>64</tileHeight>
+                <bpp>16</bpp>
+            </imgMosaic>
+        </imageModalities>
+    </experimentData>
+    <statistics>
+        <corrAnalysis/>
+        <referenceFunctions>
+            <dGamma refFctID="dGamma1">
+                <tPeak1>6000</tPeak1>
+                <mWidth1>51000</mWidth1>
+                <scale1>1</scale1>
+                <tPeak2>16000</tPeak2>
+                <mWidth2>8000</mWidth2>
+                <scale2>0.09</scale2>
+                <offset>0</offset>
+                <overallWidth>30000</overallWidth>
+            </dGamma>
+        </referenceFunctions>
+    </statistics>
+    <stimulusData>
+        <stimEnvironment>
+            <startTrigger waitForInitialTrigger="true">
+                <parallelPortTrigger>
+                    <triggerPort/>
+                    <bitOffset>0</bitOffset>
+                    <negativeLogic>0</negativeLogic>
+                </parallelPortTrigger>
+            </startTrigger>
+            <logEvents>
+                <logFileBase/>
+            </logEvents>
+            <screen>
+                <screenResolutionX>800</screenResolutionX>
+                <screenResolutionY>600</screenResolutionY>
+            </screen>
+        </stimEnvironment>
+        <mediaObjectList>
+            <mediaObject moID="p1" name="x" type="IMAGE">
+                <contentImage>
+                    <imageFile>pics\bacon.jpg</imageFile>
+                    <posX>0</posX>
+                    <posY>0</posY>
+                </contentImage>
+            </mediaObject>
+            <mediaObject moID="p2" name="d" type="IMAGE">
+                <contentImage>
+                    <imageFile>pics\bratwurst.jpg</imageFile>
+                    <posX>0</posX>
+                    <posY>0</posY>
+                </contentImage>
+            </mediaObject>
+            <mediaObject moID="t1" name="Cross" type="TEXT">
+                <contentText>
+                    <text>+</text>
+                    <tColor>
+                        <tcRed>1.0</tcRed>
+                        <tcGreen>1.0</tcGreen>
+                        <tcBlue>1.0</tcBlue>
+                    </tColor>
+                    <tSize>18</tSize>
+                    <posX>400</posX>
+                    <posY>300</posY>
+                </contentText>
+            </mediaObject>
+        </mediaObjectList>
+        <timeTable timeTolerance="0">
+            <freeStimulusDesign overallPresLength="480000">
+                <stimEvent duration="5000" time="0">
+                    <mObjectID>t1</mObjectID>
+                </stimEvent>
+                <stimEvent duration="3000" time="5000">
+                    <mObjectID>p1</mObjectID>
+                </stimEvent>
+                <stimEvent duration="5000" time="8000">
+                    <mObjectID>t1</mObjectID>
+                </stimEvent>
+                <stimEvent duration="3000" time="13000">
+                    <mObjectID>p2</mObjectID>
+                </stimEvent>
+                <stimEvent duration="464000" time="16000">
+                    <mObjectID>t1</mObjectID>
+                </stimEvent>
+            </freeStimulusDesign>
+        </timeTable>
+    </stimulusData>
+</rtExperiment>

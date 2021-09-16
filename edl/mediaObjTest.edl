@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<rtExperiment edlVersion="">
+    <environment globalTimeUnit="milliseconds">
+        <logging doLogging=""/>
+        <startTrigger waitForInitialTrigger="">
+            <parallelPortTrigger>
+                <triggerPort/>
+            </parallelPortTrigger>
+        </startTrigger>
+        <dataFolder/>
+    </environment>
+    <experimentData trSimulation="">
+        <paradigm ignoreScansAtStart="0"/>
+        <imageModalities imgDataExtension=".ima" imgType="IMA">
+            <imgBase/>
+            <byteOrder/>
+            <img3D/>
+        </imageModalities>
+    </experimentData>
+    <stimulusData>
+        <stimEnvironment>
+            <startTrigger waitForInitialTrigger="">
+                <parallelPortTrigger>
+                    <triggerPort/>
+                </parallelPortTrigger>
+            </startTrigger>
+            <logEvents>
+                <logFileBase/>
+            </logEvents>
+            <screen>
+                <screenResolutionX>800</screenResolutionX>
+                <screenResolutionY>600</screenResolutionY>
+            </screen>
+        </stimEnvironment>
+        <mediaObjectList>
+            <mediaObject moID="blaID" name="blaName" type="IMAGE">
+                <contentImage>
+                    <imageFile>/media/DATA/studies/sem06/praktikum/mpi_svn/gr_bart/Misc/BARTPresentation/google_trends.png</imageFile>
+                    <posX>0</posX>
+                    <posY>0</posY>
+                </contentImage>
+            </mediaObject>
+            <mediaObject moID="blubID" name="blubName" type="TEXT">
+                <contentText>
+                    <text>Text...</text>
+                    <tColor>
+                        <tcRed>1.0</tcRed>
+                        <tcGreen>1.0</tcGreen>
+                        <tcBlue>1.0</tcBlue>
+                    </tColor>
+                    <tSize>12</tSize>
+                    <posX>200</posX>
+                    <posY>400</posY>
+                </contentText>
+            </mediaObject>
+            <mediaObject moID="vid" name="vid" type="VIDEO">
+                <contentVideo>
+                    <videoFile>/media/MULE/stuff/futurama_s02e03.avi</videoFile>
+                    <posX>0</posX>
+                    <posY>0</posY>
+                </contentVideo>
+            </mediaObject>
+        </mediaObjectList>
+        <timeTable timeTolerance="0">
+            <freeStimulusDesign overallPresLength="20000">
+                <stimEvent duration="10000" time="0">
+                    <mObjectID>blaID</mObjectID>
+                </stimEvent>
+                <stimEvent duration="10000" time="10000">
+                    <mObjectID>blubID</mObjectID>
+                </stimEvent>
+            </freeStimulusDesign>
+        </timeTable>
+    </stimulusData>
+</rtExperiment>

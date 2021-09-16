@@ -1,0 +1,12 @@
+# Map file for the stimulus plugin.
+# Based EDL specification v1.4.
+
+SCREEN
+/rtExperiment/stimulusData/stimEnvironment/screen
+
+MEDIAOBJECTLIST
+/rtExperiment/stimulusData/mediaObjectList
+
+TIMETABLE
+/rtExperiment/stimulusData/timeTable
+

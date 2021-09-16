@@ -1,0 +1,15 @@
+# Design v0.2.1 (DesignPlugin) #
+2012-09-07
+
+ * Implement double gamma support.
+
+# Design v0.2.0 (DesignPlugin) # 
+2011-07-25
+
+ * Added HRF view for double gamma and glover kernels.
+
+# Design v0.1.0 (DesignPlugin) #
+2011-04-18
+
+ * Initial release featuring convolution and orthogonality view.
+

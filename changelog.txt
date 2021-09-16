@@ -1,0 +1,110 @@
+# EDled v3.1.0 #
+2012-08-01
+
+ * Clicking on a node's label/the info icon now shows a window containing the
+   node's description.
+ * If a non-existent file is opened an appropriate error message is shown.
+   It will not be labeled as "not schema compliant" anymore.
+ * Updated EDLRules to the latest version.
+ * Updated EDL XSD rtExperiment_v15.xsd to r35.
+
+# EDLed v3.0.2 #
+2012-04-11
+
+ * Mac OS X keyboard shortcuts for open, new, save and quit now use the command
+   instead of the control key.
+
+# EDLed v3.0.1 #
+2012-04-11
+
+ * Fixed a bug causing no repaint after opening/creating a configuration.
+
+# EDLed v3.0.0 #
+2012-04-11
+
+ * Reworked the application launch. EDLed can now be started just by executing
+   the edled.jar file on Linux systems.
+   The edled.sh script can still be used as an alternative CLI launch method. 
+ * The notification system now supports brief/verbose notifications.
+ * The node inspector now also shows all direct child elements of a node.
+ * All dialogs are now realized as notifications.
+ * EDLed now comes bundled with latest EDL version incorporating dynamic design
+   support.
+
+# EDLed v2.0.0 #
+2012-03-26
+
+ * New notification subsystem.
+   Replacing the old message area at the bottom of the main window.
+   Some Notifications are automatically removed once an issue is resolved.
+   Other Notifications are user removable.
+ * The EDL XSD will now be validated parallel to the program launch.
+   The validation process takes approx. 40-50 seconds.
+
+# EDLed v1.3.0 #
+2012-01-08
+
+ * Fields that are specified to a have a File-/DirChooser now also offer a text 
+   field for manual path editing
+ * The window title now shows the full path of the active EDL file.  
+ * Recently opened files are now tracked.
+
+## Bug fixes ##
+
+ * Fixed a bug that caused an ArrayOutOfBoundsException while switching tabs 
+   in the view.
+ * Fixed a bug that caused the display of an ID violation when switching from
+   a plugin view to the tree view.
+
+# EDLed v1.2.0 #
+2011-04-26
+
+ * EDLed is now shipped with rtExperiment_v15.xsd r30 (choosen by default) and
+   rtExperiment_v14.xsd r27 
+ * A "?"-icon next to a element name now indicates that the element has a
+   tooltip description. 
+ * The content of the XSD annotation/appinfo tags is now shown as a tooltip on 
+   mouseover of the element label.
+
+## Bug fixes ##
+
+ * Corrected argument order and improved MacOS X support in edled.sh 
+   (launch script).
+ * Fixed a bug in the build process resulting in packaging every class file 
+   into the main executable jar. Needed libraries have to be in res/lib/, 
+   plugins go to plugin/.
+ * A warning will be shown now if the specified XSD file could not be found.
+ * Attributes that provide a default or fixed value will now always be present
+   unaffected by their use value.
+ * Now supporting default and fixed values for elements correctly.
+
+
+
+# EDLed v1.1.0 #
+2011-01-21
+
+## New features ##
+ * Added evaluation of type restrictions.
+ * Added support for input methods other than text fields and drop down menus:
+    Alternative input methods can be specified in the file 
+    EDLed/res/config/inputmethods.map either on a XPath or a XSD type basis.
+    
+ * The "Open"-Dialog now starts in the directory of last opened XML/EDL file.
+   (Does not carry over to subsequent invocations of EDLed!)
+ * A single EDL file can now be passed as a command line parameter.
+ * The entire XML document/EDL configuration is now validated upon saving.
+  
+## Bug fixes ##
+
+ * Fixed a bug in the validation of xs:NMTOKEN types.
+ * Textfield inputs: the node is no longer validated when modifier key is
+    pressed (shift/ctrl/super/alt/altgr).
+    
+
+
+# EDLed v1.0.1 #
+
+## Bug fixes ##
+
+ * Fixed a bug in the ID validation
+
